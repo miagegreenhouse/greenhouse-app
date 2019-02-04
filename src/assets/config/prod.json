@@ -1,0 +1,9 @@
+{
+  "debugging": false,
+  "restApi": {
+    "getMe": {
+      "url": "api/users/me",
+      "method": "GET"
+    }
+  }
+}

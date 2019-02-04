@@ -1,3 +1,4 @@
+import { AppConfig } from './../../model/index';
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
@@ -27,6 +28,11 @@ export class RestService {
       params: params
     });
   }
+
+  loadFromAppConfig(appConfig: AppConfig) {
+    
+  }
+
 }
 
 export interface Param {

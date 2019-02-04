@@ -8,6 +8,7 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { ToastService } from './services/toast/toast.service';
 import { StorageService } from './services/storage/storage.service';
+import { ConfigModule, ConfigService } from './services/config/config.service';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -28,6 +29,8 @@ import { HttpClientModule } from '@angular/common/http';
     SplashScreen,
     ToastService,
     StorageService,
+    ConfigService,
+    ConfigModule.init(),
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

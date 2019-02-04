@@ -7,3 +7,22 @@ export interface UserForm {
   email: string,
   password: string
 };
+
+export interface AppConfig {
+  debuggin: boolean,
+  restApi: {
+    [key: string]: ApiEntry
+  }
+};
+
+export interface ApiEntry {
+  url: string,
+  method: HTTPMethod
+};
+
+export enum HTTPMethod {
+  GET="GET",
+  POST="POST",
+  PUT="PUT",
+  DELETE="DELETE"
+};
