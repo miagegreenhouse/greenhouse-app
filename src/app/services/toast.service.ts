@@ -19,7 +19,7 @@ export class ToastService {
    */
   async showToast(text: string, color?: string, onDismiss?: () => any) {
     let toast = await this.toastController.create({
-      color: (color ? color : 'F94B4B'),
+      color: (color ? color : 'danger'),
       message: text,
       position: 'bottom',
       showCloseButton: true,

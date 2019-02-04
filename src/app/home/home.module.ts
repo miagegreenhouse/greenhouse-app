@@ -1,3 +1,4 @@
+import { ToastService } from './../services/toast.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,6 +18,9 @@ import { HomePage } from './home.page';
         component: HomePage
       }
     ])
+  ],
+  providers: [
+    ToastService
   ],
   declarations: [HomePage]
 })
