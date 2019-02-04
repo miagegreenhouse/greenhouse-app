@@ -12,6 +12,7 @@ import { ConfigModule, ConfigService } from './services/config/config.service';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { AuthenticationService } from'./services/authentication/authentication.service'
 import { ConnexionComponent } from './component/connexion/connexion/connexion.component';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -30,6 +31,7 @@ import { HttpClientModule } from '@angular/common/http';
     ToastService,
     StorageService,
     ConfigService,
+    AuthenticationService,
     ConfigModule.init(),
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
