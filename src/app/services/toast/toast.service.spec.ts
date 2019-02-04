@@ -18,11 +18,4 @@ describe('ToastService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should show a toast', (done) => {
-    const service: ToastService = TestBed.get(ToastService);
-    service.showToast("It works", undefined, () => {
-      done();
-    });
-  });
-
 });

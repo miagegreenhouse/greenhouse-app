@@ -1,4 +1,4 @@
-import { ToastService } from './../services/toast.service';
+import { ToastService } from '../services/toast/toast.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
