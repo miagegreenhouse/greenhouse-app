@@ -1,3 +1,4 @@
+import { ToastService } from './../services/toast.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -19,6 +20,9 @@ import {ChartComponent} from '../chart/chart.component';
       }
     ])
   ],
-  declarations: [HomePage, ChartComponent]
+  declarations: [HomePage, ChartComponent],
+  providers: [
+    ToastService
+  ]
 })
 export class HomePageModule {}
