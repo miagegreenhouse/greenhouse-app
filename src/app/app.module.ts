@@ -13,6 +13,7 @@ import { RestService, RestModule } from './services/rest/rest.service';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { AuthenticationService } from'./services/authentication/authentication.service'
 import { ConnexionComponent } from './component/connexion/connexion/connexion.component';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -45,6 +46,7 @@ export function initApp(configService: ConfigService, restService: RestService) 
     StorageService,
     ConfigService,
     RestService,
+    AuthenticationService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {
       provide: APP_INITIALIZER,
