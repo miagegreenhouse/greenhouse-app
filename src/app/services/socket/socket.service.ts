@@ -1,12 +1,9 @@
-import { HeaterConfiguration } from './../../model/heater.configuration';
-import { WaterHeaterModule } from './../../model/water.heater.module';
-import { User } from './../../model/user';
 import { Injectable } from '@angular/core';
-import { Events } from 'ionic-angular';
 
 import * as socketIo from 'socket.io-client';
 import { Observable } from 'rxjs';
-import { AppEvents } from '../../model';
+
+import { Events } from '@ionic/angular';
 
 export enum WebSocketProtocol {
     WS="ws",
@@ -42,7 +39,7 @@ export class SocketService {
 		if (onError) {
 			this.onError().subscribe(onError);
 		} else {
-			this.onError().subscribe(this.socketErrorHandler);
+			// this.onError().subscribe(this.socketErrorHandler);
 		}
 	}
 
@@ -61,9 +58,9 @@ export class SocketService {
 	 * Function that handles socket error
 	 * @return {void}
 	 */
-	socketErrorHandler = (error): void => {
-		this.events.publish(AppEvents.SOCKET_ERROR, error);
-	}
+	// socketErrorHandler = (error): void => {
+	// 	this.events.publish(AppEvents.SOCKET_ERROR, error);
+	// }
 
 	/**
 	 * Send an object
@@ -103,15 +100,6 @@ export class SocketService {
 		return new Observable<any>(observer => {
 			this.socket.on('event', () => observer.next(event));
 		});
-    }
-    
-    authenticateSocket = (user: User, config: HeaterConfiguration) => {
-        let command = {
-            code: OpCodes.IDENTIFICATION,
-            token: user.token,
-            hubName: config.hub_name
-        };
-        this.send(command);
-    }
+  }
 
 }
