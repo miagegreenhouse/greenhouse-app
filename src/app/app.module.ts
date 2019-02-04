@@ -12,6 +12,7 @@ import { StorageService } from './services/storage/storage.service';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import {HttpClientModule} from '@angular/common/http';
+import 'chartjs-plugin-annotation';
 
 @NgModule({
   declarations: [AppComponent],

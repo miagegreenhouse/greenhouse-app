@@ -26,6 +26,17 @@ export class ChartComponent implements OnInit {
       options: {
         scales: {
           xAxes: this.getOptionxAxes(this.dateRange)
+        },
+        annotation: {
+          annotations: [{
+            type: 'line',
+            mode: 'horizontal',
+            scaleID: 'y-axis-0',
+            value: '12',
+            borderColor: 'tomato',
+            borderWidth: 1
+          }],
+          drawTime: "afterDraw" // (default)
         }
       }
     });
