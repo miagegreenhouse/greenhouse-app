@@ -12,7 +12,9 @@ export interface AppConfig {
   debuggin: boolean,
   restApi: {
     [key: string]: ApiEntry
-  }
+  },
+  host: string,
+  method: string
 };
 
 export interface ApiEntry {

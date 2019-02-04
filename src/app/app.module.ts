@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -9,11 +9,25 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { ToastService } from './services/toast/toast.service';
 import { StorageService } from './services/storage/storage.service';
 import { ConfigModule, ConfigService } from './services/config/config.service';
+import { RestService, RestModule } from './services/rest/rest.service';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ConnexionComponent } from './component/connexion/connexion/connexion.component';
 import { HttpClientModule } from '@angular/common/http';
+
+export function initApp(configService: ConfigService, restService: RestService) {
+  return () => {
+    return new Promise((resolve, reject) => {
+      configService.load()
+      .then(() => {
+        restService.loadFromAppConfig(configService.appConfig);
+        resolve();
+      })
+      .catch(reject);
+    });
+  }
+};
 
 @NgModule({
   declarations: [AppComponent, ConnexionComponent],
@@ -30,8 +44,14 @@ import { HttpClientModule } from '@angular/common/http';
     ToastService,
     StorageService,
     ConfigService,
-    ConfigModule.init(),
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    RestService,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initApp,
+      deps: [ConfigService, RestService],
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })
