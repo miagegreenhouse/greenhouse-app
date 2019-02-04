@@ -12,9 +12,10 @@ import { StorageService } from './services/storage/storage.service';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { ConnexionComponent } from './component/connexion/connexion/connexion.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, ConnexionComponent],
   entryComponents: [],
   imports: [
     BrowserModule,
