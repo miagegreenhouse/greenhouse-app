@@ -11,12 +11,13 @@ export class ChartComponent implements OnInit {
 
   @Input() title: string;
   @Input() data: ChartData;
+  @Input() dateRange = 21600000; // Default value is 6h
 
   chart = null;
 
   @ViewChild('chart') canvas;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     this.chart = new Chart(this.canvas.nativeElement, {
@@ -24,12 +25,25 @@ export class ChartComponent implements OnInit {
       data: this.data,
       options: {
         scales: {
-          xAxes: [{
-            type: 'time',
-          }]
+          xAxes: this.getOptionxAxes(this.dateRange)
         }
       }
     });
+  }
+
+  public updateDateRange(newDateRange: number): void {
+    this.chart.options.scales.xAxes = this.getOptionxAxes(newDateRange);
+    this.chart.update();
+  }
+
+  private getOptionxAxes(dateRange: number) {
+    return [{
+      type: 'time',
+      time: {
+        min: new Date(new Date().getTime() - dateRange),
+        max: new Date()
+      }
+    }];
   }
 
 }
