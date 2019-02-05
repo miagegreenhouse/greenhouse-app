@@ -15,10 +15,10 @@
 </ion-header>
 
 <ion-content>
-    <app-chart [title]="mockData1.title"
-               [data]="mockData1.data" [min]="0" [max]="4"
-               [dateRange]="dateRange[dateRangeSelected].timestamp"></app-chart>
-    <app-chart [title]="mockData2.title"
-               [data]="mockData2.data" [min]="-2" [max]="25"
-               [dateRange]="dateRange[dateRangeSelected].timestamp"></app-chart>
+  <ion-row>
+    <ion-button (click)="addData()">Add Data</ion-button>
+  </ion-row>
+  <app-chart *ngFor="let data of dataService.getDatas()"
+             [data]="data"
+             [dateRange]="dateRange[dateRangeSelected].timestamp"></app-chart>
 </ion-content>

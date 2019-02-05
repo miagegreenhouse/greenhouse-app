@@ -1,5 +1,7 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import { Chart } from 'chart.js';
+import {Captor, Data} from '../services/data/data.service';
+import {Events} from '@ionic/angular';
 
 // @ts-ignore
 @Component({
@@ -9,37 +11,44 @@ import { Chart } from 'chart.js';
 })
 export class ChartComponent implements OnInit {
 
-  @Input() title: string;
-  @Input() data: ChartData;
+  @Input() data: Data;
   @Input() dateRange = 21600000; // Default value is 6h
-  @Input() min: number = null;
-  @Input() max: number = null;
 
   chart = null;
   paddingPercent = 0.1;
 
   @ViewChild('chart') canvas;
 
-  constructor() {}
+  constructor(public events: Events) {
+  }
 
   ngOnInit() {
+    this.updateChart();
+    this.events.subscribe('updateData:' + this.data.dataId, () => {
+      this.updateChart();
+    });
+  }
+
+  public updateChart(): void {
+    const chartData: ChartData = this.getChartData();
 
     // In order to be more readable add a paddingPercent padding top and bottom in chart
-    const chartBounds: number[] = this.getChartBounds();
+    const chartBounds: number[] = this.getChartBounds(chartData);
 
     // Add horizontal lines for min and max alert values in chart
     const annotations = [];
-    if (this.min !== null) {
-      annotations.push(this.getAnnotation(this.min, true));
+    if (this.data.min !== null) {
+      annotations.push(this.getAnnotation(this.data.min, true));
     }
-    if (this.max !== null) {
-      annotations.push(this.getAnnotation(this.max, false));
+    if (this.data.max !== null) {
+      annotations.push(this.getAnnotation(this.data.max, false));
     }
 
     this.chart = new Chart(this.canvas.nativeElement, {
       type: 'line',
-      data: this.data,
+      data: chartData,
       options: {
+        animation: { duration: 0 },
         scales: {
           yAxes: [{
             ticks: {
@@ -61,6 +70,28 @@ export class ChartComponent implements OnInit {
     this.chart.update();
   }
 
+  private getChartData(): ChartData {
+    const chartData: ChartData = {
+      datasets: []
+    };
+    Object.keys(this.data.captors).forEach(captorId => {
+      const captor: Captor = this.data.captors[captorId];
+      const dataset: Dataset = {
+        label: captor.source,
+        borderColor: '#0000FF',
+        data: []
+      };
+      captor.data.forEach(data => {
+        dataset.data.push({
+          t: new Date(data.timestamp),
+          y: data.value
+        });
+      });
+      chartData.datasets.push(dataset);
+    });
+    return chartData;
+  }
+
   private getOptionxAxes(dateRange: number) {
     return [{
       type: 'time',
@@ -74,8 +105,8 @@ export class ChartComponent implements OnInit {
   // Return [min, max]
   // min: min chart display - paddingPercent % margin
   // max: maxchart display - paddingPercent % margin
-  private getChartBounds(): number[] {
-    const minMax: number[] = this.getMinMax();
+  private getChartBounds(chartData: ChartData): number[] {
+    const minMax: number[] = this.getMinMax(chartData);
     const marginChart = (minMax[1] - minMax[0]) * this.paddingPercent;
 
     minMax[0] = minMax[0] - marginChart;
@@ -87,21 +118,21 @@ export class ChartComponent implements OnInit {
   // Return [min, max]
   // min: Min value between all values and min alert value
   // max: Max value between all values and max alert value
-  private getMinMax(): number[] {
-    if (this.data.datasets.length === 0 && this.data.datasets[0].data.length === 0) {
+  private getMinMax(chartData: ChartData): number[] {
+    if (chartData.datasets.length === 0 && chartData.datasets[0].data.length === 0) {
       return [0, 0];
     }
-    const initValue = this.data.datasets[0].data[0].y;
+    const initValue = chartData.datasets[0].data[0].y;
     const minMax: number[] = [initValue, initValue];
 
-    this.data.datasets.forEach(dataset => {
+    chartData.datasets.forEach(dataset => {
       dataset.data.forEach(data => {
         minMax[0] = Math.min(data.y, minMax[0]);
         minMax[1] = Math.max(data.y, minMax[1]);
       });
     });
-    minMax[0] = Math.min(this.min, minMax[0]);
-    minMax[1] = Math.max(this.max, minMax[1]);
+    minMax[0] = Math.min(this.data.min, minMax[0]);
+    minMax[1] = Math.max(this.data.max, minMax[1]);
 
     return minMax;
   }
@@ -133,7 +164,7 @@ export interface ChartData {
 }
 
 export interface Dataset {
-  label: string;
+  label: string; // source
   data: DataFormat[];
   borderColor: string;
 }
