@@ -1,0 +1,21 @@
+
+<ion-content>
+  <div id="container">
+    <ion-card id="connexionCard">  
+        <ion-card-header>
+          <ion-card-title>Connexion</ion-card-title>
+        </ion-card-header>
+        <ion-list no-lines id="connexionList">
+            <ion-item id="rounded">
+              <ion-input type="text" placeholder="Login" [(ngModel)]="userForm.email" ></ion-input>
+            </ion-item>
+            <ion-item id="rounded">
+              <ion-input type="password" placeholder="Password" [(ngModel)]="userForm.password" ></ion-input>
+            </ion-item>            
+          </ion-list>
+          <ion-item>
+            <ion-button (click)="login()">Connexion</ion-button>
+          </ion-item>
+      </ion-card>
+  </div>
+</ion-content>

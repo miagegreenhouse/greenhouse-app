@@ -1,0 +1,11 @@
+{
+  "debugging": true,
+  "restApi": {
+    "getMe": {
+      "url": "api/users/me",
+      "method": "GET"
+    }
+  },
+  "host": "localhost:3000",
+  "method": "http"
+}
