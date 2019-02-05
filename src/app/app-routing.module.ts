@@ -6,7 +6,7 @@ import { PreferencesComponent } from './component/preferences/preferences/prefer
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'connexion',
+    redirectTo: 'home',
     pathMatch: 'full'
   },
   {
