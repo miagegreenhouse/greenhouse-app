@@ -5,7 +5,7 @@ import { ConnexionComponent } from './component/connexion/connexion/connexion.co
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'connexion',
+    redirectTo: 'home',
     pathMatch: 'full'
   },
   {
