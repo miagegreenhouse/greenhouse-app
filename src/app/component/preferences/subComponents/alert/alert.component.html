@@ -1,0 +1,16 @@
+<div id="alertContainer">
+  <ion-list no-lines>
+    <ion-item *ngFor="let mail of mailList">
+      <ion-input readonly >{{mail}}</ion-input> 
+      <ion-fab-button id="alertFabButton" (click)="removeEMail(mail)">
+        <ion-icon name="remove"></ion-icon>
+      </ion-fab-button>   
+    </ion-item>        
+  </ion-list>
+  <ion-item>
+    <ion-input color="primary" type="text" placeholder="Ajouter un eMail" [(ngModel)]="newMail" ></ion-input>
+    <ion-fab-button id="alertFabButton" (click)="addMail()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-item>
+</div>

@@ -10,34 +10,38 @@ import { ToastService } from './services/toast/toast.service';
 import { StorageService } from './services/storage/storage.service';
 import { ConfigService } from './services/config/config.service';
 import { RestService } from './services/rest/rest.service';
+import { AppConfigService} from './services/appConfig/app-config.service';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { AuthenticationService } from'./services/authentication/authentication.service'
+import { AuthenticationService } from './services/authentication/authentication.service';
 import { ConnexionComponent } from './component/connexion/connexion/connexion.component';
 import { HttpClientModule } from '@angular/common/http';
+import 'chartjs-plugin-annotation';
 
-export function initApp(configService: ConfigService, restService: RestService) {
-  return () => {
-    return new Promise((resolve, reject) => {
-      configService.load()
-      .then(() => {
-        restService.loadFromAppConfig(configService.appConfig);
-        resolve();
-      })
-      .catch(reject);
-    });
-  }
-};
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { PreferencesComponent } from './component/preferences/preferences/preferences.component';
+import { AlertComponent } from './component/preferences/subComponents/alert/alert.component';
 
+export function initApp(configService: ConfigService, restService: RestService) {
+  return () => {
+    return new Promise((resolve, reject) => {
+      configService.load()
+          .then(() => {
+            restService.loadFromAppConfig(configService.appConfig);
+            resolve();
+          })
+          .catch(reject);
+    });
+  };
+}
 
 @NgModule({
-  declarations: [AppComponent, ConnexionComponent],
+  declarations: [AppComponent, ConnexionComponent, PreferencesComponent, AlertComponent],
   entryComponents: [],
     imports: [
     BrowserModule,
@@ -56,6 +60,7 @@ import { FormsModule } from '@angular/forms';
     StorageService,
     ConfigService,
     RestService,
+    AppConfigService,
     AuthenticationService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {

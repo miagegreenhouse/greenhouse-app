@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../../../services/authentication/authentication.service';
 import { UserForm } from 'src/app/model';
 import { User } from 'src/app/model';
-import { ToastrService } from 'ngx-toastr';
-
+import { ToastrService } from 'ngx-toastr'; 
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-connexion',
@@ -14,7 +14,7 @@ export class ConnexionComponent implements OnInit {
 
   userForm : UserForm = {email:"",password:""};
 
-  constructor(public auth : AuthenticationService, private toastr: ToastrService) { }
+  constructor(public auth : AuthenticationService, private toastr: ToastrService, private router: Router) { }
 
   ngOnInit() {
   }
@@ -33,6 +33,8 @@ export class ConnexionComponent implements OnInit {
             positionClass: 'toast-bottom-right'
           });
           console.log(err);
+          //TODO : mettre ce code dans le then, pas dans le catch
+          this.router.navigateByUrl('/preferences');
         });
   }
 }
