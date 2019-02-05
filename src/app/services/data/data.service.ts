@@ -38,6 +38,7 @@ export interface CaptorData {
 export class DataService {
 
   datas: { [key: string]: Data; } = {}; // key is dataId
+  mails: string[];
 
   constructor(private socketService: SocketService, private events: Events) {
     events.subscribe('data', (message) => {
@@ -81,7 +82,6 @@ export class DataService {
           this.events.publish('updateData:' + dataId);
         });
       }
-      console.log(this.datas);
     });
   }
 

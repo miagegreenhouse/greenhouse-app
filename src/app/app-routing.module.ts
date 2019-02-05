@@ -19,6 +19,10 @@ const routes: Routes = [
   {
     path: 'connexion',
     component: ConnexionComponent
+  },
+  {
+    path: 'preferences',
+    loadChildren: './preferences/preferences.module#PreferencesPageModule'
   }
 ];
 

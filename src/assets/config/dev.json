@@ -4,6 +4,10 @@
     "getMe": {
       "url": "api/users/me",
       "method": "GET"
+    },
+    "login": {
+      "url": "api/token",
+      "method": "POST"
     }
   },
   "host": "localhost:3000",
