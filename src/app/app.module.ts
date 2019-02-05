@@ -10,6 +10,7 @@ import { ToastService } from './services/toast/toast.service';
 import { StorageService } from './services/storage/storage.service';
 import { ConfigService } from './services/config/config.service';
 import { RestService } from './services/rest/rest.service';
+import { AppConfigService} from './services/appConfig/app-config.service';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -59,6 +60,7 @@ export function initApp(configService: ConfigService, restService: RestService) 
     StorageService,
     ConfigService,
     RestService,
+    AppConfigService,
     AuthenticationService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {
