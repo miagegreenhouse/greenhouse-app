@@ -34,10 +34,11 @@ import { ToastrModule } from 'ngx-toastr';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { PreferencesComponent } from './component/preferences/preferences/preferences.component';
 
 
 @NgModule({
-  declarations: [AppComponent, ConnexionComponent],
+  declarations: [AppComponent, ConnexionComponent, PreferencesComponent],
   entryComponents: [],
     imports: [
     BrowserModule,
