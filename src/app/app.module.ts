@@ -8,8 +8,8 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 
 import { ToastService } from './services/toast/toast.service';
 import { StorageService } from './services/storage/storage.service';
-import { ConfigModule, ConfigService } from './services/config/config.service';
-import { RestService, RestModule } from './services/rest/rest.service';
+import { ConfigService } from './services/config/config.service';
+import { RestService } from './services/rest/rest.service';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -29,15 +29,25 @@ export function initApp(configService: ConfigService, restService: RestService) 
     });
   }
 };
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
+
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
 
 @NgModule({
   declarations: [AppComponent, ConnexionComponent],
   entryComponents: [],
     imports: [
     BrowserModule,
+    FormsModule,
     IonicModule.forRoot(),
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    CommonModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot()
     ],
   providers: [
     StatusBar,
