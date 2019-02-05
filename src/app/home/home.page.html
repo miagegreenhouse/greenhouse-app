@@ -15,6 +15,10 @@
 </ion-header>
 
 <ion-content>
-    <app-chart [title]="mockData1.title" [data]="mockData1.data" [dateRange]="dateRange[dateRangeSelected].timestamp"></app-chart>
-    <app-chart [title]="mockData2.title" [data]="mockData2.data" [dateRange]="dateRange[dateRangeSelected].timestamp"></app-chart>
+    <app-chart [title]="mockData1.title"
+               [data]="mockData1.data" [min]="0" [max]="4"
+               [dateRange]="dateRange[dateRangeSelected].timestamp"></app-chart>
+    <app-chart [title]="mockData2.title"
+               [data]="mockData2.data" [min]="-2" [max]="25"
+               [dateRange]="dateRange[dateRangeSelected].timestamp"></app-chart>
 </ion-content>
