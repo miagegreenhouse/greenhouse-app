@@ -28,19 +28,3 @@ export enum HTTPMethod {
   PUT="PUT",
   DELETE="DELETE"
 };
-
-//
-// export interface SensorConfig {
-//   id: string,
-//   name: string,
-//   unit: string,
-//   minThresholdValue: number,
-//   minThresholdAlertMessage: string,
-//   maxThresholdValue: number,
-//   maxThresholdAlertValue: string
-// }
-//
-// export interface AppConfig{
-//   mailList: string[];
-//   sensorList: SensorConfig[];
-// }

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {DataService} from '../../../services/data/data.service';
 
 @Component({
   selector: 'app-alert',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AlertComponent implements OnInit {
   
-  constructor() {
+  constructor(public dataService: DataService) {
    }
 
   ngOnInit() {
@@ -18,8 +19,17 @@ export class AlertComponent implements OnInit {
     // TODO
   }
 
-  removeEMail(mail: string){
+  removeEMail(mail: string) {
     // TODO
+  }
+
+  public formatTime(timestamp: number): string {
+    const options = {
+      year: 'numeric', month: 'numeric', day: 'numeric',
+      hour: 'numeric', minute: 'numeric', second: 'numeric'
+    };
+
+    return new Date().toLocaleDateString('fr-FR', options);
   }
 
 }
