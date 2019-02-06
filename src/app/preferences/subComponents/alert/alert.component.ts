@@ -7,6 +7,7 @@ import {DataService} from '../../../services/data/data.service';
   styleUrls: ['./alert.component.scss']
 })
 export class AlertComponent implements OnInit {
+  newMail: string;
   
   constructor(public dataService: DataService) {
    }
@@ -15,7 +16,7 @@ export class AlertComponent implements OnInit {
     
   }
 
-  addMail(){
+  addMail() {
     // TODO
   }
 

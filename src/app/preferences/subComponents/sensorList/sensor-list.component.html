@@ -1,0 +1,25 @@
+<ion-card>
+  <ion-card-content>
+    <ion-row>
+      <ion-card-title>Capteurs</ion-card-title>
+      <ion-row>
+        <ion-col><ion-input text-center readonly >Nom</ion-input></ion-col>
+        <ion-col><ion-input readonly >Unité</ion-input> </ion-col>
+        <ion-col><ion-input readonly >Seuil min</ion-input></ion-col>
+        <ion-col><ion-input readonly >Seuil max</ion-input></ion-col>
+        <ion-col></ion-col>
+      </ion-row>
+      <ion-row *ngFor="let sensor of sensorList">
+        <ion-col><ion-input readonly >{{sensor.name}}</ion-input></ion-col>
+        <ion-col><ion-input readonly >{{sensor.unit}}</ion-input> </ion-col>
+        <ion-col><ion-input readonly >{{sensor.minThresholdValue}}</ion-input></ion-col>
+        <ion-col><ion-input readonly >{{sensor.maxThresholdValue}}</ion-input></ion-col>
+        <ion-col>
+          <ion-fab-button class="sensorFabButton">
+            <ion-icon name="create"></ion-icon>
+          </ion-fab-button>
+        </ion-col>
+      </ion-row>
+    </ion-row>
+  </ion-card-content>
+</ion-card>
