@@ -19,7 +19,7 @@ export class ConnexionComponent implements OnInit {
   ngOnInit() {
   }
 
-  login(login: string, password: string){
+  login(){
         this.auth.login(this.userForm)
         .then((user: User) => {
           this.toastr.success("Vous êtes connecté avec : "+user.email,"Succès",{
