@@ -171,11 +171,11 @@ export class ChartComponent implements OnInit {
     };
   }
 
-  private getCaptorsId(): string[] {
+  public getCaptorsId(): string[] {
     return Object.keys(this.data.sensor);
   }
 
-  private getLastValue(sensorId: string): string {
+  public getLastValue(sensorId: string): string {
     const sensor: Sensor = this.data.sensor[sensorId];
     if (sensor.data.length === 0 ) {
       return 'no data';
@@ -183,7 +183,7 @@ export class ChartComponent implements OnInit {
     return sensor.data[sensor.data.length - 1].value.toFixed(2);
   }
 
-  private getColor(sensorId: string): string {
+  public getColor(sensorId: string): string {
     let hash = 0;
     for (let i = 0; i < sensorId.length; i++) {
       hash += sensorId.charCodeAt(i);
