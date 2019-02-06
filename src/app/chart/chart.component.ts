@@ -12,7 +12,8 @@ import {Events} from '@ionic/angular';
 export class ChartComponent implements OnInit {
 
   @Input() data: Data;
-  @Input() dateRange = 21600000; // Default value is 6h
+  dateRange = 21600000; // Default value is 6h
+  source = null;
 
   chart = null;
   paddingPercent = 0.1;
@@ -39,11 +40,11 @@ export class ChartComponent implements OnInit {
     });
   }
 
-  public updateChart(): void {
+  private updateChart(): void {
     const chartData: ChartData = this.getChartData();
 
     // In order to be more readable add a paddingPercent padding top and bottom in chart
-    const chartBounds: number[] = this.getChartBounds(chartData);
+    const chartBounds: number[] = (chartData.datasets.length === 0) ? [0, 1] : this.getChartBounds(chartData);
 
     // Add horizontal lines for min and max alert values in chart
     const annotations = [];
@@ -84,6 +85,11 @@ export class ChartComponent implements OnInit {
     this.chart.update();
   }
 
+  public updateSource(newSource: string): void {
+    this.source = newSource;
+    this.updateChart();
+  }
+
   private getChartData(): ChartData {
     const chartData: ChartData = {
       datasets: []
@@ -95,6 +101,9 @@ export class ChartComponent implements OnInit {
         borderColor: this.getColor(sensorId),
         data: []
       };
+      if (this.source && this.source !== sensor.source) {
+        return;
+      }
       sensor.data.forEach(data => {
         dataset.data.push({
           t: new Date(data.timestamp),
