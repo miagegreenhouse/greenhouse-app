@@ -41,6 +41,7 @@ export class HomePage {
     },
   ];
   dateRangeSelected = 0;
+  sourceSelected = 'Toutes';
 
   constructor(public toastService: ToastService,
               public dataService: DataService,
@@ -51,6 +52,18 @@ export class HomePage {
     this.charts.forEach(chart => {
       chart.updateDateRange(this.dateRange[this.dateRangeSelected].timestamp);
     });
+  }
+
+  onChangeSource() {
+    this.charts.forEach(chart => {
+      chart.updateSource((this.sourceSelected === 'Toutes') ? null : this.sourceSelected);
+    });
+  }
+
+  getSourceOptions(): string[] {
+    const sources = this.dataService.getSources();
+    sources.unshift('Toutes');
+    return sources;
   }
 
   addData() {

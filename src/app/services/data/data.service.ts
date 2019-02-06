@@ -38,6 +38,7 @@ export interface SensorData {
 export class DataService {
 
   datas: { [key: string]: Data; } = {}; // key is dataId
+  sources: Set<string> = new Set();
   mails: string[];
 
   constructor(private socketService: SocketService, private events: Events) {
@@ -78,6 +79,8 @@ export class DataService {
               timestamp: messageCaptor.timestamp,
               value: messageCaptor.value
             });
+
+            this.sources.add(sensor.source);
           });
           this.events.publish('updateData:' + dataId);
         });
@@ -87,5 +90,9 @@ export class DataService {
 
   getDatas(): Data[] {
     return Object.values(this.datas);
+  }
+
+  getSources(): string[] {
+    return Array.from(this.sources);
   }
 }
