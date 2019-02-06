@@ -1,6 +1,6 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import { Chart } from 'chart.js';
-import {Captor, Data} from '../services/data/data.service';
+import {Sensor, Data} from '../services/data/data.service';
 import {Events} from '@ionic/angular';
 
 // @ts-ignore
@@ -88,14 +88,14 @@ export class ChartComponent implements OnInit {
     const chartData: ChartData = {
       datasets: []
     };
-    Object.keys(this.data.captors).forEach(captorId => {
-      const captor: Captor = this.data.captors[captorId];
+    Object.keys(this.data.sensor).forEach(sensorId => {
+      const sensor: Sensor = this.data.sensor[sensorId];
       const dataset: Dataset = {
-        label: captor.source,
-        borderColor: this.getColor(captorId),
+        label: sensor.source,
+        borderColor: this.getColor(sensorId),
         data: []
       };
-      captor.data.forEach(data => {
+      sensor.data.forEach(data => {
         dataset.data.push({
           t: new Date(data.timestamp),
           y: data.value
@@ -172,21 +172,21 @@ export class ChartComponent implements OnInit {
   }
 
   private getCaptorsId(): string[] {
-    return Object.keys(this.data.captors);
+    return Object.keys(this.data.sensor);
   }
 
-  private getLastValue(captorId: string): string {
-    const captor: Captor = this.data.captors[captorId];
-    if (captor.data.length === 0 ) {
+  private getLastValue(sensorId: string): string {
+    const sensor: Sensor = this.data.sensor[sensorId];
+    if (sensor.data.length === 0 ) {
       return 'no data';
     }
-    return captor.data[captor.data.length - 1].value.toFixed(2);
+    return sensor.data[sensor.data.length - 1].value.toFixed(2);
   }
 
-  private getColor(captorId: string): string {
+  private getColor(sensorId: string): string {
     let hash = 0;
-    for (let i = 0; i < captorId.length; i++) {
-      hash += captorId.charCodeAt(i);
+    for (let i = 0; i < sensorId.length; i++) {
+      hash += sensorId.charCodeAt(i);
     }
     return this.colors[hash % this.colors.length];
   }

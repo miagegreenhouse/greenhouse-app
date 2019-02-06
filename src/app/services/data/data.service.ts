@@ -4,7 +4,7 @@ import {Events} from '@ionic/angular';
 
 export interface DataMessage {
   [key: string]: { // key dataId
-    [key: string]: { // key is captorId
+    [key: string]: { // key is sensorId
       timestamp: number;
       value: any;
     }
@@ -16,17 +16,17 @@ export interface Data {
   dataId: string;
   min: number;
   max: number;
-  captors: { [key: string]: Captor; }; // key: captorId
+  sensor: { [key: string]: Sensor; }; // key: sensorId
 }
 
-export interface Captor {
-  captorId: string; // uniqueId
+export interface Sensor {
+  sensorId: string; // uniqueId
   source: string;
   nom: string;
-  data: CaptorData[];
+  data: SensorData[];
 }
 
-export interface CaptorData {
+export interface SensorData {
   timestamp: number;
   value: number;
 }
@@ -53,28 +53,28 @@ export class DataService {
             this.datas[dataId] = {
               max: null,
               min: null,
-              captors: {},
+              sensor: {},
               dataId: dataId,
               name: Math.random().toString(36).substring(7)
             };
           }
           const data: Data = this.datas[dataId];
 
-          // For each captor in data
-          Object.keys(messageData).forEach(captorId => {
-            const messageCaptor = messageData[captorId];
-            if (data.captors[captorId] === undefined) { // if object does not exists in map
-              data.captors[captorId] = {
+          // For each sansor in data
+          Object.keys(messageData).forEach(sensorId => {
+            const messageCaptor = messageData[sensorId];
+            if (data.sensor[sensorId] === undefined) { // if object does not exists in map
+              data.sensor[sensorId] = {
                 nom: Math.random().toString(36).substring(7),
                 source: Math.random().toString(36).substring(7),
-                captorId: captorId,
+                sensorId: sensorId,
                 data: []
               };
             }
-            const captor: Captor = data.captors[captorId];
+            const sensor: Sensor = data.sensor[sensorId];
 
             // Add data from message
-            captor.data.push({
+            sensor.data.push({
               timestamp: messageCaptor.timestamp,
               value: messageCaptor.value
             });

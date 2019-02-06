@@ -55,13 +55,13 @@ export class HomePage {
 
   addData() {
     const dataId = (Math.random() > 0.5 ? '1' : '2');
-    const captorId = (Math.random() > 0.5 ? '1' : '2');
+    const sensorId = (Math.random() > 0.5 ? '1' : '2');
     const data = {
       timestamp: new Date().getTime(),
       value: Math.random()
     };
     const dataCaptor = {};
-    dataCaptor[captorId] = data;
+    dataCaptor[sensorId] = data;
     const dataMessage = {};
     dataMessage[dataId] = dataCaptor;
     const message: Message = {
