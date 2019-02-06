@@ -8,7 +8,7 @@
       <ion-col><ion-input readonly >Seuil max</ion-input></ion-col>
       <ion-col></ion-col>
     </ion-row>
-    <ion-row *ngFor="let sensor of getSensors()">
+    <ion-row *ngFor="let sensor of sensorList">
       <ion-col><ion-input readonly >{{sensor.name}}</ion-input></ion-col>
       <ion-col><ion-input readonly >{{sensor.unit}}</ion-input> </ion-col>
       <ion-col><ion-input readonly >{{sensor.minThresholdValue}}</ion-input></ion-col> 
