@@ -12,7 +12,7 @@ export class AlertComponent implements OnInit {
   mailList: string[];
   
   constructor(public appConfig: AppConfigService) {
-    this.mailList = this.appConfig.config.mailList;
+    //this.mailList = this.appConfig.config.mailList;
    }
 
   ngOnInit() {

@@ -26,6 +26,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PreferencesComponent } from './component/preferences/preferences/preferences.component';
 import { AlertComponent } from './component/preferences/subComponents/alert/alert.component';
+import { SensorListComponent } from './component/preferences/subComponents/sensorList/sensor-list.component';
 
 export function initApp(configService: ConfigService, restService: RestService) {
   return () => {
@@ -41,7 +42,7 @@ export function initApp(configService: ConfigService, restService: RestService) 
 }
 
 @NgModule({
-  declarations: [AppComponent, ConnexionComponent, PreferencesComponent, AlertComponent],
+  declarations: [AppComponent, ConnexionComponent, PreferencesComponent, AlertComponent, SensorListComponent],
   entryComponents: [],
     imports: [
     BrowserModule,

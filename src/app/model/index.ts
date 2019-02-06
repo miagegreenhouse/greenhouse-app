@@ -39,7 +39,7 @@ export interface SensorConfig {
   maxThresholdAlertValue: string
 }
 
-export interface AppConfig{
+export interface GreenHouseConfig{
   mailList: string[];
   sensorList: SensorConfig[];
 }
