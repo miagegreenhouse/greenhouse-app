@@ -3,6 +3,7 @@ import { Events } from '@ionic/angular';
 import { DataService} from '../../../services/data/data.service';
 import { SensorConfig } from 'src/app/model';
 
+
 @Component({
   selector: 'app-sensor-list',
   templateUrl: './sensor-list.component.html',
