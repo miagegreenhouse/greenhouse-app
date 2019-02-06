@@ -1,7 +1,7 @@
 import {Component, QueryList, ViewChildren} from '@angular/core';
 import {ToastService} from '../services/toast/toast.service';
 import {ChartComponent} from '../chart/chart.component';
-import {DataMessage, DataService} from '../services/data/data.service';
+import {DataService} from '../services/data/data.service';
 import {Events} from '@ionic/angular';
 import {Message, MessageType} from '../services/socket/socket.service';
 

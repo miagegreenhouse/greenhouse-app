@@ -1,6 +1,11 @@
 <ion-card>
   <ion-card-header>
-    <ion-card-title>{{title}}</ion-card-title>
+    <ion-card-title text-center>
+      <ion-badge *ngFor="let captorId of getCaptorsId()"
+                 [style.font-size]="'1.5em'"
+                 [style.background]="getColor(captorId)"
+                 margin-start margin-end >{{getLastValue(captorId)}}</ion-badge>
+    </ion-card-title>
   </ion-card-header>
 
   <ion-card-content>

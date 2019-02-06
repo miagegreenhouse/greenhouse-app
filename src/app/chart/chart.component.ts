@@ -17,6 +17,16 @@ export class ChartComponent implements OnInit {
   chart = null;
   paddingPercent = 0.1;
 
+  colors: string[] = [
+    '#953686',
+    '#cf368d',
+    '#f17e2f',
+    '#edb446',
+    '#66cd7f',
+    '#62a1d1',
+    '#5cd0dd'
+  ];
+
   @ViewChild('chart') canvas;
 
   constructor(public events: Events) {
@@ -48,6 +58,10 @@ export class ChartComponent implements OnInit {
       type: 'line',
       data: chartData,
       options: {
+        title: {
+          display: true,
+          text: this.data.name
+        },
         animation: { duration: 0 },
         scales: {
           yAxes: [{
@@ -78,7 +92,7 @@ export class ChartComponent implements OnInit {
       const captor: Captor = this.data.captors[captorId];
       const dataset: Dataset = {
         label: captor.source,
-        borderColor: '#0000FF',
+        borderColor: this.getColor(captorId),
         data: []
       };
       captor.data.forEach(data => {
@@ -157,6 +171,25 @@ export class ChartComponent implements OnInit {
     };
   }
 
+  private getCaptorsId(): string[] {
+    return Object.keys(this.data.captors);
+  }
+
+  private getLastValue(captorId: string): string {
+    const captor: Captor = this.data.captors[captorId];
+    if (captor.data.length === 0 ) {
+      return 'no data';
+    }
+    return captor.data[captor.data.length - 1].value.toFixed(2);
+  }
+
+  private getColor(captorId: string): string {
+    let hash = 0;
+    for (let i = 0; i < captorId.length; i++) {
+      hash += captorId.charCodeAt(i);
+    }
+    return this.colors[hash % this.colors.length];
+  }
 }
 
 export interface ChartData {

@@ -28,7 +28,7 @@ export interface Captor {
 
 export interface CaptorData {
   timestamp: number;
-  value: any;
+  value: number;
 }
 
 @Injectable({
@@ -55,7 +55,7 @@ export class DataService {
               min: null,
               captors: {},
               dataId: dataId,
-              name: ''
+              name: Math.random().toString(36).substring(7)
             };
           }
           const data: Data = this.datas[dataId];
@@ -65,8 +65,8 @@ export class DataService {
             const messageCaptor = messageData[captorId];
             if (data.captors[captorId] === undefined) { // if object does not exists in map
               data.captors[captorId] = {
-                nom: '',
-                source: 'source',
+                nom: Math.random().toString(36).substring(7),
+                source: Math.random().toString(36).substring(7),
                 captorId: captorId,
                 data: []
               };
