@@ -1,6 +1,9 @@
 import {Component, QueryList, ViewChildren} from '@angular/core';
-import { ToastService } from '../services/toast/toast.service';
+import {ToastService} from '../services/toast/toast.service';
 import {ChartComponent} from '../chart/chart.component';
+import {DataService} from '../services/data/data.service';
+import {Events} from '@ionic/angular';
+import {Message, MessageType} from '../services/socket/socket.service';
 
 @Component({
   selector: 'app-home',
@@ -39,72 +42,33 @@ export class HomePage {
   ];
   dateRangeSelected = 0;
 
-  mockData1 = {
-    title: 'Chart1',
-    data: {
-      datasets: [
-        {
-          label: 'My First dataset',
-          borderColor: '#ff0000',
-          data: [
-            {
-              t: new Date(1549292555136),
-              y: 1
-            },
-            {
-              t: new Date(1549288955136),
-              y: 2
-            },
-            {
-              t: new Date(1549206155136),
-              y: 5
-            },
-            {
-              t: new Date(1548082955136),
-              y: 3
-            }
-          ],
-        },
-      ]
-    }
-  };
-  mockData2 = {
-    title: 'Chart2',
-    data: {
-      datasets: [
-        {
-          label: 'Second DataSet',
-          borderColor: '#0000ff',
-          data: [
-            {
-              t: new Date(1549292555136),
-              y: 1
-            },
-            {
-              t: new Date(1549288955136),
-              y: 20
-            },
-            {
-              t: new Date(1549206155136),
-              y: -5
-            },
-            {
-              t: new Date(1548082955136),
-              y: 12
-            }
-          ],
-        },
-      ]
-    }
-  };
-
-  constructor(public toastService: ToastService) {
+  constructor(public toastService: ToastService,
+              public dataService: DataService,
+              public events: Events) {
   }
 
   onChangeDateRange() {
     this.charts.forEach(chart => {
       chart.updateDateRange(this.dateRange[this.dateRangeSelected].timestamp);
     });
+  }
+
+  addData() {
+    const dataId = (Math.random() > 0.5 ? '1' : '2');
+    const sensorId = (Math.random() > 0.5 ? '1' : '2');
+    const data = {
+      timestamp: new Date().getTime(),
+      value: Math.random()
+    };
+    const dataCaptor = {};
+    dataCaptor[sensorId] = data;
+    const dataMessage = {};
+    dataMessage[dataId] = dataCaptor;
+    const message: Message = {
+      type: MessageType.DATA,
+      data: dataMessage
+    };
+    this.events.publish('data', message);
   }
 }
 

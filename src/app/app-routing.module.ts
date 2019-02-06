@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ConnexionComponent } from './component/connexion/connexion/connexion.component'
-import { PreferencesComponent } from './component/preferences/preferences/preferences.component'
 
 const routes: Routes = [
   {
@@ -23,7 +22,7 @@ const routes: Routes = [
   },
   {
     path: 'preferences',
-    component: PreferencesComponent
+    loadChildren: './preferences/preferences.module#PreferencesPageModule'
   }
 ];
 

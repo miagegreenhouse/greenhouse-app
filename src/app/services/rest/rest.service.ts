@@ -107,7 +107,11 @@ export class RestService {
   }
 
   getHeaders() {
-    let token = this.storageService.get("access_token").value;
+    let access_token = this.storageService.get("access_token");
+    let token;
+    if (access_token) {
+      token = access_token.value;
+    }
     return Object.assign({"Authorization": (token ? 'Bearer ' + token : undefined)}, this.headers);
   }
 
