@@ -10,7 +10,6 @@ import { ToastService } from './services/toast/toast.service';
 import { StorageService } from './services/storage/storage.service';
 import { ConfigService } from './services/config/config.service';
 import { RestService } from './services/rest/rest.service';
-import { AppConfigService} from './services/appConfig/app-config.service';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -24,8 +23,7 @@ import { ToastrModule } from 'ngx-toastr';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PreferencesComponent } from './component/preferences/preferences/preferences.component';
-import { AlertComponent } from './component/preferences/subComponents/alert/alert.component';
+import {DataService} from './services/data/data.service';
 
 export function initApp(configService: ConfigService, restService: RestService) {
   return () => {
@@ -41,7 +39,7 @@ export function initApp(configService: ConfigService, restService: RestService) 
 }
 
 @NgModule({
-  declarations: [AppComponent, ConnexionComponent, PreferencesComponent, AlertComponent],
+  declarations: [AppComponent, ConnexionComponent],
   entryComponents: [],
     imports: [
     BrowserModule,
@@ -60,7 +58,7 @@ export function initApp(configService: ConfigService, restService: RestService) 
     StorageService,
     ConfigService,
     RestService,
-    AppConfigService,
+    DataService,
     AuthenticationService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {

@@ -4,6 +4,7 @@ import * as socketIo from 'socket.io-client';
 import { Observable } from 'rxjs';
 
 import { Events } from '@ionic/angular';
+import {DataMessage} from '../data/data.service';
 
 export enum WebSocketProtocol {
     WS="ws",
@@ -16,6 +17,16 @@ export enum OpCodes {
 	MQTT_MSG= 0x02
 };
 
+export enum MessageType {
+	DATA='data',
+	ALERT='alert'
+}
+
+export interface Message {
+	type: MessageType;
+	data: DataMessage; // TODO : DataMessage | AlertMessage | ...
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -24,7 +35,6 @@ export class SocketService {
 	private socket;
 
 	constructor(
-		private events 				: Events
 	) {}
 
 	/**
@@ -75,7 +85,7 @@ export class SocketService {
 	 * Function that will be executed on message
 	 * @return {Observable} An Observable which resolves each message received
 	 */
-	onMessage = (): Observable<any> => {
+	onMessage = (): Observable<Message> => {
 		return new Observable(observer => {
 			this.socket.on('message', (message: any) => observer.next(JSON.parse(message.data)));
 		});
