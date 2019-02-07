@@ -1,16 +1,58 @@
-<div id="alertContainer">
-  <!-- <ion-list no-lines>
-    <ion-item *ngFor="let mail of mailList">
-      <ion-input readonly >{{mail}}</ion-input> 
-      <ion-fab-button id="alertFabButton" (click)="removeEMail(mail)">
-        <ion-icon name="remove"></ion-icon>
-      </ion-fab-button>   
-    </ion-item>        
-  </ion-list>
-  <ion-item>
-    <ion-input color="primary" type="text" placeholder="Ajouter un eMail" [(ngModel)]="newMail" ></ion-input>
-    <ion-fab-button id="alertFabButton" (click)="addMail()">
-      <ion-icon name="add"></ion-icon>
-    </ion-fab-button>
-  </ion-item> -->
-</div>
+<ion-card>
+  <ion-card-content>
+    <ion-row>
+      <ion-card-title>Alertes</ion-card-title>
+      <ion-col size="12">
+        <ion-list no-lines>
+          <ion-item *ngFor="let mail of dataService.mails">
+            <ion-input readonly >{{mail}}</ion-input>
+            <ion-fab-button id="alertFabButton" (click)="removeEMail(mail)">
+              <ion-icon name="remove"></ion-icon>
+            </ion-fab-button>
+          </ion-item>
+        </ion-list>
+        <ion-item>
+          <ion-input color="primary" type="text" placeholder="Ajouter un eMail" [(ngModel)]="newMail" ></ion-input>
+          <ion-fab-button id="alertFabButton" (click)="addMail()">
+            <ion-icon name="add"></ion-icon>
+          </ion-fab-button>
+        </ion-item>
+      </ion-col>
+      <ion-card-title margin-top>Liste des alertes</ion-card-title>
+      <ion-col size="12">
+        <ion-list>
+          <ion-item *ngFor="let alert of dataService.getAlerts()" slot="start">
+            <ion-icon [name]="alert.acquit ? 'checkmark-circle-outline' : 'alert'"
+                      [color]="alert.acquit ? 'success' : 'danger'"
+                      margin-end></ion-icon>
+            <span margin-end>{{'TEst'}}</span>
+            <ion-label text-wrap>
+              <h1>{{alert.value}}</h1>
+              <p><i>{{alert.message}}</i></p>
+              <ion-text>
+                <ion-badge margin-end color="medium">
+                  {{formatTime(alert.timestamp)}}
+                </ion-badge>
+                <ion-badge margin-end color="dark" *ngIf="dataService.datas[alert.dataId]">
+                  {{dataService.datas[alert.dataId].name}}
+                </ion-badge>
+                <ion-badge margin-end color="dark" *ngIf="dataService.datas[alert.dataId] && dataService.datas[alert.dataId].sensor[alert.sensorId]">
+                  {{dataService.datas[alert.dataId].sensor[alert.sensorId].nom}}
+                </ion-badge>
+                <ion-badge *ngIf="alert.acquit && alert.acquit.timestamp" margin-end color="success">
+                  {{formatTime(alert.acquit.timestamp)}}
+                </ion-badge>
+              </ion-text>
+            </ion-label>
+            <ion-button slot="end"
+                        *ngIf="!alert.acquit"
+                        (click)="dataService.acquitAlert(alert.alertId)">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              Acquitter
+            </ion-button>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+  </ion-card-content>
+</ion-card>

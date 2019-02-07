@@ -1,7 +1,7 @@
 import {Component, QueryList, ViewChildren} from '@angular/core';
 import {ToastService} from '../services/toast/toast.service';
 import {ChartComponent} from '../chart/chart.component';
-import {DataService} from '../services/data/data.service';
+import {AlertMessage, DataService} from '../services/data/data.service';
 import {Events} from '@ionic/angular';
 import {Message, MessageType} from '../services/socket/socket.service';
 
@@ -41,6 +41,7 @@ export class HomePage {
     },
   ];
   dateRangeSelected = 0;
+  sourceSelected = 'Toutes';
 
   constructor(public toastService: ToastService,
               public dataService: DataService,
@@ -51,6 +52,18 @@ export class HomePage {
     this.charts.forEach(chart => {
       chart.updateDateRange(this.dateRange[this.dateRangeSelected].timestamp);
     });
+  }
+
+  onChangeSource() {
+    this.charts.forEach(chart => {
+      chart.updateSource((this.sourceSelected === 'Toutes') ? null : this.sourceSelected);
+    });
+  }
+
+  getSourceOptions(): string[] {
+    const sources = this.dataService.getSources();
+    sources.unshift('Toutes');
+    return sources;
   }
 
   addData() {
@@ -64,11 +77,20 @@ export class HomePage {
     dataCaptor[sensorId] = data;
     const dataMessage = {};
     dataMessage[dataId] = dataCaptor;
-    const message: Message = {
-      type: MessageType.DATA,
-      data: dataMessage
+    this.events.publish(MessageType.DATA, dataMessage);
+  }
+
+  addAlert() {
+    const alert: AlertMessage = {
+      message: 'Random Alert',
+      alertId: '' + (Object.keys(this.dataService.alerts).length + 100),
+      acquit: null,
+      dataId: '1',
+      sensorId: '1',
+      timestamp: new Date().getTime(),
+      value: Math.random()
     };
-    this.events.publish('data', message);
+    this.events.publish(MessageType.ALERT, alert);
   }
 }
 

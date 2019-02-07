@@ -7,6 +7,11 @@
       Home
     </ion-title>
     <ion-select slot="end"
+                [(ngModel)]="sourceSelected" (ionChange)="onChangeSource()"
+                [interfaceOptions]="customActionSheetOptions" interface="action-sheet">
+      <ion-select-option *ngFor="let source of getSourceOptions()">{{source}}</ion-select-option>
+    </ion-select>
+    <ion-select slot="end"
                 [(ngModel)]="dateRangeSelected" (ionChange)="onChangeDateRange()"
                 [interfaceOptions]="customActionSheetOptions" interface="action-sheet">
       <ion-select-option *ngFor="let tick of dateRange; let i = index" [value]="i">{{tick.name}}</ion-select-option>
@@ -18,8 +23,8 @@
 <ion-content>
   <ion-row>
     <ion-button (click)="addData()">Add Data</ion-button>
+    <ion-button (click)="addAlert()">Trigger Alert</ion-button>
   </ion-row>
   <app-chart *ngFor="let data of dataService.getDatas()"
-             [data]="data"
-             [dateRange]="dateRange[dateRangeSelected].timestamp"></app-chart>
+             [data]="data"></app-chart>
 </ion-content>

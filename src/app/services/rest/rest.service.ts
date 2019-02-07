@@ -15,7 +15,7 @@ export class RestService {
     'Content-Type': 'application/json',
     'Authorization': (JSON.parse(localStorage.getItem('access_token')) ? 'Bearer ' + JSON.parse(localStorage.getItem('access_token')).value : '')
   });
-  apiUrl = ''; // TODO Set api URL
+  apiUrl = 'http://greenhouse-iot.tk';
   public LOGIN_ENDPOINT: string   = '/api/token';
   public GET_ME_ENDPOINT: string  = '/api/users/me';
 
@@ -24,17 +24,28 @@ export class RestService {
     ) { }
 
   get(path: string, queryParameters?: Param[]): Observable<any> {
-    const url = this.apiUrl;
-    const params = new HttpParams();
-    if (queryParameters) {
-      queryParameters.forEach(queryParameter => {
-        params.append(queryParameter.name, queryParameter.value.toString());
+    return this.http.get<any>(this.apiUrl + path, {
+      headers: this.headers,
+      params: this.getHttpParams(queryParameters)
+    });
+  }
+
+  post(path: string, data: any, queryParameters?: Param[]): Observable<any> {
+    return this.http.post<any>(this.apiUrl + path, data, {
+      headers: this.headers,
+      params: this.getHttpParams(queryParameters)
+    });
+  }
+
+  getHttpParams(params: Param[]): HttpParams {
+    const httpParams: HttpParams = new HttpParams();
+    if (params) {
+      params.forEach(queryParameter => {
+        console.log(queryParameter);
+        httpParams.append(queryParameter.name, queryParameter.value.toString());
       });
     }
-    return this.http.get<any>(url + path, {
-      headers: this.headers,
-      params: params
-    });
+    return httpParams;
   }
 
   createUrlFromParams(url: string, queryParameters: Param[]) {

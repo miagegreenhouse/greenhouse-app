@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 
 import { PreferencesPage } from './preferences.page';
 import {AlertComponent} from './subComponents/alert/alert.component';
+import { SensorListComponent } from './subComponents/sensorList/sensor-list.component'
 
 const routes: Routes = [
   {
@@ -22,7 +23,7 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [PreferencesPage, AlertComponent],
-  exports: [AlertComponent]
+  declarations: [PreferencesPage, AlertComponent, SensorListComponent],
+  exports: [AlertComponent, SensorListComponent]
 })
 export class PreferencesPageModule {}

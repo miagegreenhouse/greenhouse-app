@@ -17,6 +17,7 @@ import { AuthenticationService } from './services/authentication/authentication.
 import { ConnexionComponent } from './component/connexion/connexion/connexion.component';
 import { HttpClientModule } from '@angular/common/http';
 import 'chartjs-plugin-annotation';
+import { PreferencesPageModule } from './preferences/preferences.module'
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
@@ -49,6 +50,7 @@ export function initApp(configService: ConfigService, restService: RestService) 
     HttpClientModule,
     CommonModule,
     BrowserAnimationsModule,
+    PreferencesPageModule,
     ToastrModule.forRoot()
     ],
   providers: [
