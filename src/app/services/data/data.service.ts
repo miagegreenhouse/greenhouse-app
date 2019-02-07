@@ -3,30 +3,17 @@ import {MessageType, SocketService} from '../socket/socket.service';
 import {Events} from '@ionic/angular';
 import {ToastService} from '../toast/toast.service';
 import {RestService} from '../rest/rest.service';
+import {Observable} from 'rxjs';
+import {SensorConfig} from '../../model';
 
 export interface DataMessage {
-  [key: string]: { // key dataId
-    [key: string]: { // key is sensorId
-      timestamp: number;
-      value: any;
-    }
-  };
+  [key: string]: SensorData[]; // sensorId => SensorData
 }
 
 export interface Data {
-  name: string; // ex: Temperature
   dataId: string;
-  min: number;
-  max: number;
-  sensor: { [key: string]: Sensor; }; // key: sensorId
-}
-
-export interface Sensor {
-  sensorId: string; // uniqueId
-  dataId: string;
-  source: string;
-  nom: string;
-  data: SensorData[];
+  name: string; // ex: Temperature de l'eau
+  sensorsId: Set<string>; // sensorId set
 }
 
 export interface SensorData {
@@ -43,7 +30,7 @@ export interface AlertMessage {
   value: number;
   acquit: {
    timestamp: number;
-   userId: number;
+   email: string;
   };
 }
 
@@ -53,55 +40,42 @@ export interface AlertMessage {
 
 export class DataService {
 
-  datas: { [key: string]: Data; } = {}; // key is dataId
+  datas: { [key: string]: Data } = {}; // dataId => Data
+  sensorsDatas: {[key: string]: SensorData[] } = {}; // sensorId => SensorData[]
+  sensorsConfigs: {[key: string]: SensorConfig } = {}; // sensorId => SensorConfig
   sources: Set<string> = new Set();
-  alerts: { [key: string]: AlertMessage} = {}; // key is alertId
-  mails: string[];
+
+  alerts: { [key: string]: AlertMessage} = {}; // alertId => AlertMessage
+  mails: Set<string> = new Set();
 
   constructor(private socketService: SocketService,
               private toastService: ToastService,
               public restService: RestService,
               private events: Events) {
+
+    // TODO: Get requests
+    // url/datas
+    // url/sensorsConfigs
+    // url/alerts
+    // url/mails
+
     events.subscribe(MessageType.DATA, (dataMessage: DataMessage) => {
-      // For each data in message
-      Object.keys(dataMessage).forEach(dataId => {
-        const messageData = dataMessage[dataId];
-        if (this.datas[dataId] === undefined) { // if object does not exists in map
-          this.datas[dataId] = {
-            max: null,
-            min: null,
-            sensor: {},
-            dataId: dataId,
-            name: Math.random().toString(36).substring(7)
-          };
+      // For each sensor in data
+      Object.keys(dataMessage).forEach(sensorId => {
+        const messageSensor = dataMessage[sensorId];
+        if (this.sensorsDatas[sensorId] === undefined) { // if object does not exists in map
+          this.sensorsDatas[sensorId] = [];
         }
-        const data: Data = this.datas[dataId];
+        const sensorDatas = this.sensorsDatas[sensorId];
 
-        // For each sansor in data
-        Object.keys(messageData).forEach(sensorId => {
-          const messageCaptor = messageData[sensorId];
-          if (data.sensor[sensorId] === undefined) { // if object does not exists in map
-            data.sensor[sensorId] = {
-              nom: Math.random().toString(36).substring(7),
-              source: Math.random().toString(36).substring(7),
-              sensorId: sensorId,
-              dataId: dataId,
-              data: []
-            };
-          }
-          const sensor: Sensor = data.sensor[sensorId];
-
-          // Add data from message
-          sensor.data.push({
-            timestamp: messageCaptor.timestamp,
-            value: messageCaptor.value
-          });
-
-          this.sources.add(sensor.source);
+        sensorDatas.forEach(sensorData => {
+          sensorDatas.push(sensorData);
         });
-        this.events.publish('updateData:' + dataId);
+
+        this.events.publish('updateData:' + this.sensorsConfigs[sensorId].dataId);
       });
     });
+
     events.subscribe(MessageType.ALERT, (alertMessage: AlertMessage) => {
       this.alerts[alertMessage.alertId] = alertMessage;
       if (alertMessage.acquit) {
@@ -110,11 +84,16 @@ export class DataService {
         this.toastService.showToast(alertMessage.message, 'warning', 3000);
       }
     });
+
     this.mockData();
   }
 
   getDatas(): Data[] {
     return Object.values(this.datas);
+  }
+
+  getSensorsConfig(): SensorConfig[] {
+    return Object.values(this.sensorsConfigs);
   }
 
   getSources(): string[] {
@@ -125,7 +104,22 @@ export class DataService {
     return Object.values(this.alerts);
   }
 
+  getMails(): string[] {
+    return Array.from(this.mails);
+  }
+
+  getSensorData(sensorId: string): SensorData[] {
+    return this.sensorsDatas[sensorId];
+  }
+
+  getSensorConfig(sensorId: string): SensorConfig {
+    return this.sensorsConfigs[sensorId];
+  }
+
   private mockData() {
+    this.mails.add('test@gmail.com');
+    this.mails.add('test2@gmail.com');
+
     for (let i = 0; i < 10; i++) {
       const dataId = (Math.random() > 0.5 ? '1' : '2');
       const sensorId = (Math.random() > 0.5 ? '1' : '2');
@@ -161,13 +155,52 @@ export class DataService {
   }
 
   acquitAlert(alertId: string) {
-    this.restService.post('validAlert', {}).subscribe(data => {
-    });
+    // TODO (jules) : Rest POST
     // TODO : remove below: just a mock
     this.alerts[alertId].acquit = {
       timestamp: new Date().getTime(),
-      userId: 1
+      email: 'test'
     };
     this.events.publish(MessageType.ALERT, this.alerts[alertId]);
+  }
+
+  addMail(email: string): Observable<any> {
+    // TODO (jules) : Rest POST
+    // TODO : remove below: just a mock
+    return new Observable<any>(observer => {
+      this.mails.add(email);
+      observer.next(email);
+      this.toastService.showToast(email + ' ajouté', 'success', 3000);
+    });
+  }
+
+  removeMail(email: string): Observable<any> {
+    // TODO (jules) : Rest DELETE
+    // TODO : remove below: just a mock
+    return new Observable<any>(observer => {
+      this.mails.delete(email);
+      observer.next(email);
+      this.toastService.showToast(email + ' supprimé', 'success', 3000);
+    });
+  }
+
+  editSensor(sensorConfigEdit: SensorConfig): Observable<any> {
+    // TODO (jules): REST PUT
+    // TODO : remove below: just a mock
+    return new Observable<any>(observer => {
+
+      // Remove sensor from previous data
+      const oldSensorConfig = this.sensorsConfigs[sensorConfigEdit.sensorId];
+      if (oldSensorConfig) {
+        this.datas[oldSensorConfig.sensorId].sensorsId.delete(oldSensorConfig.dataId);
+      }
+
+      // Add sensor to new data
+      this.sensorsConfigs[sensorConfigEdit.sensorId] = sensorConfigEdit;
+      this.datas[sensorConfigEdit.dataId].sensorsId.add(sensorConfigEdit.sensorId);
+
+      observer.next(sensorConfigEdit);
+      this.toastService.showToast(sensorConfigEdit.name + ' édité', 'success', 3000);
+    });
   }
 }

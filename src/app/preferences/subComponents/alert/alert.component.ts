@@ -7,7 +7,7 @@ import {DataService} from '../../../services/data/data.service';
   styleUrls: ['./alert.component.scss']
 })
 export class AlertComponent implements OnInit {
-  newMail: string;
+  mailInput = '';
 
   constructor(public dataService: DataService) {
    }
@@ -16,11 +16,14 @@ export class AlertComponent implements OnInit {
   }
 
   addMail() {
-    // TODO
+    this.dataService.addMail(this.mailInput).subscribe(() => {
+        this.mailInput = '';
+    });
   }
 
-  removeEMail(mail: string) {
-    // TODO
+  removeMail(mail: string) {
+    this.dataService.removeMail(mail).subscribe(() => {
+    });
   }
 
   public formatTime(timestamp: number): string {

@@ -3,7 +3,7 @@ import {ToastService} from '../services/toast/toast.service';
 import {ChartComponent} from '../chart/chart.component';
 import {AlertMessage, DataService} from '../services/data/data.service';
 import {Events} from '@ionic/angular';
-import {Message, MessageType} from '../services/socket/socket.service';
+import {MessageType} from '../services/socket/socket.service';
 
 @Component({
   selector: 'app-home',
@@ -66,6 +66,7 @@ export class HomePage {
     return sources;
   }
 
+  // TODO: remove (and HTML) just Mock
   addData() {
     const dataId = (Math.random() > 0.5 ? '1' : '2');
     const sensorId = (Math.random() > 0.5 ? '1' : '2');
@@ -80,6 +81,7 @@ export class HomePage {
     this.events.publish(MessageType.DATA, dataMessage);
   }
 
+  // TODO: remove (and HTML) just Mock
   addAlert() {
     const alert: AlertMessage = {
       message: 'Random Alert',

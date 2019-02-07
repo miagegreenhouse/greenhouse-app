@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Events } from '@ionic/angular';
 import { DataService} from '../../../services/data/data.service';
 import { SensorConfig } from 'src/app/model';
 
@@ -10,39 +9,14 @@ import { SensorConfig } from 'src/app/model';
 })
 export class SensorListComponent implements OnInit {
 
-  sensorList: SensorConfig[] = [];
+  sensorEdit: SensorConfig;
 
-  constructor(public events: Events, public dataService: DataService) {}
+  constructor(public dataService: DataService) {}
 
   ngOnInit() {
-    this.fillSensors();
-    this.sensorList.forEach(sensorConfig => {
-      this.events.subscribe('updateData:' + sensorConfig.dataId, () => {
-        this.fillSensors();
-      });
-    });
   }
 
-  fillSensors() {
-    this.sensorList = [];
-    this.dataService.getDatas().forEach(data => {
-      Object.keys(data.sensor).forEach(sensorID => {
-        const sensor = data.sensor[sensorID];
-        let newConfig: SensorConfig;
-        newConfig = {
-          id : sensor.sensorId,
-          dataId: data.dataId,
-          name : sensor.nom,
-          maxThresholdValue : data.max,
-          minThresholdValue : data.min,
-
-          // TODO remplir ces données lorsque le modèle est à jour
-          unit : '',
-          minThresholdAlertMessage : '',
-          maxThresholdAlertMessage : ''
-        };
-        this.sensorList.push(newConfig);
-      });
-    });
+  editSensor() {
+    return this.dataService.editSensor(this.sensorEdit).subscribe(() => {});
   }
 }

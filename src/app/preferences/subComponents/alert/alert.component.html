@@ -4,18 +4,21 @@
       <ion-card-title>Alertes</ion-card-title>
       <ion-col size="12">
         <ion-list no-lines>
-          <ion-item *ngFor="let mail of dataService.mails">
+          <ion-item *ngFor="let mail of dataService.getMails()">
             <ion-input readonly >{{mail}}</ion-input>
-            <ion-fab-button id="alertFabButton" (click)="removeEMail(mail)">
-              <ion-icon name="remove"></ion-icon>
-            </ion-fab-button>
+            <ion-button (click)="removeMail(mail)"
+                        color="danger"
+                        slot="end">
+              <ion-icon slot="icon-only" name="remove"></ion-icon>
+            </ion-button>
           </ion-item>
         </ion-list>
         <ion-item>
-          <ion-input color="primary" type="text" placeholder="Ajouter un eMail" [(ngModel)]="newMail" ></ion-input>
-          <ion-fab-button id="alertFabButton" (click)="addMail()">
-            <ion-icon name="add"></ion-icon>
-          </ion-fab-button>
+          <ion-input type="text" placeholder="Ajouter un email" [(ngModel)]="mailInput" ></ion-input>
+          <ion-button (click)="addMail()"
+                      slot="end">
+            <ion-icon slot="icon-only" name="add"></ion-icon>
+          </ion-button>
         </ion-item>
       </ion-col>
       <ion-card-title margin-top>Liste des alertes</ion-card-title>

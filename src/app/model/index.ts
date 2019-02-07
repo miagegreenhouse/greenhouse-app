@@ -30,9 +30,10 @@ export enum HTTPMethod {
 }
 
 export interface SensorConfig {
-  id: string;
-  dataId: string;
+  sensorId: string;
   name: string;
+  dataId: string;
+  source: string;
   unit: string;
   minThresholdValue: number;
   minThresholdAlertMessage: string;
