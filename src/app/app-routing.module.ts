@@ -1,6 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ConnexionComponent } from './component/connexion/connexion/connexion.component'
+import { 
+  AuthenticationService as AuthGuard 
+} from './services/authentication/authentication.service';
 
 const routes: Routes = [
   {
@@ -22,7 +25,8 @@ const routes: Routes = [
   },
   {
     path: 'preferences',
-    loadChildren: './preferences/preferences.module#PreferencesPageModule'
+    loadChildren: './preferences/preferences.module#PreferencesPageModule',
+    canActivate: [AuthGuard]
   }
 ];
 
