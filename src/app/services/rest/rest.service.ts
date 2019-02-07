@@ -1,5 +1,5 @@
 import { StorageService } from './../storage/storage.service';
-import { AppConfig, ApiEntry, HTTPMethod } from './../../model/index';
+import { AppConfig, ApiEntry, HTTPMethod, UserForm } from './../../model/index';
 import { Injectable, APP_INITIALIZER } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
@@ -15,6 +15,7 @@ export class RestService {
     'Content-Type': 'application/json'
   });
   apiUrl = ''; // TODO Set api URL
+  public LOGIN_ENDPOINT: string = '/api/token';
 
   constructor(private http: HttpClient,
     public storageService: StorageService
@@ -112,7 +113,12 @@ export class RestService {
     if (access_token) {
       token = access_token.value;
     }
-    return Object.assign({"Authorization": (token ? 'Bearer ' + token : undefined)}, this.headers);
+    return Object.assign(this.headers, {"Authorization": (token ? 'Bearer ' + token : undefined)});
+  }
+
+  login(userForm: UserForm) {
+    let url = this.apiUrl + this.LOGIN_ENDPOINT;
+    return this.http.post(url, userForm, {headers: this.getHeaders()});
   }
 
 }

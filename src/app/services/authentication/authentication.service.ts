@@ -15,11 +15,10 @@ export class AuthenticationService {
 
   login(userForm: UserForm) {
     return new Promise((resolve, reject) => {
-      this.restService.getApi().login(userForm).then((user) => {
+      this.restService.login(userForm).subscribe((user: User) => {
         this.currentUser = user;
         resolve(user);
-      })
-      .catch(reject);
+      }, reject);
     });
   }
 

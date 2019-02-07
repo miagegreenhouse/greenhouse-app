@@ -6,6 +6,6 @@
       "method": "GET"
     }
   },
-  "host": "localhost:3000",
-  "method": "http"
+  "host": "greenhouse-iot.tk",
+  "method": "https"
 }
