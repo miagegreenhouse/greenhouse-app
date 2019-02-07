@@ -1,7 +1,9 @@
 import { Component, OnInit,Input } from '@angular/core';
-import { Events } from '@ionic/angular';
+import { Events, ModalController } from '@ionic/angular';
 import { DataService} from '../../../services/data/data.service';
 import { SensorConfig } from 'src/app/model';
+import { EditSensorComponent } from '../edit-sensor/edit-sensor.component';
+
 
 
 @Component({
@@ -15,7 +17,7 @@ export class SensorListComponent implements OnInit {
 
   sensorList: SensorConfig[]= [];
 
-  constructor(public events: Events, public dataService: DataService) {}
+  constructor(public events: Events, public dataService: DataService, public modalController: ModalController) {}
 
   ngOnInit() {
     this.fillSensors();
@@ -53,5 +55,16 @@ export class SensorListComponent implements OnInit {
     /*this.events.unsubscribe((response: string) => {
       
     });*/
+  }
+
+  async editSensor(sensor:SensorConfig) {
+    const modal = await this.modalController.create({
+      component: EditSensorComponent,
+      cssClass: 'my-custom-modal-css',
+      componentProps: {
+        'sensor': sensor,
+      }
+    });
+    return await modal.present();
   }
 }
