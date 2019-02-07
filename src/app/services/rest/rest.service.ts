@@ -13,25 +13,37 @@ export class RestService {
   public endPoints: Map<string, ApiEntry> = new Map<string, ApiEntry>();
   headers = new HttpHeaders({
     'Content-Type': 'application/json'
+    // 'access-token': 'token' // TODO get token
   });
-  apiUrl = ''; // TODO Set api URL
+  apiUrl = 'http://greenhouse-iot.tk';
 
   constructor(private http: HttpClient,
     public storageService: StorageService
     ) { }
 
   get(path: string, queryParameters?: Param[]): Observable<any> {
-    const url = this.apiUrl;
-    const params = new HttpParams();
-    if (queryParameters) {
-      queryParameters.forEach(queryParameter => {
-        params.append(queryParameter.name, queryParameter.value.toString());
+    return this.http.get<any>(this.apiUrl + path, {
+      headers: this.headers,
+      params: this.getHttpParams(queryParameters)
+    });
+  }
+
+  post(path: string, data: any, queryParameters?: Param[]): Observable<any> {
+    return this.http.post<any>(this.apiUrl + path, data, {
+      headers: this.headers,
+      params: this.getHttpParams(queryParameters)
+    });
+  }
+
+  getHttpParams(params: Param[]): HttpParams {
+    const httpParams: HttpParams = new HttpParams();
+    if (params) {
+      params.forEach(queryParameter => {
+        console.log(queryParameter);
+        httpParams.append(queryParameter.name, queryParameter.value.toString());
       });
     }
-    return this.http.get<any>(url + path, {
-      headers: this.headers,
-      params: params
-    });
+    return httpParams;
   }
 
   createUrlFromParams(url: string, queryParameters: Param[]) {

@@ -8,12 +8,11 @@ import {DataService} from '../../../services/data/data.service';
 })
 export class AlertComponent implements OnInit {
   newMail: string;
-  
+
   constructor(public dataService: DataService) {
    }
 
   ngOnInit() {
-    
   }
 
   addMail() {
