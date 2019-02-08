@@ -1,32 +1,43 @@
 <ion-content padding>
-      <ion-list>     
+    <form [formGroup]="sensorForm" (ngSubmit)="validateForm()">
           <ion-item>
               <ion-label position="floating">Nom du capteur</ion-label>
-              <ion-input placeholder="Température de l'eau" [(ngModel)]="sensor.name"></ion-input>
+              <ion-input color="primary" name="nomCapteur" formControlName="nomCapteur"
+            placeholder="Température de l'eau"></ion-input>
           </ion-item>
+        <div *ngIf="!sensorForm.controls.nomCapteur.valid &&
+          sensorForm.controls.nomCapteur.dirty"
+          class="validator-error">
+        Please enter a valid email.
+        </div>
           <ion-item>
               <ion-label position="floating">Unité</ion-label>
-              <ion-input placeholder="Unité" [(ngModel)]="sensor.unit"></ion-input>
+              <ion-input color="primary" name="unite" formControlName="unite"
+              placeholder="Unité"></ion-input>
           </ion-item>
           <ion-item>
               <ion-label position="floating">Seuil Minimum</ion-label>
-              <ion-input type="text" color="primary" placeholder="Seuil minimum" [(ngModel)]="sensor.minThresholdValue"></ion-input>
+              <ion-input (blur)="controlThreshold()" color="primary" name="seuilMini" formControlName="seuilMini" 
+               placeholder="Seuil minimum"></ion-input>
           </ion-item>
           <ion-item>
-              <ion-label position="floating">Message alerte</ion-label>
-              <ion-input type="text" color="primary" placeholder="Seuil minimum" [(ngModel)]="sensor.minThresholdAlertMessage"></ion-input>
+              <ion-label position="floating">Message alerte (Seuil Minimum)</ion-label>
+              <ion-input color="primary" name="messageSeuilMini" formControlName="messageSeuilMini"
+               placeholder="Message seuil minimum"></ion-input>
           </ion-item>
           <ion-item>
-              <ion-label position="floating">Seuil Maximum</ion-label>
-              <ion-input type="text" placeholder="Seuil maximum" [(ngModel)]="sensor.maxThresholdValue"></ion-input>
+              <ion-label position="floating" >Seuil Maximum</ion-label>
+              <ion-input (blur)="controlThreshold()" color="primary" name="seuilMaxi" formControlName="seuilMaxi"
+               placeholder="Seuil maximum"></ion-input>
           </ion-item>
           <ion-item>
-              <ion-label position="floating">Message alerte</ion-label>
-              <ion-input type="text" placeholder="Seuil maximum" [(ngModel)]="sensor.maxThresholdAlertMessage"></ion-input>
+              <ion-label position="floating">Message alerte (Seuil Maximum)</ion-label>
+              <ion-input color="primary" name="messageSeuilMaxi" formControlName="messageSeuilMaxi"
+               placeholder="Message seuil maximum"></ion-input>
           </ion-item>
-          <ion-item justify-content-center>
-              <ion-button end (click)="sensorDismiss()">Annuler</ion-button>
-              <ion-button (click)="sensorValidate()">Valider</ion-button>
+          <ion-item>
+              <ion-button (click)="sensorDismiss()">Annuler</ion-button>
+              <ion-button type="submit" [disabled]="!sensorForm.valid">Valider</ion-button>
           </ion-item>
-        </ion-list>
+    </form>
 </ion-content>
