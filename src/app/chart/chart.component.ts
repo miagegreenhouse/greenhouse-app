@@ -103,8 +103,8 @@ export class ChartComponent implements OnInit {
       }
       sensorDatas.forEach(data => {
         dataset.data.push({
-          t: new Date(parseInt(data.time)),
-          y: parseInt(data.value)
+          t: new Date(data.timestamp),
+          y: data.value
         });
       });
       chartData.datasets.push(dataset);
