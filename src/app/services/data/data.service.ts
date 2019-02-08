@@ -18,8 +18,8 @@ export interface SensorGroup {
 
 export interface SensorData {
   sensorid: string;
-  time: number;
-  value: string | number;
+  timestamp: number;
+  value: number;
 }
 
 export interface AlertMessage {
@@ -85,11 +85,15 @@ export class DataService {
     })
     .then(() => {
       return new Promise((resolve, reject) => {
-        this.restService.getSensorsData().subscribe((sensorsData: SensorData[]) => {
+        this.restService.getSensorsData().subscribe((sensorsData: any[]) => {
           sensorsData.forEach(sensorData => {
             let sensorId = sensorData.sensorid;
             const sensorDatas = this.sensorsDatas[sensorId];
-            sensorDatas.push(sensorData);
+            sensorDatas.push(<SensorData> {
+              sensorid: sensorData.sensorid,
+              timestamp: parseInt(sensorData.time),
+              value: parseInt(sensorData.value)
+            });
           });
           resolve();
         }, reject);
