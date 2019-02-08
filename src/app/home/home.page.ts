@@ -67,21 +67,21 @@ export class HomePage {
   }
 
   // TODO: remove (and HTML) just Mock
-  addData() {
+  // addData() {
 
-    const dataId = (Math.random() > 0.5 ? '1' : '2');
-    let sensorId = '';
-    if (dataId === '1') sensorId = (Math.random() > 0.5 ? '1' : '2');
-    else if (dataId === '2') sensorId = (Math.random() > 0.5 ? '3' : '4');
-    const message: DataMessage = {};
-    message[sensorId] = [
-      {
-        timestamp: new Date().getTime(),
-        value: Math.random() * 30
-      }
-    ];
-    this.events.publish(MessageType.DATA, message);
-  }
+  //   const dataId = (Math.random() > 0.5 ? '1' : '2');
+  //   let sensorId = '';
+  //   if (dataId === '1') sensorId = (Math.random() > 0.5 ? '1' : '2');
+  //   else if (dataId === '2') sensorId = (Math.random() > 0.5 ? '3' : '4');
+  //   const message: DataMessage = {};
+  //   message[sensorId] = [
+  //     {
+  //       timestamp: new Date().getTime(),
+  //       value: Math.random() * 30
+  //     }
+  //   ];
+  //   this.events.publish(MessageType.DATA, message);
+  // }
 
   // TODO: remove (and HTML) just Mock
   addAlert() {

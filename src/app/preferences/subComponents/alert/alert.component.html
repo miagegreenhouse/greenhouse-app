@@ -5,7 +5,7 @@
       <ion-col size="12">
         <ion-list no-lines>
           <ion-item *ngFor="let mail of dataService.getMails()">
-            <ion-input readonly >{{mail}}</ion-input>
+            <ion-input readonly >{{mail.email}}</ion-input>
             <ion-button (click)="removeMail(mail)"
                         color="danger"
                         slot="end">
@@ -24,6 +24,9 @@
       <ion-card-title margin-top>Liste des alertes</ion-card-title>
       <ion-col size="12">
         <ion-list>
+          <ion-item *ngIf="dataService.getAlerts().length === 0">
+            Aucune alerte pour le moment
+          </ion-item>
           <ion-item *ngFor="let alert of dataService.getAlerts()" slot="start">
             <ion-icon [name]="alert.acquit ? 'checkmark-circle-outline' : 'alert'"
                       [color]="alert.acquit ? 'success' : 'danger'"
@@ -36,11 +39,11 @@
                 <ion-badge margin-end color="medium">
                   {{formatTime(alert.timestamp)}}
                 </ion-badge>
-                <ion-badge margin-end color="dark" *ngIf="dataService.datas[alert.dataId]">
-                  {{dataService.datas[alert.dataId].name}}
+                <ion-badge margin-end color="dark" *ngIf="dataService.hasData(alert.dataId)">
+                  {{dataService.datas[alert.dataId].sensorName}}
                 </ion-badge>
-                <ion-badge margin-end color="dark" *ngIf="dataService.datas[alert.dataId] && dataService.datas[alert.dataId].sensor[alert.sensorId]">
-                  {{dataService.datas[alert.dataId].sensor[alert.sensorId].nom}}
+                <ion-badge margin-end color="dark" *ngIf="dataService.hasData(alert.dataId) && dataService.getSensorConfig(alert.sensorId)">
+                  {{dataService.getSensorConfig(alert.sensorId).sensorName}}
                 </ion-badge>
                 <ion-badge *ngIf="alert.acquit && alert.acquit.timestamp" margin-end color="success">
                   {{formatTime(alert.acquit.timestamp)}}

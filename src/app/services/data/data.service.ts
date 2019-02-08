@@ -4,21 +4,22 @@ import {Events} from '@ionic/angular';
 import {ToastService} from '../toast/toast.service';
 import {RestService} from '../rest/rest.service';
 import {Observable} from 'rxjs';
-import {SensorConfig} from '../../model';
+import {SensorConfig, Email} from '../../model';
 
 export interface DataMessage {
   [key: string]: SensorData[]; // sensorId => SensorData
 }
 
 export interface SensorGroup {
-  dataId: string;
+  _id: string;
   name: string; // ex: Temperature de l'eau
   sensorsId: Set<string>; // sensorId set
 }
 
 export interface SensorData {
-  timestamp: number;
-  value: number;
+  sensorid: string;
+  time: number;
+  value: string | number;
 }
 
 export interface AlertMessage {
@@ -40,13 +41,13 @@ export interface AlertMessage {
 
 export class DataService {
 
-  datas: { [key: string]: SensorGroup } = {}; // dataId => SensorGroup
+  sensorsGroups: { [key: string]: SensorGroup } = {}; // dataId => SensorGroup
   sensorsConfigs: {[key: string]: SensorConfig } = {}; // sensorId => SensorConfig
   sensorsDatas: {[key: string]: SensorData[] } = {}; // sensorId => SensorData[]
   sources: Set<string> = new Set();
 
   alerts: { [key: string]: AlertMessage} = {}; // alertId => AlertMessage
-  mails: Set<string> = new Set();
+  mails: Set<Email> = new Set();
 
   constructor(private socketService: SocketService,
               private toastService: ToastService,
@@ -54,10 +55,54 @@ export class DataService {
               private events: Events) {
 
     // TODO: Get requests
-    // url/datas
-    // url/sensorsConfigs
+    // url/sensorsGroup
+    // url/sensorsConfig
     // url/alerts
     // url/mails
+
+    new Promise((resolve, reject) => {
+      this.restService.getSensorsGroups().subscribe((sensorsGroups: SensorGroup[]) => {
+        sensorsGroups.forEach(sensorGroup => {
+          this.sensorsGroups[sensorGroup._id] = sensorGroup;
+          this.sensorsGroups[sensorGroup._id].sensorsId = new Set<string>();
+          resolve();
+        });
+      }, reject);
+    }).then(() => {
+      return new Promise((resolve, reject) => {
+        this.restService.getSensorsConfigs().subscribe((sensorsConfigs: SensorConfig[]) => {
+          sensorsConfigs.forEach(sensorConfig => {
+            this.sensorsConfigs[sensorConfig._id] = sensorConfig;
+            this.sensorsDatas[sensorConfig._id] = [];
+            if (this.sensorsGroups[sensorConfig.sensorGroupId] !== undefined) {
+              this.sensorsGroups[sensorConfig.sensorGroupId].sensorsId.add(sensorConfig._id);
+            }
+            resolve();
+          });
+          console.log(this.sensorsConfigs);
+        }, reject);
+      });
+    })
+    .then(() => {
+      return new Promise((resolve, reject) => {
+        this.restService.getSensorsData().subscribe((sensorsData: SensorData[]) => {
+          sensorsData.forEach(sensorData => {
+            let sensorId = sensorData.sensorid;
+            const sensorDatas = this.sensorsDatas[sensorId];
+            sensorDatas.push(sensorData);
+          });
+          resolve();
+        }, reject);
+      });
+    }).then(() => {
+
+    }).catch(err => {
+      // TODO
+    });
+
+    this.restService.getEmails().subscribe((mails: Email[]) => {
+      mails.forEach(mail => this.mails.add(mail));
+    });
 
     events.subscribe(MessageType.DATA, (dataMessage: DataMessage) => {
       // For each sensor in data
@@ -89,7 +134,7 @@ export class DataService {
   }
 
   getDatas(): SensorGroup[] {
-    return Object.values(this.datas);
+    return Object.values(this.sensorsGroups);
   }
 
   getSensorsConfig(): SensorConfig[] {
@@ -104,7 +149,7 @@ export class DataService {
     return Object.values(this.alerts);
   }
 
-  getMails(): string[] {
+  getMails(): Email[] {
     return Array.from(this.mails);
   }
 
@@ -114,101 +159,106 @@ export class DataService {
   }
 
   getDataSensorsId(dataId: string): string[] {
-    return Array.from(this.datas[dataId].sensorsId);
+    return Array.from(this.sensorsGroups[dataId].sensorsId);
   }
 
   getSensorConfig(sensorId: string): SensorConfig {
     return this.sensorsConfigs[sensorId];
   }
 
+  hasData(dataId: string): boolean {
+    return this.sensorsDatas !== undefined && this.sensorsDatas[dataId] !== undefined;
+  }
+
   private mockData() {
 
-    this.datas = {
-      '1': {
-        dataId: '1',
-        name: 'Température eau',
-        sensorsId: new Set()
-      },
-      '2': {
-        dataId: '2',
-        name: 'Température air',
-        sensorsId: new Set()
-      }
-    };
+    // this.datas = {
+    //   '1': {
+    //     _id: 'sgfsh',
+    //     name: 'Température eau',
+    //     sensorsId: new Set()
+    //   },
+    //   '2': {
+    //     _id: 'sgfsj',
+    //     name: 'Température air',
+    //     sensorsId: new Set()
+    //   }
+    // };
 
-    this.sensorsConfigs = {
-      '1': {
-        sensorId: '1',
-        source: 'g2e',
-        dataId: '1',
-        name: 'Capteur haut',
-        unit: '°C',
-        maxThresholdValue: 5,
-        minThresholdValue: 30,
-        minThresholdAlertMessage: 'Il fait froid',
-        maxThresholdAlertMessage: 'Il fait chaud'
-      },
-      '2': {
-        sensorId: '2',
-        source: 'myFood',
-        dataId: '1',
-        name: 'Capteur bas',
-        unit: '°C',
-        maxThresholdValue: 5,
-        minThresholdValue: 30,
-        minThresholdAlertMessage: 'Il fait froid',
-        maxThresholdAlertMessage: 'Il fait chaud'
-      },
-      '3': {
-        sensorId: '3',
-        source: 'g2e',
-        dataId: '2',
-        name: 'Capteur porte',
-        unit: '°C',
-        maxThresholdValue: 5,
-        minThresholdValue: 30,
-        minThresholdAlertMessage: 'Il fait froid',
-        maxThresholdAlertMessage: 'Il fait chaud'
-      },
-      '4': {
-        sensorId: '4',
-        source: 'myFood',
-        dataId: '2',
-        name: 'Capteur fenetre',
-        unit: '°C',
-        maxThresholdValue: 5,
-        minThresholdValue: 30,
-        minThresholdAlertMessage: 'Il fait froid',
-        maxThresholdAlertMessage: 'Il fait chaud'
-      }
-    };
+    // this.sensorsConfigs = {
+    //   '1': {
+    //     _id: 'sgfsg',
+    //     sensorId: '1',
+    //     source: 'g2e',
+    //     dataId: '1',
+    //     name: 'Capteur haut',
+    //     unit: '°C',
+    //     maxThresholdValue: 5,
+    //     minThresholdValue: 30,
+    //     minThresholdAlertMessage: 'Il fait froid',
+    //     maxThresholdAlertMessage: 'Il fait chaud'
+    //   },
+    //   '2': {
+    //     _id: 'sgfsh',
+    //     sensorId: '2',
+    //     source: 'myFood',
+    //     dataId: '1',
+    //     name: 'Capteur bas',
+    //     unit: '°C',
+    //     maxThresholdValue: 5,
+    //     minThresholdValue: 30,
+    //     minThresholdAlertMessage: 'Il fait froid',
+    //     maxThresholdAlertMessage: 'Il fait chaud'
+    //   },
+    //   '3': {
+    //     _id: 'sgfsi',
+    //     sensorId: '3',
+    //     source: 'g2e',
+    //     dataId: '2',
+    //     name: 'Capteur porte',
+    //     unit: '°C',
+    //     maxThresholdValue: 5,
+    //     minThresholdValue: 30,
+    //     minThresholdAlertMessage: 'Il fait froid',
+    //     maxThresholdAlertMessage: 'Il fait chaud'
+    //   },
+    //   '4': {
+    //     _id: 'sgfsj',
+    //     sensorId: '4',
+    //     source: 'myFood',
+    //     dataId: '2',
+    //     name: 'Capteur fenetre',
+    //     unit: '°C',
+    //     maxThresholdValue: 5,
+    //     minThresholdValue: 30,
+    //     minThresholdAlertMessage: 'Il fait froid',
+    //     maxThresholdAlertMessage: 'Il fait chaud'
+    //   }
+    // };
 
-    this.datas['1'].sensorsId.add('1');
-    this.datas['1'].sensorsId.add('2');
-    this.datas['2'].sensorsId.add('3');
-    this.datas['2'].sensorsId.add('4');
+    // this.datas['1'].sensorsId.add('1');
+    // this.datas['1'].sensorsId.add('2');
+    // this.datas['2'].sensorsId.add('3');
+    // this.datas['2'].sensorsId.add('4');
 
-    this.mails.add('test@gmail.com');
-    this.mails.add('test2@gmail.com');
-
-    this.events.publish(MessageType.ALERT, {
-      timestamp: new Date().getTime(),
-      alertId: '1',
-      message: 'Attention il fait trop chaud',
-      value: 35,
-      sensorId: '1',
-      dataId: '1',
-      acquit: null
-    });
-    this.events.publish(MessageType.ALERT, {
-      timestamp: new Date().getTime(),
-      alertId: '2',
-      message: 'Attention il fait trop froid',
-      value: 9,
-      sensorId: '1',
-      dataId: '1',
-      acquit: null
-    });
+    // this.events.publish(MessageType.ALERT, {
+    //   timestamp: new Date().getTime(),
+    //   alertId: '1',
+    //   message: 'Attention il fait trop chaud',
+    //   value: 35,
+    //   sensorId: '1',
+    //   dataId: '1',
+    //   acquit: null
+    // });
+    // this.events.publish(MessageType.ALERT, {
+    //   timestamp: new Date().getTime(),
+    //   alertId: '2',
+    //   message: 'Attention il fait trop froid',
+    //   value: 9,
+    //   sensorId: '1',
+    //   dataId: '1',
+    //   acquit: null
+    // });
   }
 
   acquitAlert(alertId: string) {
@@ -223,22 +273,24 @@ export class DataService {
 
   addMail(email: string): Observable<any> {
     // TODO (jules) : Rest POST
+    return this.restService.createEmail({email: email});
     // TODO : remove below: just a mock
-    return new Observable<any>(observer => {
-      this.mails.add(email);
-      observer.next(email);
-      this.toastService.showToast(email + ' ajouté', 'success', 3000);
-    });
+    // return new Observable<any>(observer => {
+    //   this.mails.add(email);
+    //   observer.next(email);
+    //   this.toastService.showToast(email + ' ajouté', 'success', 3000);
+    // });
   }
 
-  removeMail(email: string): Observable<any> {
+  removeMail(email: Email): Observable<any> {
     // TODO (jules) : Rest DELETE
+    return this.restService.deleteEmail(email);
     // TODO : remove below: just a mock
-    return new Observable<any>(observer => {
-      this.mails.delete(email);
-      observer.next(email);
-      this.toastService.showToast(email + ' supprimé', 'success', 3000);
-    });
+    // return new Observable<any>(observer => {
+    //   this.mails.delete(email);
+    //   observer.next(email);
+    //   this.toastService.showToast(email + ' supprimé', 'success', 3000);
+    // });
   }
 
   editSensor(sensorConfigEdit: SensorConfig): Observable<any> {
@@ -247,17 +299,17 @@ export class DataService {
     return new Observable<any>(observer => {
 
       // Remove sensor from previous data
-      const oldSensorConfig = this.sensorsConfigs[sensorConfigEdit.sensorId];
+      const oldSensorConfig = this.sensorsConfigs[sensorConfigEdit._id];
       if (oldSensorConfig) {
-        this.datas[oldSensorConfig.sensorId].sensorsId.delete(oldSensorConfig.dataId);
+        this.sensorsGroups[oldSensorConfig._id].sensorsId.delete(oldSensorConfig.dataId);
       }
 
       // Add sensor to new data
-      this.sensorsConfigs[sensorConfigEdit.sensorId] = sensorConfigEdit;
-      this.datas[sensorConfigEdit.dataId].sensorsId.add(sensorConfigEdit.sensorId);
+      this.sensorsConfigs[sensorConfigEdit._id] = sensorConfigEdit;
+      this.sensorsGroups[sensorConfigEdit.dataId].sensorsId.add(sensorConfigEdit._id);
 
       observer.next(sensorConfigEdit);
-      this.toastService.showToast(sensorConfigEdit.name + ' édité', 'success', 3000);
+      this.toastService.showToast(sensorConfigEdit.sensorName + ' édité', 'success', 3000);
     });
   }
 }

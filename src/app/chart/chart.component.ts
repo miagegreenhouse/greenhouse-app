@@ -36,12 +36,12 @@ export class ChartComponent implements OnInit {
 
   ngOnInit() {
     this.updateChart();
-    this.events.subscribe('updateData:' + this.data.dataId, () => {
+    this.events.subscribe('updateData:' + this.data._id, () => {
       this.updateChart();
     });
   }
 
-  private updateChart(): void {
+  public updateChart(): void {
     const chartData: ChartData = this.getChartData();
 
     // In order to be more readable add a paddingPercent padding top and bottom in chart
@@ -78,7 +78,7 @@ export class ChartComponent implements OnInit {
 
   public updateDateRange(newDateRange: number): void {
     this.chart.options.scales.xAxes = this.getOptionxAxes(newDateRange);
-    this.chart.update();
+    this.updateChart();
   }
 
   public updateSource(newSource: string): void {
@@ -94,17 +94,17 @@ export class ChartComponent implements OnInit {
       const sensorDatas: SensorData[] = this.dataService.getSensorData(sensorId);
       const sensorConfig: SensorConfig = this.dataService.getSensorConfig(sensorId);
       const dataset: Dataset = {
-        label: sensorConfig.source,
+        label: sensorConfig.dataSource,
         borderColor: this.getColor(sensorId),
         data: []
       };
-      if (this.source && this.source !== sensorConfig.source) {
+      if (this.source && this.source !== sensorConfig.dataSource) {
         return;
       }
       sensorDatas.forEach(data => {
         dataset.data.push({
-          t: new Date(data.timestamp),
-          y: data.value
+          t: new Date(parseInt(data.time)),
+          y: parseInt(data.value)
         });
       });
       chartData.datasets.push(dataset);
@@ -185,7 +185,7 @@ export class ChartComponent implements OnInit {
   }
 
   public getSensorsId(): string[] {
-    return this.dataService.getDataSensorsId(this.data.dataId);
+    return this.dataService.getDataSensorsId(this.data._id);
   }
 
   public getLastValue(sensorId: string): string {
@@ -193,7 +193,7 @@ export class ChartComponent implements OnInit {
     if (!sensorData || sensorData.length === 0 ) {
       return 'no data';
     }
-    return sensorData[sensorData.length - 1].value.toFixed(2);
+    return parseInt(sensorData[sensorData.length - 1].value).toFixed(2);
   }
 
   public getColor(sensorId: string): string {

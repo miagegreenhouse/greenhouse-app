@@ -30,13 +30,23 @@ export enum HTTPMethod {
 }
 
 export interface SensorConfig {
-  sensorId: string;
-  name: string;
-  dataId: string;
-  source: string;
-  unit: string;
-  minThresholdValue: number;
-  minThresholdAlertMessage: string;
-  maxThresholdValue: number;
-  maxThresholdAlertMessage: string;
+  _id: string;
+  sensorName?: string;
+  sensorGroupId?: string;
+  dataId?: string;
+  dataSource?: string;
+  unit?: string;
+  minThresholdValue?: number;
+  minThresholdAlertMessage?: string;
+  maxThresholdValue?: number;
+  maxThresholdAlertMessage?: string;
+  createdDate?: string;
+  lastModifiedDate?: string;
+}
+
+export interface Email {
+  _id: string,
+  createdDate: string,
+  email: string,
+  lastModifiedDate: string
 }

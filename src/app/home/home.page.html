@@ -16,7 +16,9 @@
                 [interfaceOptions]="customActionSheetOptions" interface="action-sheet">
       <ion-select-option *ngFor="let tick of dateRange; let i = index" [value]="i">{{tick.name}}</ion-select-option>
     </ion-select>
-    <ion-icon slot="end" name="settings" [routerDirection]="'root'" [routerLink]="'/preferences'"></ion-icon>
+    <ion-button color="light" slot="end" [routerDirection]="'root'" [routerLink]="'/preferences'">
+      <ion-icon slot="icon-only" name="settings"></ion-icon>
+    </ion-button>
   </ion-toolbar>
 </ion-header>
 
