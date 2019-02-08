@@ -41,8 +41,8 @@ export interface AlertMessage {
 export class DataService {
 
   datas: { [key: string]: SensorGroup } = {}; // dataId => SensorGroup
-  sensorsDatas: {[key: string]: SensorData[] } = {}; // sensorId => SensorData[]
   sensorsConfigs: {[key: string]: SensorConfig } = {}; // sensorId => SensorConfig
+  sensorsDatas: {[key: string]: SensorData[] } = {}; // sensorId => SensorData[]
   sources: Set<string> = new Set();
 
   alerts: { [key: string]: AlertMessage} = {}; // alertId => AlertMessage
@@ -68,7 +68,7 @@ export class DataService {
         }
         const sensorDatas = this.sensorsDatas[sensorId];
 
-        sensorDatas.forEach(sensorData => {
+        dataMessage[sensorId].forEach(sensorData => {
           sensorDatas.push(sensorData);
         });
 
@@ -109,7 +109,12 @@ export class DataService {
   }
 
   getSensorData(sensorId: string): SensorData[] {
-    return this.sensorsDatas[sensorId];
+    const sensorsDatas: SensorData[] = this.sensorsDatas[sensorId];
+    return sensorsDatas ? sensorsDatas : [];
+  }
+
+  getDataSensorsId(dataId: string): string[] {
+    return Array.from(this.datas[dataId].sensorsId);
   }
 
   getSensorConfig(sensorId: string): SensorConfig {
@@ -117,22 +122,74 @@ export class DataService {
   }
 
   private mockData() {
+
+    this.datas = {
+      '1': {
+        dataId: '1',
+        name: 'Température eau',
+        sensorsId: new Set()
+      },
+      '2': {
+        dataId: '2',
+        name: 'Température air',
+        sensorsId: new Set()
+      }
+    };
+
+    this.sensorsConfigs = {
+      '1': {
+        sensorId: '1',
+        source: 'g2e',
+        dataId: '1',
+        name: 'Capteur haut',
+        unit: '°C',
+        maxThresholdValue: 5,
+        minThresholdValue: 30,
+        minThresholdAlertMessage: 'Il fait froid',
+        maxThresholdAlertMessage: 'Il fait chaud'
+      },
+      '2': {
+        sensorId: '2',
+        source: 'myFood',
+        dataId: '1',
+        name: 'Capteur bas',
+        unit: '°C',
+        maxThresholdValue: 5,
+        minThresholdValue: 30,
+        minThresholdAlertMessage: 'Il fait froid',
+        maxThresholdAlertMessage: 'Il fait chaud'
+      },
+      '3': {
+        sensorId: '3',
+        source: 'g2e',
+        dataId: '2',
+        name: 'Capteur porte',
+        unit: '°C',
+        maxThresholdValue: 5,
+        minThresholdValue: 30,
+        minThresholdAlertMessage: 'Il fait froid',
+        maxThresholdAlertMessage: 'Il fait chaud'
+      },
+      '4': {
+        sensorId: '4',
+        source: 'myFood',
+        dataId: '2',
+        name: 'Capteur fenetre',
+        unit: '°C',
+        maxThresholdValue: 5,
+        minThresholdValue: 30,
+        minThresholdAlertMessage: 'Il fait froid',
+        maxThresholdAlertMessage: 'Il fait chaud'
+      }
+    };
+
+    this.datas['1'].sensorsId.add('1');
+    this.datas['1'].sensorsId.add('2');
+    this.datas['2'].sensorsId.add('3');
+    this.datas['2'].sensorsId.add('4');
+
     this.mails.add('test@gmail.com');
     this.mails.add('test2@gmail.com');
-
-    for (let i = 0; i < 10; i++) {
-      const dataId = (Math.random() > 0.5 ? '1' : '2');
-      const sensorId = (Math.random() > 0.5 ? '1' : '2');
-      const data = {
-        timestamp: new Date().getTime(),
-        value: Math.random()
-      };
-      const dataCaptor = {};
-      dataCaptor[sensorId] = data;
-      const dataMessage = {};
-      dataMessage[dataId] = dataCaptor;
-      this.events.publish(MessageType.DATA, dataMessage);
-    }
 
     this.events.publish(MessageType.ALERT, {
       timestamp: new Date().getTime(),

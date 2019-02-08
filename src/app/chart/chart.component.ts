@@ -13,7 +13,7 @@ import {SensorConfig} from '../model';
 export class ChartComponent implements OnInit {
 
   @Input() data: SensorGroup;
-  dateRange = 21600000; // Default value is 6h
+  dateRange = 180000; // Default value is 6h
   source = null;
 
   chart = null;
@@ -142,8 +142,7 @@ export class ChartComponent implements OnInit {
     if (chartData.datasets.length === 0 && chartData.datasets[0].data.length === 0) {
       return [0, 0];
     }
-    const initValue = chartData.datasets[0].data[0].y;
-    const minMax: number[] = [initValue, initValue];
+    const minMax: number[] = [Infinity, -Infinity];
 
     for (const sensorId of this.getSensorsId()) {
       const sensorConfig = this.dataService.getSensorConfig(sensorId);
@@ -186,12 +185,12 @@ export class ChartComponent implements OnInit {
   }
 
   public getSensorsId(): string[] {
-    return Object.keys(this.data.sensorsId);
+    return this.dataService.getDataSensorsId(this.data.dataId);
   }
 
   public getLastValue(sensorId: string): string {
     const sensorData: SensorData[] = this.dataService.getSensorData(sensorId);
-    if (sensorData.length === 0 ) {
+    if (!sensorData || sensorData.length === 0 ) {
       return 'no data';
     }
     return sensorData[sensorData.length - 1].value.toFixed(2);

@@ -1,7 +1,7 @@
 import {Component, QueryList, ViewChildren} from '@angular/core';
 import {ToastService} from '../services/toast/toast.service';
 import {ChartComponent} from '../chart/chart.component';
-import {AlertMessage, DataService} from '../services/data/data.service';
+import {AlertMessage, DataMessage, DataService} from '../services/data/data.service';
 import {Events} from '@ionic/angular';
 import {MessageType} from '../services/socket/socket.service';
 
@@ -68,17 +68,19 @@ export class HomePage {
 
   // TODO: remove (and HTML) just Mock
   addData() {
+
     const dataId = (Math.random() > 0.5 ? '1' : '2');
-    const sensorId = (Math.random() > 0.5 ? '1' : '2');
-    const data = {
-      timestamp: new Date().getTime(),
-      value: Math.random()
-    };
-    const dataCaptor = {};
-    dataCaptor[sensorId] = data;
-    const dataMessage = {};
-    dataMessage[dataId] = dataCaptor;
-    this.events.publish(MessageType.DATA, dataMessage);
+    let sensorId = '';
+    if (dataId === '1') sensorId = (Math.random() > 0.5 ? '1' : '2');
+    else if (dataId === '2') sensorId = (Math.random() > 0.5 ? '3' : '4');
+    const message: DataMessage = {};
+    message[sensorId] = [
+      {
+        timestamp: new Date().getTime(),
+        value: Math.random() * 30
+      }
+    ];
+    this.events.publish(MessageType.DATA, message);
   }
 
   // TODO: remove (and HTML) just Mock
