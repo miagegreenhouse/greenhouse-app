@@ -67,7 +67,7 @@ export class HomePage {
   }
 
   // TODO: remove (and HTML) just Mock
-  // addData() {
+  addData() {
 
   //   const dataId = (Math.random() > 0.5 ? '1' : '2');
   //   let sensorId = '';
@@ -81,7 +81,7 @@ export class HomePage {
   //     }
   //   ];
   //   this.events.publish(MessageType.DATA, message);
-  // }
+  }
 
   // TODO: remove (and HTML) just Mock
   addAlert() {
