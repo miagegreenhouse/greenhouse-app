@@ -193,7 +193,7 @@ export class ChartComponent implements OnInit {
     if (!sensorData || sensorData.length === 0 ) {
       return 'no data';
     }
-    return parseInt(sensorData[sensorData.length - 1].value).toFixed(2);
+    return sensorData[sensorData.length - 1].value.toFixed(2);
   }
 
   public getColor(sensorId: string): string {
