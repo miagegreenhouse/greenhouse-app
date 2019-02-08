@@ -15,7 +15,10 @@
                 [(ngModel)]="dateRangeSelected" (ionChange)="onChangeDateRange()"
                 [interfaceOptions]="customActionSheetOptions" interface="action-sheet">
       <ion-select-option *ngFor="let tick of dateRange; let i = index" [value]="i">{{tick.name}}</ion-select-option>
+      <ion-select-option [value]="-1"><span>Personnalisé</span></ion-select-option>
     </ion-select>
+    <ion-icon *ngIf="dateRangeSelected === -1"
+              slot="end" name="calendar" (click)="openModal()"></ion-icon>
     <ion-icon slot="end" name="settings" [routerDirection]="'root'" [routerLink]="'/preferences'"></ion-icon>
   </ion-toolbar>
 </ion-header>

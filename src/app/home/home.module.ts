@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 
 import { HomePage } from './home.page';
 import {ChartComponent} from '../chart/chart.component';
+import {DateRangePickerComponent} from '../component/date-range-picker/date-range-picker.component';
 
 @NgModule({
   imports: [
@@ -20,9 +21,11 @@ import {ChartComponent} from '../chart/chart.component';
       }
     ])
   ],
-  declarations: [HomePage, ChartComponent],
+  declarations: [HomePage, ChartComponent, DateRangePickerComponent],
   providers: [
     ToastService
-  ]
+  ],
+  entryComponents: [DateRangePickerComponent],
+  exports: [DateRangePickerComponent]
 })
 export class HomePageModule {}
