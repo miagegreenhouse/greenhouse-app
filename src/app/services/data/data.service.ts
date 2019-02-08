@@ -10,7 +10,7 @@ export interface DataMessage {
   [key: string]: SensorData[]; // sensorId => SensorData
 }
 
-export interface Data {
+export interface SensorGroup {
   dataId: string;
   name: string; // ex: Temperature de l'eau
   sensorsId: Set<string>; // sensorId set
@@ -40,7 +40,7 @@ export interface AlertMessage {
 
 export class DataService {
 
-  datas: { [key: string]: Data } = {}; // dataId => Data
+  datas: { [key: string]: SensorGroup } = {}; // dataId => SensorGroup
   sensorsDatas: {[key: string]: SensorData[] } = {}; // sensorId => SensorData[]
   sensorsConfigs: {[key: string]: SensorConfig } = {}; // sensorId => SensorConfig
   sources: Set<string> = new Set();
@@ -88,7 +88,7 @@ export class DataService {
     this.mockData();
   }
 
-  getDatas(): Data[] {
+  getDatas(): SensorGroup[] {
     return Object.values(this.datas);
   }
 

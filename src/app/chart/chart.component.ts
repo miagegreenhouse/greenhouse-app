@@ -1,6 +1,6 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import { Chart } from 'chart.js';
-import {Data, DataService, SensorData} from '../services/data/data.service';
+import {SensorGroup, DataService, SensorData} from '../services/data/data.service';
 import {Events} from '@ionic/angular';
 import {SensorConfig} from '../model';
 
@@ -12,7 +12,7 @@ import {SensorConfig} from '../model';
 })
 export class ChartComponent implements OnInit {
 
-  @Input() data: Data;
+  @Input() data: SensorGroup;
   dateRange = 21600000; // Default value is 6h
   source = null;
 
