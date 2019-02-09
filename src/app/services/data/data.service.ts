@@ -101,6 +101,7 @@ export class DataService {
     }).then(() => {
 
     }).catch(err => {
+      console.error(err);
       // TODO
     });
 

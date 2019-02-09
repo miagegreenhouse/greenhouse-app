@@ -89,8 +89,8 @@ export class HomePage {
       message: 'Random Alert',
       alertId: '' + (Object.keys(this.dataService.alerts).length + 100),
       acquit: null,
-      dataId: '1',
-      sensorId: '1',
+      dataId: Object.keys(this.dataService.sensorsGroups)[0],
+      sensorId: Object.keys(this.dataService.sensorsConfigs)[0],
       timestamp: new Date().getTime(),
       value: Math.random()
     };

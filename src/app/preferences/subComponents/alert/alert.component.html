@@ -31,16 +31,16 @@
             <ion-icon [name]="alert.acquit ? 'checkmark-circle-outline' : 'alert'"
                       [color]="alert.acquit ? 'success' : 'danger'"
                       margin-end></ion-icon>
-            <span margin-end>{{'TEst'}}</span>
+            <span margin-end>{{dataService.getSensorConfig(alert.sensorId).sensorName}}</span>
             <ion-label text-wrap>
-              <h1>{{alert.value}}</h1>
+              <h1>{{alert.value.toFixed(2)}}</h1>
               <p><i>{{alert.message}}</i></p>
               <ion-text>
                 <ion-badge margin-end color="medium">
                   {{formatTime(alert.timestamp)}}
                 </ion-badge>
                 <ion-badge margin-end color="dark" *ngIf="dataService.hasData(alert.dataId)">
-                  {{dataService.datas[alert.dataId].sensorName}}
+                  {{dataService.sensorsGroups[alert.dataId].sensorName}}
                 </ion-badge>
                 <ion-badge margin-end color="dark" *ngIf="dataService.hasData(alert.dataId) && dataService.getSensorConfig(alert.sensorId)">
                   {{dataService.getSensorConfig(alert.sensorId).sensorName}}
