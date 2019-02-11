@@ -17,7 +17,7 @@ import { AuthenticationService } from './services/authentication/authentication.
 import { ConnexionComponent } from './component/connexion/connexion/connexion.component';
 import { HttpClientModule } from '@angular/common/http';
 import 'chartjs-plugin-annotation';
-import { PreferencesPageModule } from './preferences/preferences.module'
+import { PreferencesPageModule } from './preferences/preferences.module';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
@@ -42,7 +42,7 @@ export function initApp(configService: ConfigService, restService: RestService) 
 @NgModule({
   declarations: [AppComponent, ConnexionComponent],
   entryComponents: [],
-    imports: [
+  imports: [
     BrowserModule,
     FormsModule,
     IonicModule.forRoot(),
@@ -52,7 +52,7 @@ export function initApp(configService: ConfigService, restService: RestService) 
     BrowserAnimationsModule,
     PreferencesPageModule,
     ToastrModule.forRoot()
-    ],
+  ],
   providers: [
     StatusBar,
     SplashScreen,

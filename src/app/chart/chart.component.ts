@@ -1,8 +1,8 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
-import { Chart } from 'chart.js';
+import {AfterContentInit, Component, Input, ViewChild} from '@angular/core';
 import {SensorGroup, DataService, SensorData} from '../services/data/data.service';
 import {Events} from '@ionic/angular';
 import {SensorConfig} from '../model';
+import {StockChart} from 'angular-highcharts';
 
 export interface DateRange {
   start: number;
@@ -14,7 +14,9 @@ export interface DateRange {
   templateUrl: './chart.component.html',
   styleUrls: ['./chart.component.scss']
 })
-export class ChartComponent implements OnInit {
+export class ChartComponent implements AfterContentInit {
+
+  theChart;
 
   @Input() data: SensorGroup;
   dateRange: DateRange = {
@@ -41,11 +43,59 @@ export class ChartComponent implements OnInit {
   constructor(public events: Events, public dataService: DataService) {
   }
 
-  ngOnInit() {
-    this.updateChart();
-    this.events.subscribe('updateData:' + this.data.dataId, () => {
-      this.updateChart();
-    });
+  ngAfterContentInit() {
+    // this.updateChart();
+    // this.events.subscribe('updateData:' + this.data.dataId, () => {
+    //   this.updateChart();
+    // });
+    setTimeout(() => {
+      this.theChart = new StockChart({
+        chart: {
+          events: {
+            load: function () {
+
+              // set up the updating of the chart each second
+              const series = this.series[0];
+              setInterval(function () {
+                const x = (new Date()).getTime(), // current time
+                    y = Math.round(Math.random() * 100);
+                series.addPoint([x, y], true, true);
+              }, 1000);
+            }
+          }
+        },
+
+        time: {
+          useUTC: false
+        },
+
+        title: {
+          text: this.data.name
+        },
+
+        series: [{
+          name: 'Random data',
+          data: (function () {
+            // generate an array of random data
+            const data = [];
+            let time = (new Date()).getTime();
+            let i =0;
+
+            for (i = -999; i <= 0; i += 1) {
+              data.push([
+                time + i * 1000,
+                Math.round(Math.random() * 100)
+              ]);
+            }
+              return data;
+          }())
+        }]
+      });
+    }, 1000);
+  }
+
+  add() {
+    this.theChart.addPoint(Math.floor(Math.random() * 50));
   }
 
   private updateChart(): void {
@@ -58,29 +108,29 @@ export class ChartComponent implements OnInit {
     const annotations = [];
     // TODO set annotations min max for each sensor
 
-    this.chart = new Chart(this.canvas.nativeElement, {
-      type: 'line',
-      data: chartData,
-      options: {
-        title: {
-          display: true,
-          text: this.data.name
-        },
-        animation: { duration: 0 },
-        scales: {
-          yAxes: [{
-            ticks: {
-              suggestedMin: chartBounds[0],
-              suggestedMax: chartBounds[1]
-            }
-          }],
-          xAxes: this.getOptionxAxes(this.dateRange)
-        },
-        annotation: {
-          annotations: annotations
-        }
-      }
-    });
+    // this.chart = new Chart(this.canvas.nativeElement, {
+    //   type: 'line',
+    //   data: chartData,
+    //   options: {
+    //     title: {
+    //       display: true,
+    //       text: this.data.name
+    //     },
+    //     animation: { duration: 0 },
+    //     scales: {
+    //       yAxes: [{
+    //         ticks: {
+    //           suggestedMin: chartBounds[0],
+    //           suggestedMax: chartBounds[1]
+    //         }
+    //       }],
+    //       xAxes: this.getOptionxAxes(this.dateRange)
+    //     },
+    //     annotation: {
+    //       annotations: annotations
+    //     }
+    //   }
+    // });
   }
 
   public updateDateRange(dateRange: DateRange): void {
