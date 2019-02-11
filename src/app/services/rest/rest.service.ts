@@ -1,9 +1,10 @@
 import { StorageService } from './../storage/storage.service';
-import { AppConfig, ApiEntry, HTTPMethod, UserForm, Email } from './../../model/index';
+import { AppConfig, ApiEntry, HTTPMethod, UserForm, Email, SensorConfig } from './../../model/index';
 import { Injectable, APP_INITIALIZER } from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import { ConfigService } from '../config/config.service';
+import { SensorGroup } from '../data/data.service';
 
 @Injectable({
   providedIn: 'root'
@@ -146,8 +147,14 @@ export class RestService {
     return this.http.post(url, userForm, {headers: this.headers});
   }
 
+
   getEmails() {
     let url = this.apiUrl + this.EMAIL_ENDPOINT;
+    return this.http.get(url, {headers: this.headers});
+  }
+
+  getEmail(mail: Email) {
+    let url = this.apiUrl + this.EMAIL_ENDPOINT + '/' + mail._id;
     return this.http.get(url, {headers: this.headers});
   }
 
@@ -173,6 +180,25 @@ export class RestService {
     return this.http.get(url, {headers: this.headers});
   }
 
+  getSensorsGroup(sensorGroup: SensorGroup) {
+    let url = this.apiUrl + this.SENSORS_GROUP_ENDPOINT + '/' + sensorGroup._id;
+    return this.http.get(url, {headers: this.headers});
+  }
+
+  createSensorsGroup(sensorGroupForm: SensorGroupForm) {
+    let url = this.apiUrl + this.SENSORS_GROUP_ENDPOINT;
+    return this.http.post(url, sensorGroupForm, {headers: this.headers});
+  }
+
+  updateSensorsGroup(sensorGroup: SensorGroup) {
+    let url = this.apiUrl + this.SENSORS_GROUP_ENDPOINT + '/' + sensorGroup._id;
+    return this.http.put(url, sensorGroup, {headers: this.headers});
+  }
+
+  deleteSensorsGroup(sensorGroup: SensorGroup) {
+    let url = this.apiUrl + this.SENSORS_GROUP_ENDPOINT + '/' + sensorGroup._id;
+    return this.http.delete(url, {headers: this.headers});
+  }
 
 
   getSensorsConfigs() {
@@ -180,18 +206,55 @@ export class RestService {
     return this.http.get(url, {headers: this.headers});
   }
 
+  getSensorsConfig(sensorConfig: SensorConfig) {
+    let url = this.apiUrl + this.SENSORS_CONFIG_ENDPOINT + '/' + sensorConfig._id;
+    return this.http.get(url, {headers: this.headers});
+  }
+
+  createSensorsConfig(sensorConfigForm: SensorConfigForm) {
+    let url = this.apiUrl + this.SENSORS_CONFIG_ENDPOINT;
+    return this.http.post(url, sensorConfigForm, {headers: this.headers});
+  }
+
+  updateSensorsConfig(sensorConfig: SensorConfig) {
+    let url = this.apiUrl + this.SENSORS_CONFIG_ENDPOINT + '/' + sensorConfig._id;
+    return this.http.put(url, sensorConfig, {headers: this.headers});
+  }
+
+  deleteSensorsConfig(sensorConfig: SensorConfig) {
+    let url = this.apiUrl + this.SENSORS_CONFIG_ENDPOINT + '/' + sensorConfig._id;
+    return this.http.delete(url, {headers: this.headers});
+  }
 
 
   getSensorsData() {
     let url = this.apiUrl + this.SENSORS_DATA_ENDPOINT;
     return this.http.get(url, {headers: this.headers});
   }
+  
 
 }
 
 export interface MailForm {
   email: string
 };
+
+export interface SensorConfigForm {
+  sensorName?: string;
+  sensorGroupId?: string;
+  dataId?: string;
+  dataSource?: string;
+  unit?: string;
+  minThresholdValue?: number;
+  minThresholdAlertMessage?: string;
+  maxThresholdValue?: number;
+  maxThresholdAlertMessage?: string;
+}
+
+export interface SensorGroupForm {
+  name: string; // ex: Temperature de l'eau
+  sensorsId: Set<string>; // sensorId set
+}
 
 export interface Param {
   name: string;
