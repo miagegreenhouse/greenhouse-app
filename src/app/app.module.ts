@@ -26,6 +26,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {DataService} from './services/data/data.service';
 
+
 export function initApp(configService: ConfigService, restService: RestService) {
   return () => {
     return new Promise((resolve, reject) => {

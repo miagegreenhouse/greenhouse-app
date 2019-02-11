@@ -1,0 +1,46 @@
+<ion-content padding>
+    <form [formGroup]="sensorForm" (ngSubmit)="validateForm()">
+          <ion-item>
+              <ion-label position="floating">Nom du capteur</ion-label>
+              <ion-input color="primary" name="nomCapteur" formControlName="nomCapteur"
+            placeholder="Température de l'eau"></ion-input>
+          </ion-item>
+          <ion-item>
+              <ion-label position="floating">Unité</ion-label>
+              <ion-input color="primary" name="unite" formControlName="unite"
+              placeholder="Unité"></ion-input>
+          </ion-item>
+          <ion-item>
+              <ion-label position="floating">Seuil Minimum</ion-label>
+              <ion-input color="primary" name="seuilMini" formControlName="seuilMini" 
+               placeholder="Seuil minimum"></ion-input>
+          </ion-item>
+          <div *ngIf="!errorTreshold"
+          class="alert-danger">
+        Attention le seuil minimum doit être inférieur au seuil maximum
+        </div>
+          <ion-item>
+              <ion-label position="floating">Message alerte (Seuil Minimum)</ion-label>
+              <ion-input color="primary" name="messageSeuilMini" formControlName="messageSeuilMini"
+               placeholder="Message seuil minimum"></ion-input>
+          </ion-item>
+          <ion-item>
+              <ion-label position="floating" >Seuil Maximum</ion-label>
+              <ion-input  color="primary" name="seuilMaxi" formControlName="seuilMaxi"
+               placeholder="Seuil maximum"></ion-input>
+          </ion-item>
+        <div *ngIf="!errorTreshold"
+          class="alert alert-danger">
+        Attention le seuil minimum doit être inférieur au seuil maximum
+        </div>
+          <ion-item>
+              <ion-label position="floating">Message alerte (Seuil Maximum)</ion-label>
+              <ion-input color="primary" name="messageSeuilMaxi" formControlName="messageSeuilMaxi"
+               placeholder="Message seuil maximum"></ion-input>
+          </ion-item>
+          <ion-item>
+              <ion-button (click)="sensorDismiss()">Annuler</ion-button>
+              <ion-button type="submit" [disabled]="!sensorForm.valid">Valider</ion-button>
+          </ion-item>
+    </form>
+</ion-content>

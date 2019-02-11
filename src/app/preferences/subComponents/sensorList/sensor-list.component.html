@@ -1,25 +1,23 @@
-<ion-card>
-  <ion-card-content>
+<ion-title>Capteurs</ion-title>
+<div id="sensorContainers">
+  <ion-grid ion-grid-padding >  
     <ion-row>
-      <ion-card-title>Capteurs</ion-card-title>
-      <ion-row>
-        <ion-col><ion-input text-center readonly >Nom</ion-input></ion-col>
-        <ion-col><ion-input readonly >Unité</ion-input> </ion-col>
-        <ion-col><ion-input readonly >Seuil min</ion-input></ion-col>
-        <ion-col><ion-input readonly >Seuil max</ion-input></ion-col>
-        <ion-col></ion-col>
-      </ion-row>
-      <ion-row *ngFor="let sensor of dataService.getSensorsConfig()">
-        <ion-col><ion-input readonly >{{sensor.sensorName}}</ion-input></ion-col>
-        <ion-col><ion-input readonly >{{sensor.unit || 'Non définie'}}</ion-input> </ion-col>
-        <ion-col><ion-input readonly >{{(sensor.minThresholdValue || sensor.minThresholdValue === 0) || 'Non définie'}}</ion-input></ion-col>
-        <ion-col><ion-input readonly >{{(sensor.maxThresholdValue || sensor.maxThresholdValue === 0) || 'Non définie'}}</ion-input></ion-col>
-        <ion-col>
-          <ion-fab-button class="sensorFabButton">
-            <ion-icon name="create"></ion-icon>
-          </ion-fab-button>
-        </ion-col>
-      </ion-row>
+      <ion-col><ion-input text-center readonly >Nom</ion-input></ion-col>
+      <ion-col><ion-input readonly >Unité</ion-input> </ion-col>
+      <ion-col><ion-input readonly >Seuil min</ion-input></ion-col> 
+      <ion-col><ion-input readonly >Seuil max</ion-input></ion-col>
+      <ion-col></ion-col>
     </ion-row>
-  </ion-card-content>
-</ion-card>
+    <ion-row *ngFor="let sensor of dataService.getSensorsConfig()">
+      <ion-col><ion-input readonly >{{sensor.sensorName}}</ion-input></ion-col>
+      <ion-col><ion-input readonly >{{sensor.unit || 'Non définie'}}</ion-input> </ion-col>
+      <ion-col><ion-input readonly >{{(sensor.minThresholdValue || sensor.minThresholdValue === 0) || 'Non définie'}}</ion-input></ion-col>
+      <ion-col><ion-input readonly >{{(sensor.maxThresholdValue || sensor.maxThresholdValue === 0) || 'Non définie'}}</ion-input></ion-col>
+      <ion-col>
+        <ion-fab-button (click)="editSensor(sensor)" class="sensorFabButton">
+          <ion-icon name="create"></ion-icon>
+        </ion-fab-button>
+      </ion-col>
+    </ion-row>  
+  </ion-grid>
+</div>

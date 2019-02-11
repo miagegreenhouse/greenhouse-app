@@ -1,6 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,Input } from '@angular/core';
+import { Events, ModalController } from '@ionic/angular';
 import { DataService} from '../../../services/data/data.service';
 import { SensorConfig } from 'src/app/model';
+import { EditSensorComponent } from '../edit-sensor/edit-sensor.component';
+
+
 
 @Component({
   selector: 'app-sensor-list',
@@ -9,14 +13,26 @@ import { SensorConfig } from 'src/app/model';
 })
 export class SensorListComponent implements OnInit {
 
-  sensorEdit: SensorConfig;
 
-  constructor(public dataService: DataService) {}
+  sensorList: SensorConfig[]= [];
+
+  constructor(public events: Events, public dataService: DataService, public modalController: ModalController) {}
 
   ngOnInit() {
   }
 
-  editSensor() {
+  /*editSensor() {
     return this.dataService.editSensor(this.sensorEdit).subscribe(() => {});
+  }*/
+
+  async editSensor(sensor:SensorConfig) {
+    const modal = await this.modalController.create({
+      component: EditSensorComponent,
+      cssClass: 'my-custom-modal-css',
+      componentProps: {
+        'sensor': sensor,
+      }
+    });
+    return await modal.present();
   }
 }

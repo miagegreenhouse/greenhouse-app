@@ -302,15 +302,13 @@ export class DataService {
 
       // Remove sensor from previous data
       const oldSensorConfig = this.sensorsConfigs[sensorConfigEdit._id];
-      if (oldSensorConfig) {
-        this.sensorsGroups[oldSensorConfig._id].sensorsId.delete(oldSensorConfig.dataId);
-      }
 
       // Add sensor to new data
       this.sensorsConfigs[sensorConfigEdit._id] = sensorConfigEdit;
-      this.sensorsGroups[sensorConfigEdit.dataId].sensorsId.add(sensorConfigEdit._id);
 
-      observer.next(sensorConfigEdit);
+      this.restService.updateSensorsConfig(sensorConfigEdit).subscribe(() => {
+        observer.next(sensorConfigEdit);
+      }, observer.error);
       this.toastService.showToast(sensorConfigEdit.sensorName + ' édité', 'success', 3000);
     });
   }
