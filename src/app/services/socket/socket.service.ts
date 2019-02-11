@@ -4,27 +4,27 @@ import * as socketIo from 'socket.io-client';
 import { Observable } from 'rxjs';
 
 import { Events } from '@ionic/angular';
-import {DataMessage} from '../data/data.service';
+import {AlertMessage, DataMessage} from '../data/data.service';
 
 export enum WebSocketProtocol {
-    WS="ws",
-    WSS="wss"
-};
+    WS = 'ws',
+    WSS = 'wss'
+}
 
 export enum OpCodes {
-	IDENTIFICATION= 0x00,
-	ACTION= 0x01,
-	MQTT_MSG= 0x02
-};
+	IDENTIFICATION = 0x00,
+	ACTION = 0x01,
+	MQTT_MSG = 0x02
+}
 
 export enum MessageType {
-	DATA='data',
-	ALERT='alert'
+	DATA = 'data',
+	ALERT = 'alert'
 }
 
 export interface Message {
 	type: MessageType;
-	data: DataMessage; // TODO : DataMessage | AlertMessage | ...
+	data: DataMessage | AlertMessage;
 }
 
 @Injectable({
@@ -34,8 +34,7 @@ export class SocketService {
 
 	private socket;
 
-	constructor(
-	) {}
+	constructor(public events: Events) {}
 
 	/**
 	 * Initialisation of the socket
@@ -87,7 +86,9 @@ export class SocketService {
 	 */
 	onMessage = (): Observable<Message> => {
 		return new Observable(observer => {
-			this.socket.on('message', (message: any) => observer.next(JSON.parse(message.data)));
+			this.socket.on('message', (message: Message) => {
+				this.events.publish(message.type, message.data);
+			});
 		});
 	}
 

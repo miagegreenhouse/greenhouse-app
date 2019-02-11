@@ -1,7 +1,7 @@
 <ion-card>
   <ion-card-header>
     <ion-card-title text-center>
-      <ion-badge *ngFor="let sensorId of getCaptorsId()"
+      <ion-badge *ngFor="let sensorId of getSensorsId()"
                  [style.font-size]="'1.5em'"
                  [style.background]="getColor(sensorId)"
                  margin-start margin-end >{{getLastValue(sensorId)}}</ion-badge>

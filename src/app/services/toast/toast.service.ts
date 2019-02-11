@@ -14,16 +14,18 @@ export class ToastService {
    * Show a toast with a text, a color and a callback function when the toast is dismissed
    * @param {string} text The text to show
    * @param {string} color The color of the toast
+   * @param {number} duration on the toast
    * @param {function} onDismiss The callback
    * @memberof ToastService
    */
-   showToast(text: string, color?: string, onDismiss?: () => any) {
+   showToast(text: string, color?: string, duration?: number, onDismiss?: () => any) {
     this.toastController.create({
-      color: (color ? color : 'danger'),
-      message: text,
-      position: 'bottom',
-      showCloseButton: true,
-      closeButtonText: 'Ok'
+        color: (color ? color : 'danger'),
+        message: text,
+        position: 'bottom',
+        showCloseButton: true,
+        closeButtonText: 'Ok',
+        duration: duration
     }).then(toast => {
       toast.present();
       if (onDismiss) {

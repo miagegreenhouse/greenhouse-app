@@ -1,18 +1,16 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>Preferences</ion-title>
-    <ion-icon slot="end" name="close" [routerDirection]="'root'" [routerLink]="'/home'"></ion-icon>
+    <ion-button color="light" slot="end" [routerDirection]="'root'" [routerLink]="'/home'">
+      <ion-icon slot="icon-only" name="close"></ion-icon>
+    </ion-button>
   </ion-toolbar>
 </ion-header>
 
 <ion-content padding>
-  <div class="preferencesSection">
-    <app-sensor-list >
-    </app-sensor-list>
-  </div>
+  <app-sensor-list >
+  </app-sensor-list>
 
-  <div class="preferencesSection">
-    <app-alert >
-    </app-alert>
-  </div>
+  <app-alert >
+  </app-alert>
 </ion-content>

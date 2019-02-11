@@ -13,49 +13,17 @@ import { EditSensorComponent } from '../edit-sensor/edit-sensor.component';
 })
 export class SensorListComponent implements OnInit {
 
-  sensor: SensorConfig;
 
   sensorList: SensorConfig[]= [];
 
   constructor(public events: Events, public dataService: DataService, public modalController: ModalController) {}
 
   ngOnInit() {
-    this.fillSensors();
-    this.sensorList.forEach(element => {
-      this.events.subscribe('updateData:' + element.dataId, () => {
-        this.fillSensors();
-      });
-    });
-  }
-  
-  fillSensors(){
-    this.sensorList = [];
-    this.dataService.getDatas().forEach(data =>{
-      Object.keys(data.sensor).forEach(sensorID => {
-        const sensor = data.sensor[sensorID]
-        let newConfig: SensorConfig;
-        newConfig = {
-          id : sensor.sensorId,
-          dataId: data.dataId,
-          name : sensor.nom,
-          maxThresholdValue : data.max,
-          minThresholdValue : data.min,
-
-          //TODO remplir ces données lorsque le modèle est à jour
-          unit : '',
-          minThresholdAlertMessage : '',
-          maxThresholdAlertMessage : ''
-        };
-        this.sensorList.push(newConfig);
-      });
-    });
   }
 
-  ngOnDestroy() {
-    /*this.events.unsubscribe((response: string) => {
-      
-    });*/
-  }
+  /*editSensor() {
+    return this.dataService.editSensor(this.sensorEdit).subscribe(() => {});
+  }*/
 
   async editSensor(sensor:SensorConfig) {
     const modal = await this.modalController.create({

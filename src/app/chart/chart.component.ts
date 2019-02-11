@@ -1,9 +1,14 @@
 import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import { Chart } from 'chart.js';
-import {Sensor, Data} from '../services/data/data.service';
+import {SensorGroup, DataService, SensorData} from '../services/data/data.service';
 import {Events} from '@ionic/angular';
+import {SensorConfig} from '../model';
 
-// @ts-ignore
+export interface DateRange {
+  start: number;
+  end: number;
+}
+
 @Component({
   selector: 'app-chart',
   templateUrl: './chart.component.html',
@@ -11,8 +16,11 @@ import {Events} from '@ionic/angular';
 })
 export class ChartComponent implements OnInit {
 
-  @Input() data: Data;
-  dateRange = 21600000; // Default value is 6h
+  @Input() data: SensorGroup;
+  dateRange: DateRange = {
+    start: new Date().getTime() - 180000, // Default value is 3min
+    end: new Date().getTime()
+  };
   source = null;
 
   chart = null;
@@ -30,17 +38,17 @@ export class ChartComponent implements OnInit {
 
   @ViewChild('chart') canvas;
 
-  constructor(public events: Events) {
+  constructor(public events: Events, public dataService: DataService) {
   }
 
   ngOnInit() {
     this.updateChart();
-    this.events.subscribe('updateData:' + this.data.dataId, () => {
+    this.events.subscribe('updateData:' + this.data._id, () => {
       this.updateChart();
     });
   }
 
-  private updateChart(): void {
+  public updateChart(): void {
     const chartData: ChartData = this.getChartData();
 
     // In order to be more readable add a paddingPercent padding top and bottom in chart
@@ -48,12 +56,7 @@ export class ChartComponent implements OnInit {
 
     // Add horizontal lines for min and max alert values in chart
     const annotations = [];
-    if (this.data.min !== null) {
-      annotations.push(this.getAnnotation(this.data.min, true));
-    }
-    if (this.data.max !== null) {
-      annotations.push(this.getAnnotation(this.data.max, false));
-    }
+    // TODO set annotations min max for each sensor
 
     this.chart = new Chart(this.canvas.nativeElement, {
       type: 'line',
@@ -80,9 +83,9 @@ export class ChartComponent implements OnInit {
     });
   }
 
-  public updateDateRange(newDateRange: number): void {
-    this.chart.options.scales.xAxes = this.getOptionxAxes(newDateRange);
-    this.chart.update();
+  public updateDateRange(dateRange: DateRange): void {
+    this.dateRange = dateRange;
+    this.updateChart();
   }
 
   public updateSource(newSource: string): void {
@@ -94,17 +97,18 @@ export class ChartComponent implements OnInit {
     const chartData: ChartData = {
       datasets: []
     };
-    Object.keys(this.data.sensor).forEach(sensorId => {
-      const sensor: Sensor = this.data.sensor[sensorId];
+    this.getSensorsId().forEach(sensorId => {
+      const sensorDatas: SensorData[] = this.dataService.getSensorData(sensorId);
+      const sensorConfig: SensorConfig = this.dataService.getSensorConfig(sensorId);
       const dataset: Dataset = {
-        label: sensor.source,
+        label: sensorConfig.dataSource,
         borderColor: this.getColor(sensorId),
         data: []
       };
-      if (this.source && this.source !== sensor.source) {
+      if (this.source && this.source !== sensorConfig.dataSource) {
         return;
       }
-      sensor.data.forEach(data => {
+      sensorDatas.forEach(data => {
         dataset.data.push({
           t: new Date(data.timestamp),
           y: data.value
@@ -115,12 +119,12 @@ export class ChartComponent implements OnInit {
     return chartData;
   }
 
-  private getOptionxAxes(dateRange: number) {
+  private getOptionxAxes(dateRange: DateRange) {
     return [{
       type: 'time',
       time: {
-        min: new Date(new Date().getTime() - dateRange),
-        max: new Date()
+        min: dateRange.start,
+        max: dateRange.end
       }
     }];
   }
@@ -145,8 +149,17 @@ export class ChartComponent implements OnInit {
     if (chartData.datasets.length === 0 && chartData.datasets[0].data.length === 0) {
       return [0, 0];
     }
-    const initValue = chartData.datasets[0].data[0].y;
-    const minMax: number[] = [initValue, initValue];
+    const minMax: number[] = [Infinity, -Infinity];
+
+    for (const sensorId of this.getSensorsId()) {
+      const sensorConfig = this.dataService.getSensorConfig(sensorId);
+      if (sensorConfig.minThresholdValue != null) {
+        minMax[0] = Math.min(sensorConfig.minThresholdValue, minMax[0]);
+      }
+      if (sensorConfig.minThresholdValue != null) {
+        minMax[1] = Math.max(sensorConfig.maxThresholdValue, minMax[1]);
+      }
+    }
 
     chartData.datasets.forEach(dataset => {
       dataset.data.forEach(data => {
@@ -154,8 +167,6 @@ export class ChartComponent implements OnInit {
         minMax[1] = Math.max(data.y, minMax[1]);
       });
     });
-    minMax[0] = Math.min(this.data.min, minMax[0]);
-    minMax[1] = Math.max(this.data.max, minMax[1]);
 
     return minMax;
   }
@@ -180,16 +191,16 @@ export class ChartComponent implements OnInit {
     };
   }
 
-  public getCaptorsId(): string[] {
-    return Object.keys(this.data.sensor);
+  public getSensorsId(): string[] {
+    return this.dataService.getDataSensorsId(this.data._id);
   }
 
   public getLastValue(sensorId: string): string {
-    const sensor: Sensor = this.data.sensor[sensorId];
-    if (sensor.data.length === 0 ) {
+    const sensorData: SensorData[] = this.dataService.getSensorData(sensorId);
+    if (!sensorData || sensorData.length === 0 ) {
       return 'no data';
     }
-    return sensor.data[sensor.data.length - 1].value.toFixed(2);
+    return sensorData[sensorData.length - 1].value.toFixed(2);
   }
 
   public getColor(sensorId: string): string {

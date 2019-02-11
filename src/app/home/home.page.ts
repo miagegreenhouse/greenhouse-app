@@ -1,9 +1,10 @@
 import {Component, QueryList, ViewChildren} from '@angular/core';
 import {ToastService} from '../services/toast/toast.service';
-import {ChartComponent} from '../chart/chart.component';
-import {DataService} from '../services/data/data.service';
-import {Events} from '@ionic/angular';
-import {Message, MessageType} from '../services/socket/socket.service';
+import {ChartComponent, DateRange} from '../chart/chart.component';
+import {AlertMessage, DataMessage, DataService} from '../services/data/data.service';
+import {Events, ModalController} from '@ionic/angular';
+import {MessageType} from '../services/socket/socket.service';
+import {DateRangePickerComponent} from '../component/date-range-picker/date-range-picker.component';
 
 @Component({
   selector: 'app-home',
@@ -43,15 +44,43 @@ export class HomePage {
   dateRangeSelected = 0;
   sourceSelected = 'Toutes';
 
+  customDateRange: DateRange = {
+    start: new Date().getTime() - (1000 * 60 * 60 * 24 * 90),
+    end: new Date().getTime()
+  };
+
   constructor(public toastService: ToastService,
               public dataService: DataService,
+              public modalCtrl: ModalController,
               public events: Events) {
   }
 
   onChangeDateRange() {
+    if (this.dateRangeSelected === -1) {
+      const modal = this.openModal();
+      return;
+    }
     this.charts.forEach(chart => {
-      chart.updateDateRange(this.dateRange[this.dateRangeSelected].timestamp);
+      chart.updateDateRange({
+        start: new Date().getTime() - this.dateRange[this.dateRangeSelected].timestamp,
+        end: new Date().getTime()
+      });
     });
+  }
+
+  async openModal() {
+    const modal = await this.modalCtrl.create({
+      component: DateRangePickerComponent,
+      componentProps: {
+        'dateRange': this.customDateRange
+      }
+    });
+    modal.onDidDismiss().then(() => {
+      this.charts.forEach(chart => {
+        chart.updateDateRange(this.customDateRange);
+      });
+    });
+    return await modal.present();
   }
 
   onChangeSource() {
@@ -66,22 +95,35 @@ export class HomePage {
     return sources;
   }
 
+  // TODO: remove (and HTML) just Mock
   addData() {
-    const dataId = (Math.random() > 0.5 ? '1' : '2');
-    const sensorId = (Math.random() > 0.5 ? '1' : '2');
-    const data = {
+
+  //   const dataId = (Math.random() > 0.5 ? '1' : '2');
+  //   let sensorId = '';
+  //   if (dataId === '1') sensorId = (Math.random() > 0.5 ? '1' : '2');
+  //   else if (dataId === '2') sensorId = (Math.random() > 0.5 ? '3' : '4');
+  //   const message: DataMessage = {};
+  //   message[sensorId] = [
+  //     {
+  //       timestamp: new Date().getTime(),
+  //       value: Math.random() * 30
+  //     }
+  //   ];
+  //   this.events.publish(MessageType.DATA, message);
+  }
+
+  // TODO: remove (and HTML) just Mock
+  addAlert() {
+    const alert: AlertMessage = {
+      message: 'Random Alert',
+      alertId: '' + (Object.keys(this.dataService.alerts).length + 100),
+      acquit: null,
+      dataId: Object.keys(this.dataService.sensorsGroups)[0],
+      sensorId: Object.keys(this.dataService.sensorsConfigs)[0],
       timestamp: new Date().getTime(),
       value: Math.random()
     };
-    const dataCaptor = {};
-    dataCaptor[sensorId] = data;
-    const dataMessage = {};
-    dataMessage[dataId] = dataCaptor;
-    const message: Message = {
-      type: MessageType.DATA,
-      data: dataMessage
-    };
-    this.events.publish('data', message);
+    this.events.publish(MessageType.ALERT, alert);
   }
 }
 

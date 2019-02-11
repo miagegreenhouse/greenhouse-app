@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavParams, ModalController } from '@ionic/angular';
 import { SensorConfig } from 'src/app/model';
 import {Validators, FormBuilder, FormGroup, ReactiveFormsModule, FormControl } from '@angular/forms';
-import { minValueValidator } from './seuilValidator';
+import { DataService} from '../../../services/data/data.service';
 
 
 
@@ -16,13 +16,14 @@ export class EditSensorComponent implements OnInit {
 
   sensorForm: FormGroup;
   sensor:SensorConfig;
+  sensorEdit:SensorConfig;
   errorTreshold:boolean = true;
 
-  constructor(public navParams: NavParams, public modalController: ModalController, private formBuilder: FormBuilder) {
+  constructor(public navParams: NavParams, public dataService: DataService, public modalController: ModalController, private formBuilder: FormBuilder) {
     this.sensor = this.navParams.get('sensor');
 
     this.sensorForm = this.formBuilder.group({
-      nomCapteur: [this.sensor.name, Validators.required],
+      nomCapteur: [this.sensor.sensorName, Validators.required],
       unite: [this.sensor.unit, Validators.required],
       seuilMini: [this.sensor.minThresholdValue, Validators.required],
       messageSeuilMini: [this.sensor.minThresholdAlertMessage, Validators.required],
@@ -50,8 +51,18 @@ export class EditSensorComponent implements OnInit {
   validateForm(){
     this.controlThreshold();
     if(this.errorTreshold){
-      //TODO : Faire appel au service pour modifier le capteur      
+
+      this.sensor.sensorName = this.sensorForm.value['nomCapteur'];
+      this.sensor.unit = this.sensorForm.value['unite'];
+      this.sensor.minThresholdValue = this.sensorForm.value['seuilMini'];
+      this.sensor.minThresholdAlertMessage = this.sensorForm.value['messageSeuilMini'];
+      this.sensor.maxThresholdValue = this.sensorForm.value['seuilMaxi'];
+      this.sensor.maxThresholdAlertMessage = this.sensorForm.value['messageSeuilMaxi'];
+
+
       this.modalController.dismiss(); // Enlever NgModel du template HTML
+      return this.dataService.editSensor(this.sensor).subscribe(() => {});
+
     }
   }
 

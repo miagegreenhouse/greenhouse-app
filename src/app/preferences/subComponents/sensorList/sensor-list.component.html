@@ -8,16 +8,16 @@
       <ion-col><ion-input readonly >Seuil max</ion-input></ion-col>
       <ion-col></ion-col>
     </ion-row>
-    <ion-row *ngFor="let sensor of sensorList">
-      <ion-col><ion-input readonly >{{sensor.name}}</ion-input></ion-col>
-      <ion-col><ion-input readonly >{{sensor.unit}}</ion-input> </ion-col>
-      <ion-col><ion-input readonly >{{sensor.minThresholdValue}}</ion-input></ion-col> 
-      <ion-col><ion-input readonly >{{sensor.maxThresholdValue}}</ion-input></ion-col>
-      <ion-col> 
-        <ion-fab-button (click)=editSensor(sensor) class="sensorFabButton">
+    <ion-row *ngFor="let sensor of dataService.getSensorsConfig()">
+      <ion-col><ion-input readonly >{{sensor.sensorName}}</ion-input></ion-col>
+      <ion-col><ion-input readonly >{{sensor.unit || 'Non définie'}}</ion-input> </ion-col>
+      <ion-col><ion-input readonly >{{(sensor.minThresholdValue || sensor.minThresholdValue === 0) || 'Non définie'}}</ion-input></ion-col>
+      <ion-col><ion-input readonly >{{(sensor.maxThresholdValue || sensor.maxThresholdValue === 0) || 'Non définie'}}</ion-input></ion-col>
+      <ion-col>
+        <ion-fab-button (click)="editSensor(sensor)" class="sensorFabButton">
           <ion-icon name="create"></ion-icon>
-        </ion-fab-button>   
+        </ion-fab-button>
       </ion-col>
-    </ion-row>   
+    </ion-row>  
   </ion-grid>
 </div>

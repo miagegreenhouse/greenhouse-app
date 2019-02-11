@@ -1,41 +1,52 @@
 export interface User {
-  _id: string,
-  email: string
-};
+  _id: string;
+  email: string;
+}
 
 export interface UserForm {
-  email: string,
-  password: string
-};
+  email: string;
+  password: string;
+}
 
 export interface AppConfig {
-  debuggin: boolean,
+  debuggin: boolean;
   restApi: {
     [key: string]: ApiEntry
-  },
-  host: string,
-  method: string
-};
+  };
+  host: string;
+  method: string;
+}
 
 export interface ApiEntry {
-  url: string,
-  method: HTTPMethod
-};
+  url: string;
+  method: HTTPMethod;
+}
 
 export enum HTTPMethod {
-  GET="GET",
-  POST="POST",
-  PUT="PUT",
-  DELETE="DELETE"
-};
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  DELETE = 'DELETE'
+}
 
 export interface SensorConfig {
-  id: string,
-  dataId: string,
-  name: string,
-  unit: string,
-  minThresholdValue: number,
-  minThresholdAlertMessage: string,
-  maxThresholdValue: number,
-  maxThresholdAlertMessage: string
+  _id: string;
+  sensorName?: string;
+  sensorGroupId?: string;
+  dataId?: string;
+  dataSource?: string;
+  unit?: string;
+  minThresholdValue?: number;
+  minThresholdAlertMessage?: string;
+  maxThresholdValue?: number;
+  maxThresholdAlertMessage?: string;
+  createdDate?: string;
+  lastModifiedDate?: string;
+}
+
+export interface Email {
+  _id: string,
+  createdDate: string,
+  email: string,
+  lastModifiedDate: string
 }
