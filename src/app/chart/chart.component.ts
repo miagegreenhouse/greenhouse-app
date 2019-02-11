@@ -1,7 +1,6 @@
 import {AfterContentInit, Component, Input, ViewChild} from '@angular/core';
-import {SensorGroup, DataService, SensorData} from '../services/data/data.service';
+import {SensorGroup, DataService} from '../services/data/data.service';
 import {Events} from '@ionic/angular';
-import {SensorConfig} from '../model';
 import {StockChart} from 'angular-highcharts';
 
 export interface DateRange {
@@ -50,19 +49,23 @@ export class ChartComponent implements AfterContentInit {
   }
 
   public updateChart(): void {
+    const self = this;
     this.theChart = new StockChart({
       chart: {
         events: {
-          setExtremes: function(event) {
-            // log the min and max of the primary, datetime x-axis
-            console.log(event.xAxis[0].min);
-            console.log(event.xAxis[0].max);
-            console.log(event.yAxis[0].min, event.yAxis[0].max);
+          load: function() {
+            let chart = this;
+            self.events.subscribe('resizeChart', function(dataResize) {
+              if (dataResize !== self.data._id) {
+                chart.xAxis[0].setExtremes(dataResize.min, dataResize.max);
+              }
+            });
           }
         }
       },
 
       yAxis: {
+        events: {},
         title: {
           text: 'Exchange rate'
         },
@@ -88,14 +91,18 @@ export class ChartComponent implements AfterContentInit {
       xAxis: {
         events: {
           setExtremes: function (e) {
-            // TODO : date range selected
-            console.log(e);
+            if (e.trigger !== 'navigator') return;
+            self.events.publish('resizeChart', {
+              min: e.min,
+              max: e.max,
+              dataResize: self.data._id
+            });
           }
         }
       },
 
       rangeSelector: {
-        selected: 1
+        enabled: false
       },
 
       title: {
