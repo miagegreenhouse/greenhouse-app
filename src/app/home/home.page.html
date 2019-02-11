@@ -30,6 +30,6 @@
     <ion-button (click)="addData()">Add Data</ion-button>
     <ion-button (click)="addAlert()">Trigger Alert</ion-button>
   </ion-row>
-  <app-chart *ngFor="let data of dataService.getDatas()"
+  <app-chart *ngFor="let data of dataService.getSensorGroups()"
              [data]="data"></app-chart>
 </ion-content>
