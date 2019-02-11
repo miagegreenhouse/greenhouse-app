@@ -12,13 +12,12 @@ export interface DataMessage {
 
 export interface SensorGroup {
   _id: string;
-  name: string; // ex: Temperature de l'eau
+  name: string; // ex : Temperature de l'eau
   sensorsId: Set<string>; // sensorId set
 }
 
 export interface SensorData {
-  sensorid: string;
-  timestamp: number;
+  time: string;
   value: number;
 }
 
@@ -43,7 +42,7 @@ export class DataService {
 
   sensorsGroups: { [key: string]: SensorGroup } = {}; // dataId => SensorGroup
   sensorsConfigs: {[key: string]: SensorConfig } = {}; // sensorId => SensorConfig
-  sensorsDatas: {[key: string]: SensorData[] } = {}; // sensorId => SensorData[]
+  sensorsDatas: {[key: string]: number[][] } = {}; // sensorId => [time, value][]
   sources: Set<string> = new Set();
 
   alerts: { [key: string]: AlertMessage} = {}; // alertId => AlertMessage
@@ -85,14 +84,12 @@ export class DataService {
     })
     .then(() => {
       return new Promise((resolve, reject) => {
-        this.restService.getSensorsData().subscribe((sensorsData: any[]) => {
-          sensorsData.forEach(sensorData => {
-            let sensorId = sensorData.sensorid;
-            const sensorDatas = this.sensorsDatas[sensorId];
-            sensorDatas.push(<SensorData> {
-              sensorid: sensorData.sensorid,
-              timestamp: parseInt(sensorData.time),
-              value: parseInt(sensorData.value)
+        this.restService.getSensorsData().subscribe((sensorsData: any) => {
+          console.log(sensorsData);
+          Object.keys(sensorsData).forEach(sensorId => {
+            const datas = this.sensorsDatas[sensorId];
+            sensorsData[sensorId].forEach(data => {
+              datas.push([parseInt(data.time), data.value]);
             });
           });
           resolve();
@@ -113,13 +110,13 @@ export class DataService {
       // For each sensor in data
       Object.keys(dataMessage).forEach(sensorId => {
         const messageSensor = dataMessage[sensorId];
-        if (this.sensorsDatas[sensorId] === undefined) { // if object does not exists in map
+        if (!this.sensorsDatas[sensorId]) { // if object does not exists in map
           this.sensorsDatas[sensorId] = [];
         }
         const sensorDatas = this.sensorsDatas[sensorId];
 
         dataMessage[sensorId].forEach(sensorData => {
-          sensorDatas.push(sensorData);
+          sensorDatas.push([parseInt(sensorData.time), sensorData.value]);
         });
 
         this.events.publish('updateData:' + this.sensorsConfigs[sensorId].dataId);
@@ -138,7 +135,7 @@ export class DataService {
     this.mockData();
   }
 
-  getDatas(): SensorGroup[] {
+  getSensorGroups(): SensorGroup[] {
     return Object.values(this.sensorsGroups);
   }
 
@@ -166,8 +163,8 @@ export class DataService {
     return Array.from(this.mails);
   }
 
-  getSensorData(sensorId: string): SensorData[] {
-    const sensorsDatas: SensorData[] = this.sensorsDatas[sensorId];
+  getSensorData(sensorId: string): number[][] {
+    const sensorsDatas: number[][] = this.sensorsDatas[sensorId];
     return sensorsDatas ? sensorsDatas : [];
   }
 
@@ -317,7 +314,9 @@ export class DataService {
       // Add sensor to new data
       this.sensorsConfigs[sensorConfigEdit._id] = sensorConfigEdit;
 
-      observer.next(sensorConfigEdit);
+      this.restService.updateSensorsConfig(sensorConfigEdit).subscribe(() => {
+        observer.next(sensorConfigEdit);
+      }, observer.error);
       this.toastService.showToast(sensorConfigEdit.sensorName + ' édité', 'success', 3000);
     });
   }
