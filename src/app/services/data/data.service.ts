@@ -309,7 +309,9 @@ export class DataService {
       // Add sensor to new data
       this.sensorsConfigs[sensorConfigEdit._id] = sensorConfigEdit;
 
-      observer.next(sensorConfigEdit);
+      this.restService.updateSensorsConfig(sensorConfigEdit).subscribe(() => {
+        observer.next(sensorConfigEdit);
+      }, observer.error);
       this.toastService.showToast(sensorConfigEdit.sensorName + ' édité', 'success', 3000);
     });
   }
