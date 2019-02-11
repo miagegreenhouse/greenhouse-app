@@ -98,7 +98,7 @@ export class ChartComponent implements AfterContentInit {
     this.theChart.addPoint(Math.floor(Math.random() * 50));
   }
 
-  private updateChart(): void {
+  public updateChart(): void {
     const chartData: ChartData = this.getChartData();
 
     // In order to be more readable add a paddingPercent padding top and bottom in chart
@@ -151,11 +151,11 @@ export class ChartComponent implements AfterContentInit {
       const sensorDatas: SensorData[] = this.dataService.getSensorData(sensorId);
       const sensorConfig: SensorConfig = this.dataService.getSensorConfig(sensorId);
       const dataset: Dataset = {
-        label: sensorConfig.source,
+        label: sensorConfig.dataSource,
         borderColor: this.getColor(sensorId),
         data: []
       };
-      if (this.source && this.source !== sensorConfig.source) {
+      if (this.source && this.source !== sensorConfig.dataSource) {
         return;
       }
       sensorDatas.forEach(data => {
@@ -242,7 +242,7 @@ export class ChartComponent implements AfterContentInit {
   }
 
   public getSensorsId(): string[] {
-    return this.dataService.getDataSensorsId(this.data.dataId);
+    return this.dataService.getDataSensorsId(this.data._id);
   }
 
   public getLastValue(sensorId: string): string {

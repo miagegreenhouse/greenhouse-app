@@ -19,7 +19,9 @@
     </ion-select>
     <ion-icon *ngIf="dateRangeSelected === -1"
               slot="end" name="calendar" (click)="openModal()"></ion-icon>
-    <ion-icon slot="end" name="settings" [routerDirection]="'root'" [routerLink]="'/preferences'"></ion-icon>
+    <ion-button color="light" slot="end" [routerDirection]="'root'" [routerLink]="'/preferences'">
+      <ion-icon slot="icon-only" name="settings"></ion-icon>
+    </ion-button>
   </ion-toolbar>
 </ion-header>
 

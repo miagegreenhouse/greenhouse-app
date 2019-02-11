@@ -98,18 +98,18 @@ export class HomePage {
   // TODO: remove (and HTML) just Mock
   addData() {
 
-    const dataId = (Math.random() > 0.5 ? '1' : '2');
-    let sensorId = '';
-    if (dataId === '1') sensorId = (Math.random() > 0.5 ? '1' : '2');
-    else if (dataId === '2') sensorId = (Math.random() > 0.5 ? '3' : '4');
-    const message: DataMessage = {};
-    message[sensorId] = [
-      {
-        timestamp: new Date().getTime(),
-        value: Math.random() * 30
-      }
-    ];
-    this.events.publish(MessageType.DATA, message);
+  //   const dataId = (Math.random() > 0.5 ? '1' : '2');
+  //   let sensorId = '';
+  //   if (dataId === '1') sensorId = (Math.random() > 0.5 ? '1' : '2');
+  //   else if (dataId === '2') sensorId = (Math.random() > 0.5 ? '3' : '4');
+  //   const message: DataMessage = {};
+  //   message[sensorId] = [
+  //     {
+  //       timestamp: new Date().getTime(),
+  //       value: Math.random() * 30
+  //     }
+  //   ];
+  //   this.events.publish(MessageType.DATA, message);
   }
 
   // TODO: remove (and HTML) just Mock
@@ -118,8 +118,8 @@ export class HomePage {
       message: 'Random Alert',
       alertId: '' + (Object.keys(this.dataService.alerts).length + 100),
       acquit: null,
-      dataId: '1',
-      sensorId: '1',
+      dataId: Object.keys(this.dataService.sensorsGroups)[0],
+      sensorId: Object.keys(this.dataService.sensorsConfigs)[0],
       timestamp: new Date().getTime(),
       value: Math.random()
     };
