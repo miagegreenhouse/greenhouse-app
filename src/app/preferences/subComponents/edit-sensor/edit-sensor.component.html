@@ -5,11 +5,6 @@
               <ion-input color="primary" name="nomCapteur" formControlName="nomCapteur"
             placeholder="Température de l'eau"></ion-input>
           </ion-item>
-        <div *ngIf="!sensorForm.controls.nomCapteur.valid &&
-          sensorForm.controls.nomCapteur.dirty"
-          class="validator-error">
-        Please enter a valid email.
-        </div>
           <ion-item>
               <ion-label position="floating">Unité</ion-label>
               <ion-input color="primary" name="unite" formControlName="unite"
@@ -17,9 +12,13 @@
           </ion-item>
           <ion-item>
               <ion-label position="floating">Seuil Minimum</ion-label>
-              <ion-input (blur)="controlThreshold()" color="primary" name="seuilMini" formControlName="seuilMini" 
+              <ion-input color="primary" name="seuilMini" formControlName="seuilMini" 
                placeholder="Seuil minimum"></ion-input>
           </ion-item>
+          <div *ngIf="!errorTreshold"
+          class="alert-danger">
+        Attention le seuil minimum doit être inférieur au seuil maximum
+        </div>
           <ion-item>
               <ion-label position="floating">Message alerte (Seuil Minimum)</ion-label>
               <ion-input color="primary" name="messageSeuilMini" formControlName="messageSeuilMini"
@@ -27,9 +26,13 @@
           </ion-item>
           <ion-item>
               <ion-label position="floating" >Seuil Maximum</ion-label>
-              <ion-input (blur)="controlThreshold()" color="primary" name="seuilMaxi" formControlName="seuilMaxi"
+              <ion-input  color="primary" name="seuilMaxi" formControlName="seuilMaxi"
                placeholder="Seuil maximum"></ion-input>
           </ion-item>
+        <div *ngIf="!errorTreshold"
+          class="alert alert-danger">
+        Attention le seuil minimum doit être inférieur au seuil maximum
+        </div>
           <ion-item>
               <ion-label position="floating">Message alerte (Seuil Maximum)</ion-label>
               <ion-input color="primary" name="messageSeuilMaxi" formControlName="messageSeuilMaxi"
