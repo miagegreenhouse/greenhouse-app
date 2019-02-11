@@ -4,7 +4,11 @@ import {SensorGroup, DataService, SensorData} from '../services/data/data.servic
 import {Events} from '@ionic/angular';
 import {SensorConfig} from '../model';
 
-// @ts-ignore
+export interface DateRange {
+  start: number;
+  end: number;
+}
+
 @Component({
   selector: 'app-chart',
   templateUrl: './chart.component.html',
@@ -13,7 +17,10 @@ import {SensorConfig} from '../model';
 export class ChartComponent implements OnInit {
 
   @Input() data: SensorGroup;
-  dateRange = 180000; // Default value is 6h
+  dateRange: DateRange = {
+    start: new Date().getTime() - 180000, // Default value is 3min
+    end: new Date().getTime()
+  };
   source = null;
 
   chart = null;
@@ -76,8 +83,8 @@ export class ChartComponent implements OnInit {
     });
   }
 
-  public updateDateRange(newDateRange: number): void {
-    this.chart.options.scales.xAxes = this.getOptionxAxes(newDateRange);
+  public updateDateRange(dateRange: DateRange): void {
+    this.dateRange = dateRange;
     this.updateChart();
   }
 
@@ -112,12 +119,12 @@ export class ChartComponent implements OnInit {
     return chartData;
   }
 
-  private getOptionxAxes(dateRange: number) {
+  private getOptionxAxes(dateRange: DateRange) {
     return [{
       type: 'time',
       time: {
-        min: new Date(new Date().getTime() - dateRange),
-        max: new Date()
+        min: dateRange.start,
+        max: dateRange.end
       }
     }];
   }

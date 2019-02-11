@@ -1,9 +1,10 @@
 import {Component, QueryList, ViewChildren} from '@angular/core';
 import {ToastService} from '../services/toast/toast.service';
-import {ChartComponent} from '../chart/chart.component';
+import {ChartComponent, DateRange} from '../chart/chart.component';
 import {AlertMessage, DataMessage, DataService} from '../services/data/data.service';
-import {Events} from '@ionic/angular';
+import {Events, ModalController} from '@ionic/angular';
 import {MessageType} from '../services/socket/socket.service';
+import {DateRangePickerComponent} from '../component/date-range-picker/date-range-picker.component';
 
 @Component({
   selector: 'app-home',
@@ -43,15 +44,43 @@ export class HomePage {
   dateRangeSelected = 0;
   sourceSelected = 'Toutes';
 
+  customDateRange: DateRange = {
+    start: new Date().getTime() - (1000 * 60 * 60 * 24 * 90),
+    end: new Date().getTime()
+  };
+
   constructor(public toastService: ToastService,
               public dataService: DataService,
+              public modalCtrl: ModalController,
               public events: Events) {
   }
 
   onChangeDateRange() {
+    if (this.dateRangeSelected === -1) {
+      const modal = this.openModal();
+      return;
+    }
     this.charts.forEach(chart => {
-      chart.updateDateRange(this.dateRange[this.dateRangeSelected].timestamp);
+      chart.updateDateRange({
+        start: new Date().getTime() - this.dateRange[this.dateRangeSelected].timestamp,
+        end: new Date().getTime()
+      });
     });
+  }
+
+  async openModal() {
+    const modal = await this.modalCtrl.create({
+      component: DateRangePickerComponent,
+      componentProps: {
+        'dateRange': this.customDateRange
+      }
+    });
+    modal.onDidDismiss().then(() => {
+      this.charts.forEach(chart => {
+        chart.updateDateRange(this.customDateRange);
+      });
+    });
+    return await modal.present();
   }
 
   onChangeSource() {
