@@ -1,0 +1,11 @@
+<ion-content>
+  <div class="alertViewContainer">
+    <ion-card class="alertViewCard">
+      <ion-card-content>
+        <ion-card-title>Alerte</ion-card-title>
+        <ion-item>{{dataService.getAlertById(this.id).value}}</ion-item>
+      </ion-card-content>
+      <ion-button color="danger" (click)="acknowledge()">Acquitter</ion-button>
+    </ion-card>
+  </div>
+</ion-content>

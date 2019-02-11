@@ -154,6 +154,14 @@ export class DataService {
     return Object.values(this.alerts);
   }
 
+  getAlertById(id: string): Observable<any>{
+    return this.restService.getAlertById(id);
+  }
+
+  acknowledgeAlert(id: string, token: string){
+    return this.restService.acknowledgeAlert(id,token);
+  }
+
   getMails(): Email[] {
     return Array.from(this.mails);
   }

@@ -23,6 +23,7 @@ export class RestService {
   public SENSORS_GROUP_ENDPOINT: string   = '/public/sensorsgroup';
   public SENSORS_CONFIG_ENDPOINT: string  = '/public/sensorsconfig';
   public SENSORS_DATA_ENDPOINT: string    = '/public/sensorsdata';
+  public ALERTS_ENDPOINT: string          = '/public/sensorsalert';
 
   constructor(private http: HttpClient,
     public storageService: StorageService
@@ -232,6 +233,16 @@ export class RestService {
     return this.http.get(url, {headers: this.headers});
   }
   
+
+  getAlertById(id : string) {
+    let url = this.apiUrl + this.ALERTS_ENDPOINT + '/' + id;
+    return this.http.get(url, {headers: this.headers});
+  }
+
+  acknowledgeAlert(id : string, token: string){
+    let url = this.apiUrl + this.ALERTS_ENDPOINT + '/' + id + '/' + token;
+    return this.http.put(url, {headers: this.headers}, {observe: 'response'});
+  }
 
 }
 

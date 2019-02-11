@@ -25,6 +25,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {DataService} from './services/data/data.service';
+import { AlertViewerComponent } from './component/alert-viewer/alert-viewer.component';
 
 
 export function initApp(configService: ConfigService, restService: RestService) {
@@ -41,7 +42,7 @@ export function initApp(configService: ConfigService, restService: RestService) 
 }
 
 @NgModule({
-  declarations: [AppComponent, ConnexionComponent],
+  declarations: [AppComponent, ConnexionComponent, AlertViewerComponent],
   entryComponents: [],
     imports: [
     BrowserModule,
