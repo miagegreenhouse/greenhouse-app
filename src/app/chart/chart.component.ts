@@ -64,7 +64,8 @@ export class ChartComponent implements AfterContentInit {
   }
 
   resizeChart(dateRange: DateRange) {
-    this.chart.xAxis[0].setExtremes(dateRange.min, dateRange.max);
+    if (this.chart && this.chart.xAxis && this.chart.xAxis[0]) 
+      this.chart.xAxis[0].setExtremes(dateRange.min, dateRange.max);
   }
 
   ngAfterContentInit() {

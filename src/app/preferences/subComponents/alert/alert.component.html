@@ -28,31 +28,31 @@
             Aucune alerte pour le moment
           </ion-item>
           <ion-item *ngFor="let alert of dataService.getAlerts()" slot="start">
-            <ion-icon [name]="alert.acquit ? 'checkmark-circle-outline' : 'alert'"
-                      [color]="alert.acquit ? 'success' : 'danger'"
+            <ion-icon [name]="alert.timestampAcknowledgment ? 'checkmark-circle-outline' : 'alert'"
+                      [color]="alert.timestampAcknowledgment ? 'success' : 'danger'"
                       margin-end></ion-icon>
-            <span margin-end>{{dataService.getSensorConfig(alert.sensorId).sensorName}}</span>
+            <span margin-end>{{dataService.getSensorConfig(alert.sensorid).sensorName}}</span>
             <ion-label text-wrap>
               <h1>{{alert.value.toFixed(2)}}</h1>
               <p><i>{{alert.message}}</i></p>
               <ion-text>
                 <ion-badge margin-end color="medium">
-                  {{formatTime(alert.timestamp)}}
+                  {{formatTime(alert.time)}}
                 </ion-badge>
                 <ion-badge margin-end color="dark" *ngIf="dataService.hasData(alert.dataId)">
-                  {{dataService.sensorsGroups[alert.dataId].sensorName}}
+                  {{dataService.sensorsGroups[alert.dataId].name}}
                 </ion-badge>
-                <ion-badge margin-end color="dark" *ngIf="dataService.hasData(alert.dataId) && dataService.getSensorConfig(alert.sensorId)">
-                  {{dataService.getSensorConfig(alert.sensorId).sensorName}}
+                <ion-badge margin-end color="dark" *ngIf="dataService.hasData(alert.dataId) && dataService.getSensorConfig(alert.sensorid)">
+                  {{dataService.getSensorConfig(alert.sensorid).sensorName}}
                 </ion-badge>
-                <ion-badge *ngIf="alert.acquit && alert.acquit.timestamp" margin-end color="success">
-                  {{formatTime(alert.acquit.timestamp)}}
+                <ion-badge *ngIf="alert.timestampAcknowledgment" margin-end color="success">
+                  {{formatTime(alert.timestampAcknowledgment)}}
                 </ion-badge>
               </ion-text>
             </ion-label>
             <ion-button slot="end"
-                        *ngIf="!alert.acquit"
-                        (click)="dataService.acquitAlert(alert.alertId)">
+                        *ngIf="!alert.timestampAcknowledgment"
+                        (click)="dataService.acquitAlert(alert.id)">
               <ion-icon name="checkmark-circle-outline"></ion-icon>
               Acquitter
             </ion-button>

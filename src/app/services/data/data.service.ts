@@ -23,16 +23,14 @@ export interface SensorData {
 }
 
 export interface AlertMessage {
-  alertId: string;
-  sensorId: string;
+  id: string;
+  sensorid: string;
   dataId: string;
-  timestamp: number;
+  time: number;
   message: string;
   value: number;
-  acquit: {
-   timestamp: number;
-   email: string;
-  };
+  token: string;
+  timestampAcknowledgment: number;
 }
 
 @Injectable({
@@ -104,17 +102,18 @@ export class DataService {
         }, reject);
       });
     }).then(() => {
-
+      if (this.storageService.get('access_token')) {
+        this.restService.getEmails().subscribe((mails: Email[]) => {
+          mails.forEach(mail => this.mails.add(mail));
+        });
+        this.restService.getAlerts().subscribe((alerts: any[]) => {
+          alerts.forEach(alert => this.alerts[alert.id] = alert);
+        });
+      }  
     }).catch(err => {
       console.error(err);
       // TODO
     });
-
-    if (this.storageService.get('access_token')) {
-      this.restService.getEmails().subscribe((mails: Email[]) => {
-        mails.forEach(mail => this.mails.add(mail));
-      });
-    }
 
     this.events.subscribe(MessageType.DATA, (dataMessage: DataMessage) => {
       // For each sensor in data
@@ -129,14 +128,15 @@ export class DataService {
           sensorDatas.push([parseInt(sensorData.time), sensorData.value]);
         });
 
-        this.events.publish('updateData:' + this.sensorsConfigs[sensorId].dataId);
+        this.events.publish('updateData:' + this.sensorsConfigs[sensorId].sensorGroupId);
       });
     });
 
     this.events.subscribe(MessageType.ALERT, (alertMessage: AlertMessage) => {
-      this.alerts[alertMessage.alertId] = alertMessage;
-      if (alertMessage.acquit) {
-        this.toastService.showToast('Alerte acquittée', 'success', 3000);
+      console.log("alert", alertMessage);
+      this.alerts[alertMessage.id] = alertMessage;
+      if (alertMessage.timestampAcknowledgment) {
+        // this.toastService.showToast('Alerte acquittée', 'success', 3000);
       } else {
         this.toastService.showToast(alertMessage.message, 'warning', 3000);
       }
@@ -207,11 +207,12 @@ export class DataService {
   acquitAlert(alertId: string) {
     // TODO (jules) : Rest POST
     // TODO : remove below: just a mock
-    this.alerts[alertId].acquit = {
-      timestamp: new Date().getTime(),
-      email: 'test'
-    };
-    this.events.publish(MessageType.ALERT, this.alerts[alertId]);
+    const now = new Date();
+    this.alerts[alertId].timestampAcknowledgment = now.getTime();
+    this.restService.updateAlert(this.alerts[alertId])
+    .subscribe(alert => {
+      this.toastService.showToast('Alerte acquittée', 'success', 3000);
+    });
   }
 
   addMail(email: string): Observable<any> {

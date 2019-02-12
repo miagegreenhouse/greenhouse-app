@@ -1,3 +1,4 @@
+import { SocketService, WebSocketProtocol } from './services/socket/socket.service';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
@@ -28,12 +29,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {DataService} from './services/data/data.service';
 
 
-export function initApp(configService: ConfigService, restService: RestService) {
+export function initApp(configService: ConfigService, restService: RestService, socketService: SocketService) {
   return () => {
     return new Promise((resolve, reject) => {
       configService.load()
           .then(() => {
             restService.loadFromAppConfig(configService.appConfig);
+            let wsMethod = configService.appConfig.method.indexOf('https') !== -1 ? WebSocketProtocol.WSS : WebSocketProtocol.WS;
+            socketService.initSocket(wsMethod, configService.appConfig.host, (err) => {
+              console.error(err);
+            });
             resolve();
           })
           .catch(reject);
@@ -64,12 +69,13 @@ export function initApp(configService: ConfigService, restService: RestService) 
     ConfigService,
     RestService,
     DataService,
+    SocketService,
     AuthenticationService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     {
       provide: APP_INITIALIZER,
       useFactory: initApp,
-      deps: [ConfigService, RestService],
+      deps: [ConfigService, RestService, SocketService],
       multi: true
     }
   ],

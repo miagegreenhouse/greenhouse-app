@@ -1,3 +1,4 @@
+import { AlertMessage } from './../data/data.service';
 import { StorageService } from './../storage/storage.service';
 import { AppConfig, ApiEntry, HTTPMethod, UserForm, Email, SensorConfig } from './../../model/index';
 import { Injectable, APP_INITIALIZER } from '@angular/core';
@@ -20,6 +21,7 @@ export class RestService {
   public LOGIN_ENDPOINT: string           = '/api/token';
   public GET_ME_ENDPOINT: string          = '/api/users/me';
   public EMAIL_ENDPOINT: string           = '/api/adminmails';
+  public ALERT_ENDPOINT: string           = '/api/sensorsalert';
   public SENSORS_GROUP_ENDPOINT: string   = '/public/sensorsgroup';
   public SENSORS_CONFIG_ENDPOINT: string  = '/public/sensorsconfig';
   public SENSORS_DATA_ENDPOINT: string    = '/public/sensorsdata';
@@ -172,6 +174,16 @@ export class RestService {
   createAdminAccount(adminForm) {
     let url = this.apiUrl + this.CREATE_USER_ENDPOINT;
     return this.http.post(url, adminForm, {headers: this.headers});
+  }
+
+  getAlerts() {
+    let url = this.apiUrl + this.ALERT_ENDPOINT;
+    return this.http.get(url, {headers: this.headers});
+  }
+
+  updateAlert(alert: AlertMessage) {
+    let url = this.apiUrl + this.ALERT_ENDPOINT + "/" + alert.id;
+    return this.http.put(url, alert, {headers: this.headers});
   }
 
 }

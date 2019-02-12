@@ -87,7 +87,9 @@ export class SocketService {
 	onMessage = (): Observable<Message> => {
 		return new Observable(observer => {
 			this.socket.on('message', (message: Message) => {
+				console.log(message);
 				this.events.publish(message.type, message.data);
+				observer.next(message);
 			});
 		});
 	}
