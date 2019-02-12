@@ -8,8 +8,8 @@ import {DateRange} from '../../chart/chart.component';
   styleUrls: ['./date-range-picker.component.scss']
 })
 export class DateRangePickerComponent implements OnInit {
-  @ViewChild('startDate') start;
-  @ViewChild('endDate') end;
+  @ViewChild('startDate') min;
+  @ViewChild('endDate') max;
   dateRange: DateRange;
 
   constructor(private navParams: NavParams, private modalCtrl: ModalController) {
@@ -22,8 +22,8 @@ export class DateRangePickerComponent implements OnInit {
 
   closeModal(isSave) {
     if (isSave) {
-      this.dateRange.start = new Date(this.start.value).getTime();
-      this.dateRange.end = new Date(this.end.value).getTime();
+      this.dateRange.start = new Date(this.min.value).getTime();
+      this.dateRange.end = new Date(this.max.value).getTime();
     }
     this.modalCtrl.dismiss();
   }
