@@ -1,3 +1,4 @@
+import { StorageService } from './../storage/storage.service';
 import { Injectable } from '@angular/core';
 import {MessageType, SocketService} from '../socket/socket.service';
 import {Events} from '@ionic/angular';
@@ -51,7 +52,8 @@ export class DataService {
   constructor(private socketService: SocketService,
               private toastService: ToastService,
               public restService: RestService,
-              private events: Events) {
+              private events: Events,
+              public storageService: StorageService) {
     
     this.initData();
 
@@ -107,9 +109,11 @@ export class DataService {
       // TODO
     });
 
-    this.restService.getEmails().subscribe((mails: Email[]) => {
-      mails.forEach(mail => this.mails.add(mail));
-    });
+    if (this.storageService.get('access_token')) {
+      this.restService.getEmails().subscribe((mails: Email[]) => {
+        mails.forEach(mail => this.mails.add(mail));
+      });
+    }
 
     this.events.subscribe(MessageType.DATA, (dataMessage: DataMessage) => {
       // For each sensor in data
