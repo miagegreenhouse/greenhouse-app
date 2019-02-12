@@ -257,6 +257,10 @@ export class DataService {
     });
   }
 
+  createSensorGroup(name: string){
+    return this.restService.createSensorGroup(name);
+  }
+
   getUsersCount(): Observable<any> {
     return this.restService.getUsersCount();
   }

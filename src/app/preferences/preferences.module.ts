@@ -9,7 +9,7 @@ import { PreferencesPage } from './preferences.page';
 import {AlertComponent} from './subComponents/alert/alert.component';
 import { SensorListComponent } from './subComponents/sensorList/sensor-list.component';
 import { EditSensorComponent } from './subComponents/edit-sensor/edit-sensor.component';
-
+import { SensorGroupComponent } from './subComponents/sensor-group/sensor-group.component';
 
 
 const routes: Routes = [
@@ -27,8 +27,8 @@ const routes: Routes = [
     IonicModule,
     RouterModule.forChild(routes)
   ],
-  declarations: [PreferencesPage, AlertComponent,SensorListComponent, EditSensorComponent],
+  declarations: [PreferencesPage, AlertComponent,SensorListComponent, EditSensorComponent,SensorGroupComponent],
   entryComponents: [EditSensorComponent],
-  exports: [AlertComponent,SensorListComponent, EditSensorComponent]
+  exports: [AlertComponent,SensorListComponent, EditSensorComponent,SensorGroupComponent]
 })
 export class PreferencesPageModule {}

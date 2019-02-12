@@ -25,6 +25,10 @@ export class RestService {
   public SENSORS_DATA_ENDPOINT: string    = '/public/sensorsdata';
   public ALERTS_ENDPOINT: string          = '/public/sensorsalert';  public GET_USERS_COUNT_ENDPOINT: string = '/public/users/count';
   public CREATE_USER_ENDPOINT: string     = '/public/users';
+
+  public SENSORS_GROUP_PRIVATE_ENDPOINT: string   = '/api/sensorsgroup';
+
+
   constructor(private http: HttpClient,
     public storageService: StorageService
     ) { }
@@ -113,18 +117,18 @@ export class RestService {
     return this.http.get(url, {headers: this.headers});
   }
 
-  createSensorsGroup(sensorGroupForm: SensorGroupForm) {
-    let url = this.apiUrl + this.SENSORS_GROUP_ENDPOINT;
-    return this.http.post(url, sensorGroupForm, {headers: this.headers});
+  createSensorGroup(name: string) {
+    let url = this.apiUrl + this.SENSORS_GROUP_PRIVATE_ENDPOINT;
+    return this.http.post(url, {name : name}, {headers: this.headers});
   }
 
-  updateSensorsGroup(sensorGroup: SensorGroup) {
-    let url = this.apiUrl + this.SENSORS_GROUP_ENDPOINT + '/' + sensorGroup._id;
+  updateSensorGroup(sensorGroup: SensorGroup) {
+    let url = this.apiUrl + this.SENSORS_GROUP_PRIVATE_ENDPOINT + '/' + sensorGroup._id;
     return this.http.put(url, sensorGroup, {headers: this.headers});
   }
 
-  deleteSensorsGroup(sensorGroup: SensorGroup) {
-    let url = this.apiUrl + this.SENSORS_GROUP_ENDPOINT + '/' + sensorGroup._id;
+  deleteSensorGroup(sensorGroup: SensorGroup) {
+    let url = this.apiUrl + this.SENSORS_GROUP_PRIVATE_ENDPOINT + '/' + sensorGroup._id;
     return this.http.delete(url, {headers: this.headers});
   }
 
@@ -201,11 +205,6 @@ export interface SensorConfigForm {
   minThresholdAlertMessage?: string;
   maxThresholdValue?: number;
   maxThresholdAlertMessage?: string;
-}
-
-export interface SensorGroupForm {
-  name: string; // ex: Temperature de l'eau
-  sensorsId: Set<string>; // sensorId set
 }
 
 export interface Param {

@@ -1,0 +1,19 @@
+<ion-card>
+  <ion-card-content>
+    <ion-card-title>Types de capteur</ion-card-title>
+    <div>
+      <ion-list>
+        <ion-item *ngFor="let group of dataService.getSensorGroups()">
+          <ion-input value="Readonly" type="text" >{{group.name}}</ion-input> 
+          <ion-fab-button end (click)="editSensor(sensor)" (click)="removeSensorGroup(group)" class="sensorGroupFabButton">
+            <ion-icon name="remove"></ion-icon>
+          </ion-fab-button>
+        </ion-item>
+        <ion-item>
+          <ion-input [(ngModel)]="newGroupName" type="text" placeholder="Nouveau type de capteur" ></ion-input>
+          <ion-button (click)="addSensorGroup()"> Ajouter</ion-button>
+        </ion-item>
+      </ion-list>
+    </div>
+  </ion-card-content>
+</ion-card>
