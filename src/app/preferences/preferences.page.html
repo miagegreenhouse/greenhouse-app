@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Preferences</ion-title>
+    <ion-title>Préférences</ion-title>
     <ion-button color="light" slot="end" [routerDirection]="'root'" [routerLink]="'/home'">
       <ion-icon slot="icon-only" name="close"></ion-icon>
     </ion-button>
@@ -13,4 +13,12 @@
 
   <app-alert >
   </app-alert>
+
+  <div style="width: 100%; text-align: center;">
+    <ion-button (click)="logout()">
+      Déconnexion
+      <ion-icon name="log-out" slot="end"></ion-icon>
+    </ion-button>
+  </div>
+
 </ion-content>

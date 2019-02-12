@@ -61,7 +61,8 @@ export class ConnexionComponent implements OnInit {
       });
     })
     .catch((err) => {
-      this.toastr.warning(err,"Erreur",{
+      let errString = err.error.message || JSON.stringify(err);
+      this.toastr.warning(errString,"Erreur",{
         timeOut: 5000,
         positionClass: 'toast-bottom-right'
       });

@@ -67,23 +67,32 @@ export class RegisterComponent implements OnInit {
         this.storageService.set("access_token", {
           value: token.access_token
         });
-        this.auth.login()
-        .then(user => {
-          console.log(user);
-          this.toastr.success("Vous êtes connecté avec : "+user.email,"Succès",{
-            timeOut: 2000,
-            positionClass: 'toast-bottom-right',
-          }).onHidden.subscribe(() => {
-            this.afterLogin();            
+        this.dataService.addMail(adminForm.email)
+        .subscribe(res => {
+          this.auth.login()
+          .then(user => {
+            console.log(user);
+            this.dataService.initData();
+            this.toastr.success("Vous êtes connecté avec : "+user.email,"Succès",{
+              timeOut: 2000,
+              positionClass: 'toast-bottom-right',
+            }).onHidden.subscribe(() => {
+              this.afterLogin();            
+            });
+          })
+          .catch(err => {
+            let errString = err.error.message || JSON.stringify(err);
+            this.toastr.warning(errString,"Erreur",{
+              timeOut: 5000,
+              positionClass: 'toast-bottom-right'
+            });
+            console.log(err);
           });
-        })
-        .catch(err => {
-          let errString = err.error.message || JSON.stringify(err);
-          this.toastr.warning(errString,"Erreur",{
+        }, err => {
+          this.toastr.warning("The server could not create the email","Erreur",{
             timeOut: 5000,
             positionClass: 'toast-bottom-right'
           });
-          console.log(err);
         });
       } else {
         this.toastr.warning("The server could not create this user","Erreur",{

@@ -52,7 +52,12 @@ export class DataService {
               private toastService: ToastService,
               public restService: RestService,
               private events: Events) {
+    
+    this.initData();
 
+  }
+
+  initData() {
     // TODO: Get requests
     // url/sensorsGroup
     // url/sensorsConfig
@@ -106,7 +111,7 @@ export class DataService {
       mails.forEach(mail => this.mails.add(mail));
     });
 
-    events.subscribe(MessageType.DATA, (dataMessage: DataMessage) => {
+    this.events.subscribe(MessageType.DATA, (dataMessage: DataMessage) => {
       // For each sensor in data
       Object.keys(dataMessage).forEach(sensorId => {
         const messageSensor = dataMessage[sensorId];
@@ -123,7 +128,7 @@ export class DataService {
       });
     });
 
-    events.subscribe(MessageType.ALERT, (alertMessage: AlertMessage) => {
+    this.events.subscribe(MessageType.ALERT, (alertMessage: AlertMessage) => {
       this.alerts[alertMessage.alertId] = alertMessage;
       if (alertMessage.acquit) {
         this.toastService.showToast('Alerte acquittée', 'success', 3000);
