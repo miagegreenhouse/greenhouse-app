@@ -53,6 +53,7 @@ export class ConnexionComponent implements OnInit {
   login(){
     this.auth.login(this.userForm)
     .then((user: User) => {
+      this.dataService.initData();
       this.toastr.success("Vous êtes connecté avec : "+user.email,"Succès",{
         timeOut: 2000,
         positionClass: 'toast-bottom-right',
