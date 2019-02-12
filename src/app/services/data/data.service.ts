@@ -1,10 +1,11 @@
+import { StorageService } from './../storage/storage.service';
 import { Injectable } from '@angular/core';
 import {MessageType, SocketService} from '../socket/socket.service';
 import {Events} from '@ionic/angular';
 import {ToastService} from '../toast/toast.service';
 import {RestService} from '../rest/rest.service';
 import {Observable} from 'rxjs';
-import {SensorConfig, Email} from '../../model';
+import {SensorConfig, Email, UserRegistrationForm} from '../../model';
 
 export interface DataMessage {
   [key: string]: SensorData[]; // sensorId => SensorData
@@ -52,8 +53,14 @@ export class DataService {
   constructor(private socketService: SocketService,
               private toastService: ToastService,
               public restService: RestService,
-              private events: Events) {
+              private events: Events,
+              public storageService: StorageService) {
+    
+    this.initData();
 
+  }
+
+  initData() {
     // TODO: Get requests
     // url/sensorsGroup
     // url/sensorsConfig
@@ -103,11 +110,13 @@ export class DataService {
       // TODO
     });
 
-    this.restService.getEmails().subscribe((mails: Email[]) => {
-      mails.forEach(mail => this.mails.add(mail));
-    });
+    if (this.storageService.get('access_token')) {
+      this.restService.getEmails().subscribe((mails: Email[]) => {
+        mails.forEach(mail => this.mails.add(mail));
+      });
+    }
 
-    events.subscribe(MessageType.DATA, (dataMessage: DataMessage) => {
+    this.events.subscribe(MessageType.DATA, (dataMessage: DataMessage) => {
       // For each sensor in data
       Object.keys(dataMessage).forEach(sensorId => {
         const messageSensor = dataMessage[sensorId];
@@ -124,7 +133,7 @@ export class DataService {
       });
     });
 
-    events.subscribe(MessageType.ALERT, (alertMessage: AlertMessage) => {
+    this.events.subscribe(MessageType.ALERT, (alertMessage: AlertMessage) => {
       this.alerts[alertMessage.alertId] = alertMessage;
       if (alertMessage.acquit) {
         this.toastService.showToast('Alerte acquittée', 'success', 3000);
@@ -244,4 +253,17 @@ export class DataService {
       this.toastService.showToast(sensorConfigEdit.sensorName + ' édité', 'success', 3000);
     });
   }
+
+  getUsersCount(): Observable<any> {
+    return this.restService.getUsersCount();
+  }
+
+  createAdmin(adminForm: UserRegistrationForm): Observable<any> {
+    const adminF = {
+      email: adminForm.email,
+      password: adminForm.password
+    };
+    return this.restService.createAdminAccount(adminF);
+  }
+
 }
