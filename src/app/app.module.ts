@@ -15,6 +15,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthenticationService } from './services/authentication/authentication.service';
 import { ConnexionComponent } from './component/connexion/connexion/connexion.component';
+import { RegisterComponent } from './component/register/register.component';
 import { HttpClientModule } from '@angular/common/http';
 import 'chartjs-plugin-annotation';
 import { PreferencesPageModule } from './preferences/preferences.module';
@@ -23,7 +24,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {DataService} from './services/data/data.service';
 import { AlertViewerComponent } from './component/alert-viewer/alert-viewer.component';
 
@@ -42,11 +43,12 @@ export function initApp(configService: ConfigService, restService: RestService) 
 }
 
 @NgModule({
-  declarations: [AppComponent, ConnexionComponent, AlertViewerComponent],
+  declarations: [AppComponent, ConnexionComponent, RegisterComponent,AlertViewerComponent],
   entryComponents: [],
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     IonicModule.forRoot(),
     AppRoutingModule,
     HttpClientModule,

@@ -23,36 +23,11 @@ export class RestService {
   public SENSORS_GROUP_ENDPOINT: string   = '/public/sensorsgroup';
   public SENSORS_CONFIG_ENDPOINT: string  = '/public/sensorsconfig';
   public SENSORS_DATA_ENDPOINT: string    = '/public/sensorsdata';
-  public ALERTS_ENDPOINT: string          = '/public/sensorsalert';
-
+  public ALERTS_ENDPOINT: string          = '/public/sensorsalert';  public GET_USERS_COUNT_ENDPOINT: string = '/public/users/count';
+  public CREATE_USER_ENDPOINT: string     = '/public/users';
   constructor(private http: HttpClient,
     public storageService: StorageService
     ) { }
-
-  get(path: string, queryParameters?: Param[]): Observable<any> {
-    return this.http.get<any>(this.apiUrl + path, {
-      headers: this.headers,
-      params: this.getHttpParams(queryParameters)
-    });
-  }
-
-  post(path: string, data: any, queryParameters?: Param[]): Observable<any> {
-    return this.http.post<any>(this.apiUrl + path, data, {
-      headers: this.headers,
-      params: this.getHttpParams(queryParameters)
-    });
-  }
-
-  getHttpParams(params: Param[]): HttpParams {
-    const httpParams: HttpParams = new HttpParams();
-    if (params) {
-      params.forEach(queryParameter => {
-        console.log(queryParameter);
-        httpParams.append(queryParameter.name, queryParameter.value.toString());
-      });
-    }
-    return httpParams;
-  }
 
   createUrlFromParams(url: string, queryParameters: Param[]) {
     let endPoint = this.apiUrl + '/' + url;
@@ -77,54 +52,6 @@ export class RestService {
     console.log(this.apiUrl);
   }
 
-  // getApi() {
-  //   let api: any = {};
-  //   this.endPoints.forEach((val, key) => {
-  //     let cb;
-  //     switch (val.method) {
-  //       case HTTPMethod.GET:
-  //         cb = (params) => {
-  //           return new Promise((resolve, reject) => {
-  //             this.http.get(this.createUrlFromParams(val.url, params), {
-  //               headers: this.getHeaders()
-  //             }).subscribe(resolve, reject);
-  //           });
-  //         };
-  //         break;
-  //       case HTTPMethod.POST:
-  //         cb = (value, params) => {
-  //           return new Promise((resolve, reject) => {
-  //             this.http.post(this.createUrlFromParams(val.url, params), value, {
-  //               headers: this.getHeaders()
-  //             }).subscribe(resolve, reject);
-  //           });
-  //         };
-  //         break;
-  //       case HTTPMethod.PUT:
-  //         cb = (value, params) => {
-  //           return new Promise((resolve, reject) => {
-  //             this.http.put(this.createUrlFromParams(val.url, params), value, {
-  //               headers: this.getHeaders()
-  //             }).subscribe(resolve, reject);
-  //           });
-  //         };
-  //         break;
-  //       case HTTPMethod.DELETE:
-  //         cb = (params) => {
-  //           return new Promise((resolve, reject) => {
-  //             this.http.delete(this.createUrlFromParams(val.url, params), {
-  //               headers: this.getHeaders()
-  //             }).subscribe(resolve, reject);
-  //           });
-  //         };
-  //         break;
-  //       default:
-  //         throw "Unknown method";
-  //     }
-  //     api[key] = cb;
-  //   });
-  //   return api;
-  // }
 
   getMe() {
     let url = this.apiUrl + this.GET_ME_ENDPOINT;
@@ -227,12 +154,24 @@ export class RestService {
     return this.http.delete(url, {headers: this.headers});
   }
 
-
-  getSensorsData() {
-    let url = this.apiUrl + this.SENSORS_DATA_ENDPOINT;
+  getUsersCount() {
+    let url = this.apiUrl + this.GET_USERS_COUNT_ENDPOINT;
     return this.http.get(url, {headers: this.headers});
   }
-  
+
+  getSensorsData(startTimestamp: number, endTimestamp: number) {
+    let url = this.apiUrl + this.SENSORS_DATA_ENDPOINT + '?';
+    url += [
+      startTimestamp ? ('start=' + startTimestamp) : null,
+      endTimestamp ? ('end=' + endTimestamp) : null
+    ].join('&');
+    return this.http.get(url, {headers: this.headers});
+  }
+
+  createAdminAccount(adminForm) {
+    let url = this.apiUrl + this.CREATE_USER_ENDPOINT;
+    return this.http.post(url, adminForm, {headers: this.headers});
+  }
 
   getAlertById(id : string) {
     let url = this.apiUrl + this.ALERTS_ENDPOINT + '/' + id;
@@ -246,13 +185,11 @@ export class RestService {
       "token" : token
     };
     return this.http.put(url, {headers: this.headers, alertid : id, token}, {observe: 'response'});
-  }
-
-}
+  }}
 
 export interface MailForm {
-  email: string
-};
+  email: string;
+}
 
 export interface SensorConfigForm {
   sensorName?: string;
@@ -279,7 +216,7 @@ export interface Param {
 
 export function RestFactory(config: ConfigService, rest: RestService) {
   return () => rest.loadFromAppConfig(config.appConfig);
-};
+}
 
 export function init() {
   return {
@@ -287,11 +224,11 @@ export function init() {
       useFactory: RestFactory,
       deps: [ConfigService, RestService],
       multi: true
-  }
-};
+  };
+}
 
 const RestModule = {
   init: init
-}
+};
 
 export { RestModule };

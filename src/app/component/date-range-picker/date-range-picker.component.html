@@ -11,13 +11,13 @@
     <ion-item>
       <ion-label>Date de début</ion-label>
       <ion-datetime #startDate
-                    [value]="getDateTime(dateRange.start)"
+                    [value]="getDateTime(dateRange.min)"
                     display-format="YYYY/MM/DD HH:mm"></ion-datetime>
     </ion-item>
     <ion-item>
       <ion-label>Date de fin</ion-label>
       <ion-datetime #endDate
-                    [value]="getDateTime(dateRange.end)"
+                    [value]="getDateTime(dateRange.max)"
                     display-format="YYYY/MM/DD HH:mm"></ion-datetime>
     </ion-item>
   </form>

@@ -14,7 +14,6 @@ export class DateRangePickerComponent implements OnInit {
 
   constructor(private navParams: NavParams, private modalCtrl: ModalController) {
     this.dateRange = this.navParams.get('dateRange');
-    console.log(this.dateRange);
   }
 
   ngOnInit() {
@@ -22,10 +21,12 @@ export class DateRangePickerComponent implements OnInit {
 
   closeModal(isSave) {
     if (isSave) {
-      this.dateRange.start = new Date(this.min.value).getTime();
-      this.dateRange.end = new Date(this.max.value).getTime();
+      this.dateRange.min = new Date(this.min.value).getTime();
+      this.dateRange.max = new Date(this.max.value).getTime();
+      this.modalCtrl.dismiss(this.dateRange);
+    } else {
+      this.modalCtrl.dismiss(null);
     }
-    this.modalCtrl.dismiss();
   }
 
   getDateTime(timestamp: number): string {

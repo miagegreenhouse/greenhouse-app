@@ -1,10 +1,11 @@
 import {Component, QueryList, ViewChildren} from '@angular/core';
 import {ToastService} from '../services/toast/toast.service';
-import {ChartComponent, DateRange} from '../chart/chart.component';
+import {ChartComponent, DataInfo, DateRange} from '../chart/chart.component';
 import {AlertMessage, DataService} from '../services/data/data.service';
 import {Events, ModalController} from '@ionic/angular';
 import {MessageType} from '../services/socket/socket.service';
 import {DateRangePickerComponent} from '../component/date-range-picker/date-range-picker.component';
+import {el} from '@angular/platform-browser/testing/src/browser_util';
 
 @Component({
   selector: 'app-home',
@@ -45,8 +46,8 @@ export class HomePage {
   sourceSelected = 'Toutes';
 
   customDateRange: DateRange = {
-    start: new Date().getTime() - (1000 * 60 * 60 * 24 * 90),
-    end: new Date().getTime()
+    min: new Date().getTime() - (1000 * 60 * 60 * 3),
+    max: new Date().getTime()
   };
 
   constructor(public toastService: ToastService,
@@ -60,10 +61,22 @@ export class HomePage {
       this.openModal();
       return;
     }
-    this.events.publish('resizeChart', {
-      min: new Date().getTime() - this.dateRange[this.dateRangeSelected].timestamp,
-      max: new Date().getTime()
-    });
+    const dataInfo: DataInfo = {
+      isDataLive: true,
+      dateRange: {
+        min: new Date().getTime() - this.dateRange[this.dateRangeSelected].timestamp,
+        max: new Date().getTime()
+      }
+    };
+    this.events.publish('updateChart', dataInfo);
+  }
+
+  updateCustomDateRange() {
+    if (this.dateRangeSelected === -1) {
+      this.openModal();
+    } else {
+      this.dateRangeSelected = -1;
+    }
   }
 
   async openModal() {
@@ -73,9 +86,21 @@ export class HomePage {
         'dateRange': this.customDateRange
       }
     });
-    modal.onDidDismiss().then(() => {
-      // TODO fix this
-      this.events.publish('resizeChart', this.customDateRange);
+    modal.onDidDismiss().then((datRangeSelected) => {
+      if (datRangeSelected.data) {
+        this.customDateRange = <DateRange>datRangeSelected.data;
+        this.dataService.getDatasInDateRange(this.customDateRange.min, this.customDateRange.max)
+            .then(() => {
+              const dataInfo: DataInfo = {
+                isDataLive: false,
+                dateRange: this.customDateRange
+              };
+              this.events.publish('updateChart', dataInfo);
+            })
+            .catch(err => {
+              this.toastService.showToast('Erreur lors de la récupération des donneés', 'danger', 3000);
+            });
+      }
     });
     return await modal.present();
   }

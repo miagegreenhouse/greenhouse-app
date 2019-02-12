@@ -8,6 +8,12 @@ export interface UserForm {
   password: string;
 }
 
+export interface UserRegistrationForm {
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
 export interface AppConfig {
   debuggin: boolean;
   restApi: {

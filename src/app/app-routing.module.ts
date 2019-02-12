@@ -1,3 +1,4 @@
+import { RegisterComponent } from './component/register/register.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ConnexionComponent } from './component/connexion/connexion/connexion.component'
@@ -23,6 +24,10 @@ const routes: Routes = [
   {
     path: 'connexion',
     component: ConnexionComponent
+  },
+  {
+    path: 'register',
+    component: RegisterComponent
   },
   {
     path: 'preferences',
