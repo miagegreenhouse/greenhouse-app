@@ -5,6 +5,7 @@ import { ConnexionComponent } from './component/connexion/connexion/connexion.co
 import { 
   AuthenticationService as AuthGuard 
 } from './services/authentication/authentication.service';
+import { AlertViewerComponent } from './component/alert-viewer/alert-viewer.component';
 
 const routes: Routes = [
   {
@@ -32,6 +33,10 @@ const routes: Routes = [
     path: 'preferences',
     loadChildren: './preferences/preferences.module#PreferencesPageModule',
     canActivate: [AuthGuard]
+  },
+  { 
+    path: 'alert',
+    component: AlertViewerComponent 
   }
 ];
 

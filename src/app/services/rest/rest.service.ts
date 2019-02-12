@@ -17,7 +17,7 @@ export class RestService {
     'Content-Type': 'application/json',
     'Authorization': (JSON.parse(localStorage.getItem('access_token')) ? 'Bearer ' + JSON.parse(localStorage.getItem('access_token')).value : '')
   });
-  apiUrl = 'http://greenhouse-iot.tk';
+  apiUrl = 'localhost:3000';
   public LOGIN_ENDPOINT: string           = '/api/token';
   public GET_ME_ENDPOINT: string          = '/api/users/me';
   public EMAIL_ENDPOINT: string           = '/api/adminmails';
@@ -25,9 +25,8 @@ export class RestService {
   public SENSORS_GROUP_ENDPOINT: string   = '/public/sensorsgroup';
   public SENSORS_CONFIG_ENDPOINT: string  = '/public/sensorsconfig';
   public SENSORS_DATA_ENDPOINT: string    = '/public/sensorsdata';
-  public GET_USERS_COUNT_ENDPOINT: string = '/public/users/count';
+  public ALERTS_ENDPOINT: string          = '/public/sensorsalert';  public GET_USERS_COUNT_ENDPOINT: string = '/public/users/count';
   public CREATE_USER_ENDPOINT: string     = '/public/users';
-
   constructor(private http: HttpClient,
     public storageService: StorageService
     ) { }
@@ -185,8 +184,22 @@ export class RestService {
     let url = this.apiUrl + this.ALERT_ENDPOINT + "/" + alert.id;
     return this.http.put(url, alert, {headers: this.headers});
   }
+  getAlertById(id : string) {
+    let url = this.apiUrl + this.ALERTS_ENDPOINT + '/' + id;
+    return this.http.get(url, {headers: this.headers});
+  }
+
+  acknowledgeAlert(id : string, token: string){
+    let url = this.apiUrl + this.ALERTS_ENDPOINT + '/';
+    const body = {
+      "alertid" : id,
+      "token" : token
+    };
+    return this.http.put(url, {headers: this.headers, alertid : id, token}, {observe: 'response'});
+  }
 
 }
+
 
 export interface MailForm {
   email: string;

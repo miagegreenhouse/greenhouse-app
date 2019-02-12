@@ -137,6 +137,7 @@ export class DataService {
       this.alerts[alertMessage.id] = alertMessage;
       if (alertMessage.timestampAcknowledgment) {
         // this.toastService.showToast('Alerte acquittée', 'success', 3000);
+
       } else {
         this.toastService.showToast(alertMessage.message, 'warning', 3000);
       }
@@ -158,6 +159,14 @@ export class DataService {
 
   getAlerts(): AlertMessage[] {
     return Object.values(this.alerts);
+  }
+
+  getAlertById(id: string): Observable<any>{
+    return this.restService.getAlertById(id);
+  }
+
+  acknowledgeAlert(id: string, token: string){
+    return this.restService.acknowledgeAlert(id,token);
   }
 
   getMails(): Email[] {
@@ -213,6 +222,7 @@ export class DataService {
     .subscribe(alert => {
       this.toastService.showToast('Alerte acquittée', 'success', 3000);
     });
+
   }
 
   addMail(email: string): Observable<any> {
