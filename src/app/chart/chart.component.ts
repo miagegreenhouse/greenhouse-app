@@ -4,8 +4,18 @@ import {Events} from '@ionic/angular';
 import {StockChart} from 'angular-highcharts';
 
 export interface DateRange {
-  start: number;
-  end: number;
+  min: number;
+  max: number;
+}
+
+export interface DataInfo {
+  isDataLive: boolean;
+  dateRange: DateRange;
+}
+
+export interface DataResize {
+  dateRange: DateRange;
+  dataResize: string;
 }
 
 @Component({
@@ -15,12 +25,14 @@ export interface DateRange {
 })
 export class ChartComponent implements AfterContentInit {
 
-  theChart;
-
   @Input() data: SensorGroup;
+
+  isDataLive = true;
+  theChart;
+  chart;
   dateRange: DateRange = {
-    start: new Date().getTime() - 180000, // Default value is 3min
-    end: new Date().getTime()
+    min: new Date().getTime() - 180000, // Default value is 3min
+    max: new Date().getTime()
   };
   source = null;
 
@@ -37,6 +49,22 @@ export class ChartComponent implements AfterContentInit {
   @ViewChild('chart') canvas;
 
   constructor(public events: Events, public dataService: DataService) {
+    this.events.subscribe('resizeChart', (dataResize: DataResize) => {
+      if (dataResize.dataResize !== this.data._id) {
+        this.resizeChart(dataResize.dateRange);
+      }
+    });
+    this.events.subscribe('updateChart', (dataInfo: DataInfo) => {
+      if (this.isDataLive !== dataInfo.isDataLive || !dataInfo.isDataLive) { // if change or isCustomDateRange
+        this.isDataLive = dataInfo.isDataLive;
+        this.updateChart();
+      }
+      this.resizeChart(dataInfo.dateRange);
+    });
+  }
+
+  resizeChart(dateRange: DateRange) {
+    this.chart.xAxis[0].setExtremes(dateRange.min, dateRange.max);
   }
 
   ngAfterContentInit() {
@@ -53,13 +81,8 @@ export class ChartComponent implements AfterContentInit {
     this.theChart = new StockChart({
       chart: {
         events: {
-          load: function() {
-            let chart = this;
-            self.events.subscribe('resizeChart', function(dataResize) {
-              if (dataResize !== self.data._id) {
-                chart.xAxis[0].setExtremes(dataResize.min, dataResize.max);
-              }
-            });
+          load: function() { // TODO: arrrow function
+            self.chart = this;
           }
         }
       },
@@ -91,12 +114,15 @@ export class ChartComponent implements AfterContentInit {
       xAxis: {
         events: {
           setExtremes: function (e) {
-            if (e.trigger !== 'navigator') return;
-            self.events.publish('resizeChart', {
-              min: e.min,
-              max: e.max,
+            if (e.trigger !== 'navigator') { return; }
+            const dataResize: DataResize = {
+              dateRange: {
+                min: e.min,
+                max: e.max,
+              },
               dataResize: self.data._id
-            });
+            };
+            self.events.publish('resizeChart', dataResize);
           }
         }
       },
@@ -128,7 +154,7 @@ export class ChartComponent implements AfterContentInit {
     this.getSensorsId().forEach(sensorId => {
       series.push({
         name: this.dataService.getSensorConfig(sensorId).sensorName,
-        data: this.dataService.getSensorData(sensorId).sort((d1, d2) => { // TODO : sort server side
+        data: this.dataService.getSensorData(sensorId, this.isDataLive).sort((d1, d2) => { // TODO : sort server side
           return d1[0] > d2[0] ? 1 : -1;
         })
       });
@@ -141,7 +167,7 @@ export class ChartComponent implements AfterContentInit {
   }
 
   public getLastValue(sensorId: string): string {
-    const sensorData: number[][] = this.dataService.getSensorData(sensorId);
+    const sensorData: number[][] = this.dataService.getSensorData(sensorId, this.isDataLive);
     if (!sensorData || sensorData.length === 0 ) {
       return 'no data';
     }

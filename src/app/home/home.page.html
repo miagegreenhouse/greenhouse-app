@@ -17,8 +17,9 @@
       <ion-select-option *ngFor="let tick of dateRange; let i = index" [value]="i">{{tick.name}}</ion-select-option>
       <ion-select-option [value]="-1"><span>Personnalisé</span></ion-select-option>
     </ion-select>
-    <ion-icon *ngIf="dateRangeSelected === -1"
-              slot="end" name="calendar" (click)="openModal()"></ion-icon>
+    <ion-button color="light" slot="end" (click)="updateCustomDateRange()">
+      <ion-icon slot="icon-only" name="calendar"></ion-icon>
+    </ion-button>
     <ion-button color="light" slot="end" [routerDirection]="'root'" [routerLink]="'/preferences'">
       <ion-icon slot="icon-only" name="settings"></ion-icon>
     </ion-button>

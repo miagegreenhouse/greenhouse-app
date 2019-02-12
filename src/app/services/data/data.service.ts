@@ -43,6 +43,7 @@ export class DataService {
   sensorsGroups: { [key: string]: SensorGroup } = {}; // dataId => SensorGroup
   sensorsConfigs: {[key: string]: SensorConfig } = {}; // sensorId => SensorConfig
   sensorsDatas: {[key: string]: number[][] } = {}; // sensorId => [time, value][]
+  sensorsDatasCustomRange: {[key: string]: number[][] } = {}; // sensorId => [time, value][]
   sources: Set<string> = new Set();
 
   alerts: { [key: string]: AlertMessage} = {}; // alertId => AlertMessage
@@ -84,7 +85,7 @@ export class DataService {
     })
     .then(() => {
       return new Promise((resolve, reject) => {
-        this.restService.getSensorsData().subscribe((sensorsData: any) => {
+        this.restService.getSensorsData(null, null).subscribe((sensorsData: any) => {
           console.log(sensorsData);
           Object.keys(sensorsData).forEach(sensorId => {
             const datas = this.sensorsDatas[sensorId];
@@ -132,7 +133,6 @@ export class DataService {
       }
     });
 
-    this.mockData();
   }
 
   getSensorGroups(): SensorGroup[] {
@@ -155,8 +155,13 @@ export class DataService {
     return Array.from(this.mails);
   }
 
-  getSensorData(sensorId: string): number[][] {
-    const sensorsDatas: number[][] = this.sensorsDatas[sensorId];
+  getSensorData(sensorId: string, isLive: boolean): number[][] {
+    let sensorsDatas: number[][] = [];
+    if (isLive) {
+      sensorsDatas = this.sensorsDatas[sensorId];
+    } else {
+      sensorsDatas = this.sensorsDatasCustomRange[sensorId];
+    }
     return sensorsDatas ? sensorsDatas : [];
   }
 
@@ -172,95 +177,22 @@ export class DataService {
     return this.sensorsDatas !== undefined && this.sensorsDatas[dataId] !== undefined;
   }
 
-  private mockData() {
-
-    // this.datas = {
-    //   '1': {
-    //     _id: 'sgfsh',
-    //     name: 'Température eau',
-    //     sensorsId: new Set()
-    //   },
-    //   '2': {
-    //     _id: 'sgfsj',
-    //     name: 'Température air',
-    //     sensorsId: new Set()
-    //   }
-    // };
-
-    // this.sensorsConfigs = {
-    //   '1': {
-    //     _id: 'sgfsg',
-    //     sensorId: '1',
-    //     source: 'g2e',
-    //     dataId: '1',
-    //     name: 'Capteur haut',
-    //     unit: '°C',
-    //     maxThresholdValue: 5,
-    //     minThresholdValue: 30,
-    //     minThresholdAlertMessage: 'Il fait froid',
-    //     maxThresholdAlertMessage: 'Il fait chaud'
-    //   },
-    //   '2': {
-    //     _id: 'sgfsh',
-    //     sensorId: '2',
-    //     source: 'myFood',
-    //     dataId: '1',
-    //     name: 'Capteur bas',
-    //     unit: '°C',
-    //     maxThresholdValue: 5,
-    //     minThresholdValue: 30,
-    //     minThresholdAlertMessage: 'Il fait froid',
-    //     maxThresholdAlertMessage: 'Il fait chaud'
-    //   },
-    //   '3': {
-    //     _id: 'sgfsi',
-    //     sensorId: '3',
-    //     source: 'g2e',
-    //     dataId: '2',
-    //     name: 'Capteur porte',
-    //     unit: '°C',
-    //     maxThresholdValue: 5,
-    //     minThresholdValue: 30,
-    //     minThresholdAlertMessage: 'Il fait froid',
-    //     maxThresholdAlertMessage: 'Il fait chaud'
-    //   },
-    //   '4': {
-    //     _id: 'sgfsj',
-    //     sensorId: '4',
-    //     source: 'myFood',
-    //     dataId: '2',
-    //     name: 'Capteur fenetre',
-    //     unit: '°C',
-    //     maxThresholdValue: 5,
-    //     minThresholdValue: 30,
-    //     minThresholdAlertMessage: 'Il fait froid',
-    //     maxThresholdAlertMessage: 'Il fait chaud'
-    //   }
-    // };
-
-    // this.datas['1'].sensorsId.add('1');
-    // this.datas['1'].sensorsId.add('2');
-    // this.datas['2'].sensorsId.add('3');
-    // this.datas['2'].sensorsId.add('4');
-
-    // this.events.publish(MessageType.ALERT, {
-    //   timestamp: new Date().getTime(),
-    //   alertId: '1',
-    //   message: 'Attention il fait trop chaud',
-    //   value: 35,
-    //   sensorId: '1',
-    //   dataId: '1',
-    //   acquit: null
-    // });
-    // this.events.publish(MessageType.ALERT, {
-    //   timestamp: new Date().getTime(),
-    //   alertId: '2',
-    //   message: 'Attention il fait trop froid',
-    //   value: 9,
-    //   sensorId: '1',
-    //   dataId: '1',
-    //   acquit: null
-    // });
+  getDatasInDateRange(startTimestamp: number, endTimestamp: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.restService.getSensorsData(startTimestamp, endTimestamp).subscribe((sensorsData: any) => {
+        this.sensorsDatasCustomRange = {};
+        Object.keys(sensorsData).forEach(sensorId => {
+          if (!this.sensorsDatasCustomRange[sensorId]) {
+            this.sensorsDatasCustomRange[sensorId] = [];
+          }
+          const datas = this.sensorsDatasCustomRange[sensorId];
+          sensorsData[sensorId].forEach(data => {
+            datas.push([parseInt(data.time), data.value]);
+          });
+        });
+        resolve();
+      }, reject);
+    });
   }
 
   acquitAlert(alertId: string) {
