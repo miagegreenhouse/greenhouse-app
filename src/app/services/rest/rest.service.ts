@@ -240,8 +240,12 @@ export class RestService {
   }
 
   acknowledgeAlert(id : string, token: string){
-    let url = this.apiUrl + this.ALERTS_ENDPOINT + '/' + id + '/' + token;
-    return this.http.put(url, {headers: this.headers}, {observe: 'response'});
+    let url = this.apiUrl + this.ALERTS_ENDPOINT + '/';
+    const body = {
+      "alertid" : id,
+      "token" : token
+    };
+    return this.http.put(url, {headers: this.headers, alertid : id, token}, {observe: 'response'});
   }
 
 }
