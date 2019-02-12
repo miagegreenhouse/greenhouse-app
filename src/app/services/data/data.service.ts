@@ -4,7 +4,7 @@ import {Events} from '@ionic/angular';
 import {ToastService} from '../toast/toast.service';
 import {RestService} from '../rest/rest.service';
 import {Observable} from 'rxjs';
-import {SensorConfig, Email} from '../../model';
+import {SensorConfig, Email, UserRegistrationForm} from '../../model';
 
 export interface DataMessage {
   [key: string]: SensorData[]; // sensorId => SensorData
@@ -312,4 +312,17 @@ export class DataService {
       this.toastService.showToast(sensorConfigEdit.sensorName + ' édité', 'success', 3000);
     });
   }
+
+  getUsersCount(): Observable<any> {
+    return this.restService.getUsersCount();
+  }
+
+  createAdmin(adminForm: UserRegistrationForm): Observable<any> {
+    const adminF = {
+      email: adminForm.email,
+      password: adminForm.password
+    };
+    return this.restService.createAdminAccount(adminF);
+  }
+
 }

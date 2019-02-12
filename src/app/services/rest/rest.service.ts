@@ -23,6 +23,8 @@ export class RestService {
   public SENSORS_GROUP_ENDPOINT: string   = '/public/sensorsgroup';
   public SENSORS_CONFIG_ENDPOINT: string  = '/public/sensorsconfig';
   public SENSORS_DATA_ENDPOINT: string    = '/public/sensorsdata';
+  public GET_USERS_COUNT_ENDPOINT: string = '/public/users/count';
+  public CREATE_USER_ENDPOINT: string     = '/public/users';
 
   constructor(private http: HttpClient,
     public storageService: StorageService
@@ -226,11 +228,20 @@ export class RestService {
     return this.http.delete(url, {headers: this.headers});
   }
 
+  getUsersCount() {
+    let url = this.apiUrl + this.GET_USERS_COUNT_ENDPOINT;
+    return this.http.get(url, {headers: this.headers});
+  }
 
   getSensorsData() {
     let url = this.apiUrl + this.SENSORS_DATA_ENDPOINT;
     return this.http.get(url, {headers: this.headers});
   }
+
+  createAdminAccount(adminForm) {
+    let url = this.apiUrl + this.CREATE_USER_ENDPOINT;
+    return this.http.post(url, adminForm, {headers: this.headers});
+  } 
   
 
 }

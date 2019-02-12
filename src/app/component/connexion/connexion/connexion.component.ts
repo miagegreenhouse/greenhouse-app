@@ -1,3 +1,4 @@
+import { DataService } from './../../../services/data/data.service';
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../../../services/authentication/authentication.service';
 import { UserForm } from 'src/app/model';
@@ -15,8 +16,8 @@ export class ConnexionComponent implements OnInit {
   userForm : UserForm = {email:"",password:""};
   redirect : string = '';
 
-  constructor(public auth : AuthenticationService, private toastr: ToastrService, private router: Router, private route: ActivatedRoute) { }
-
+  constructor(public auth : AuthenticationService, private toastr: ToastrService, private router: Router, private route: ActivatedRoute, public dataService: DataService) { }
+    
   ngOnInit() {
     console.log("On init");
     this.route.queryParams.subscribe(
@@ -25,8 +26,20 @@ export class ConnexionComponent implements OnInit {
         if (params.redirect) {
           this.redirect = params.redirect;
         }
+        this.dataService.getUsersCount().subscribe((response) => {
+          console.log(response);
+          if (!response.count || response.count < 0) {
+            console.log("No user in database");
+            this.toastr.info("Vous devez créer un compte administrateur pour la première utilisation");
+            this.router.navigate(['register'], {queryParams: {
+              redirect: this.redirect
+            }});
+          }
+        }, err => {
+          console.error(err);
+        });
       }
-    )
+    );
   }
 
   afterLogin() {
