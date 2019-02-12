@@ -24,14 +24,11 @@ export interface SensorData {
 export interface AlertMessage {
   alertId: string;
   sensorId: string;
-  dataId: string;
   timestamp: number;
   message: string;
   value: number;
-  acquit: {
-   timestamp: number;
-   email: string;
-  };
+  timestampAck?: number;
+  idEmailAck?: string;
 }
 
 @Injectable({
@@ -125,7 +122,7 @@ export class DataService {
 
     events.subscribe(MessageType.ALERT, (alertMessage: AlertMessage) => {
       this.alerts[alertMessage.alertId] = alertMessage;
-      if (alertMessage.acquit) {
+      if (alertMessage.timestampAck) {
         this.toastService.showToast('Alerte acquittée', 'success', 3000);
       } else {
         this.toastService.showToast(alertMessage.message, 'warning', 3000);
@@ -274,10 +271,8 @@ export class DataService {
   acquitAlert(alertId: string) {
     // TODO (jules) : Rest POST
     // TODO : remove below: just a mock
-    this.alerts[alertId].acquit = {
-      timestamp: new Date().getTime(),
-      email: 'test'
-    };
+    this.alerts[alertId].timestampAck = new Date().getTime();
+    this.alerts[alertId].idEmailAck =  'test';
     this.events.publish(MessageType.ALERT, this.alerts[alertId]);
   }
 

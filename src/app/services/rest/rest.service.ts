@@ -16,7 +16,7 @@ export class RestService {
     'Content-Type': 'application/json',
     'Authorization': (JSON.parse(localStorage.getItem('access_token')) ? 'Bearer ' + JSON.parse(localStorage.getItem('access_token')).value : '')
   });
-  apiUrl = 'http://greenhouse-iot.tk';
+  apiUrl = 'localhost:3000';
   public LOGIN_ENDPOINT: string           = '/api/token';
   public GET_ME_ENDPOINT: string          = '/api/users/me';
   public EMAIL_ENDPOINT: string           = '/api/adminmails';

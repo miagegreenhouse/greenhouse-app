@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { DataService } from 'src/app/services/data/data.service';
+import { DataService, AlertMessage } from 'src/app/services/data/data.service';
 import { ToastrService } from 'ngx-toastr';
 import {Subscription} from 'rxjs';
 
@@ -14,6 +14,7 @@ export class AlertViewerComponent implements OnInit {
   id: string;
   token: string;
   alert: any;
+  buttonValue: string = 'Acquitter';
   private paramSubscription: Subscription;
   private alertSubscription: Subscription;
 
@@ -26,6 +27,10 @@ export class AlertViewerComponent implements OnInit {
    });
     this.alertSubscription = this.dataService.getAlertById(this.id).subscribe((value) => {
       this.alert = value;
+      if(this.alert.timestampAcknowledgment){
+        this.alert.message = "L'alerte à déjà été acquitée par un autre utilisateur"; 
+        this.buttonValue = "Quitter";
+      }
     });
   }
 
@@ -35,21 +40,25 @@ export class AlertViewerComponent implements OnInit {
   }
 
   acknowledge() {
-    this.dataService.acknowledgeAlert(this.id, this.token)
-    .subscribe(resp => {
-      if (resp.status === 200) {
-        this.toastr.success('La notification à bien été acquittée', '', {
-          timeOut: 2000,
-          positionClass: 'toast-bottom-right',
-        }).onHidden.subscribe(() => {
-          this.router.navigate(['home']);
+    if(this.alert.timestampAcknowledgment){
+      this.router.navigate(['home']);
+    }else{
+      this.dataService.acknowledgeAlert(this.id, this.token)
+      .subscribe(resp => {
+        if (resp.status === 200) {
+          this.toastr.success('La notification à bien été acquittée', '', {
+            timeOut: 2000,
+            positionClass: 'toast-bottom-right',
+          }).onHidden.subscribe(() => {
+            this.router.navigate(['home']);
+          });
+        }
+      }, error => {
+        this.toastr.warning('Impossible d\'acquitter la notification', 'Erreur', {
+          timeOut: 5000,
+          positionClass: 'toast-bottom-right'
         });
-      }
-    }, error => {
-      this.toastr.warning('Impossible d\'acquitter la notification', 'Erreur', {
-        timeOut: 5000,
-        positionClass: 'toast-bottom-right'
       });
-    });
+    }
   }
 }

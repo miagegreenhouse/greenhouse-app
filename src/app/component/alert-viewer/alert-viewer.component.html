@@ -3,9 +3,9 @@
     <ion-card class="alertViewCard">
       <ion-card-content>
         <ion-card-title>Alerte</ion-card-title>
-        <ion-item>{{dataService.getAlertById(this.id).value}}</ion-item>
+        <ion-item>{{alert?.message}}</ion-item>
       </ion-card-content>
-      <ion-button color="danger" (click)="acknowledge()">Acquitter</ion-button>
+      <ion-button color="danger" (click)="acknowledge()">{{buttonValue}}</ion-button>
     </ion-card>
   </div>
 </ion-content>
