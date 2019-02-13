@@ -40,7 +40,7 @@ export interface SensorConfig {
   sensorName?: string;
   sensorGroupId?: string;
   dataId?: string;
-  dataSource?: string;
+  dataSource?: number;
   unit?: string;
   minThresholdValue?: number;
   minThresholdAlertMessage?: string;
@@ -51,8 +51,8 @@ export interface SensorConfig {
 }
 
 export interface Email {
-  _id: string,
-  createdDate: string,
-  email: string,
-  lastModifiedDate: string
+  _id: string;
+  createdDate: string;
+  email: string;
+  lastModifiedDate: string;
 }

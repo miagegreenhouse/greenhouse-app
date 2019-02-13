@@ -7,14 +7,14 @@
       Home
     </ion-title>
     <ion-select slot="end"
-                [(ngModel)]="sourceSelected" (ionChange)="onChangeSource()"
+                [(ngModel)]="chartConfig.source" (ionChange)="onChangeSource()"
                 [interfaceOptions]="customActionSheetOptions" interface="action-sheet">
-      <ion-select-option *ngFor="let source of getSourceOptions()">{{source}}</ion-select-option>
+      <ion-select-option *ngFor="let source of dataService.sourcesOptions" [value]="source.value">{{source.name}}</ion-select-option>
     </ion-select>
     <ion-select slot="end"
                 [(ngModel)]="dateRangeSelected" (ionChange)="onChangeDateRange()"
                 [interfaceOptions]="customActionSheetOptions" interface="action-sheet">
-      <ion-select-option *ngFor="let tick of dateRange; let i = index" [value]="i">{{tick.name}}</ion-select-option>
+      <ion-select-option *ngFor="let tick of dateRangeList; let i = index" [value]="i">{{tick.name}}</ion-select-option>
       <ion-select-option [value]="-1"><span>Personnalisé</span></ion-select-option>
     </ion-select>
     <ion-button color="light" slot="end" (click)="updateCustomDateRange()">
@@ -29,7 +29,7 @@
 <ion-content>
   <ion-row>
     <ion-col size-md="12" size-lg="6" *ngFor="let data of dataService.getSensorGroups()">
-      <app-chart [data]="data"></app-chart>
+      <app-chart [sensorGroup]="data"></app-chart>
     </ion-col>
   </ion-row>
 </ion-content>

@@ -10,6 +10,7 @@ export interface DateRange {
 
 export interface DataInfo {
   isDataLive: boolean;
+  source: number;
   dateRange: DateRange;
 }
 
@@ -25,16 +26,18 @@ export interface DataResize {
 })
 export class ChartComponent implements AfterContentInit {
 
-  @Input() data: SensorGroup;
+  @Input() sensorGroup: SensorGroup;
 
-  isDataLive = true;
-  theChart;
-  chart;
-  dateRange: DateRange = {
-    min: new Date().getTime() - 180000, // Default value is 3min
-    max: new Date().getTime()
+  chartComponent;
+  chartObject;
+  chartConfig: DataInfo = {
+    isDataLive: true,
+    source: -1,
+    dateRange: {
+      min: 0,
+      max: new Date().getTime()
+    }
   };
-  source = null;
 
   colors: string[] = [
     '#953686',
@@ -50,26 +53,34 @@ export class ChartComponent implements AfterContentInit {
 
   constructor(public events: Events, public dataService: DataService) {
     this.events.subscribe('resizeChart', (dataResize: DataResize) => {
-      if (dataResize.dataResize !== this.data._id) {
+      if (dataResize.dataResize !== this.sensorGroup._id) {
         this.resizeChart(dataResize.dateRange);
       }
     });
-    this.events.subscribe('updateChart', (dataInfo: DataInfo) => {
-      if (this.isDataLive !== dataInfo.isDataLive || !dataInfo.isDataLive) { // if change or isCustomDateRange
-        this.isDataLive = dataInfo.isDataLive;
+    this.events.subscribe('updateChart', (chartConfig: DataInfo) => {
+      let isUpdateChart = false;
+      if (this.chartConfig.source !== chartConfig.source) {
+        isUpdateChart = true;
+      }
+      if (this.chartConfig.isDataLive !== chartConfig.isDataLive || !chartConfig.isDataLive) { // if change or isCustomDateRange
+        isUpdateChart = true;
+      }
+      this.chartConfig = Object.assign({}, chartConfig); // deep copy
+      if (isUpdateChart) {
         this.updateChart();
       }
-      this.resizeChart(dataInfo.dateRange);
+      this.resizeChart(chartConfig.dateRange);
     });
   }
 
   resizeChart(dateRange: DateRange) {
-    if (this.chart && this.chart.xAxis && this.chart.xAxis[0]) 
-      this.chart.xAxis[0].setExtremes(dateRange.min, dateRange.max);
+    if (this.chartObject && this.chartObject.xAxis && this.chartObject.xAxis[0]) {
+      this.chartObject.xAxis[0].setExtremes(dateRange.min, dateRange.max);
+    }
   }
 
   ngAfterContentInit() {
-    this.events.subscribe('updateData:' + this.data._id, () => {
+    this.events.subscribe('updateData:' + this.sensorGroup._id, () => {
       this.updateChart();
     });
     setTimeout(() => {
@@ -79,20 +90,17 @@ export class ChartComponent implements AfterContentInit {
 
   public updateChart(): void {
     const self = this;
-    this.theChart = new StockChart({
+    this.chartComponent = new StockChart({
       chart: {
         events: {
           load: function() { // TODO: arrrow function
-            self.chart = this;
+            self.chartObject = this;
           }
         }
       },
 
       yAxis: {
         events: {},
-        title: {
-          text: 'Exchange rate'
-        },
         plotLines: [{
           value: 25,
           color: 'green',
@@ -121,11 +129,19 @@ export class ChartComponent implements AfterContentInit {
                 min: e.min,
                 max: e.max,
               },
-              dataResize: self.data._id
+              dataResize: self.sensorGroup._id
             };
             self.events.publish('resizeChart', dataResize);
           }
         }
+      },
+
+      credits: {
+        enabled: false
+      },
+
+      legend: {
+        enabled: true
       },
 
       rangeSelector: {
@@ -133,29 +149,19 @@ export class ChartComponent implements AfterContentInit {
       },
 
       title: {
-        text: this.data.name
+        text: this.sensorGroup.name
       },
 
       series: this.getChartData()
     });
   }
 
-  public updateDateRange(dateRange: DateRange): void {
-    this.dateRange = dateRange;
-    this.updateChart();
-  }
-
-  public updateSource(newSource: string): void {
-    this.source = newSource;
-    this.updateChart();
-  }
-
   private getChartData(): any[] {
     const series = [];
     this.getSensorsId().forEach(sensorId => {
       series.push({
-        name: this.dataService.getSensorConfig(sensorId).sensorName,
-        data: this.dataService.getSensorData(sensorId, this.isDataLive).sort((d1, d2) => { // TODO : sort server side
+        name: this.dataService.getSensorConfig(sensorId).sensorName, // this.dataService.getSensorConfig(sensorId).sensorName,
+        data: this.dataService.getSensorData(sensorId, this.chartConfig.isDataLive).sort((d1, d2) => { // TODO : sort server side
           return d1[0] > d2[0] ? 1 : -1;
         })
       });
@@ -164,13 +170,22 @@ export class ChartComponent implements AfterContentInit {
   }
 
   public getSensorsId(): string[] {
-    return this.dataService.getDataSensorsId(this.data._id);
+    return this.dataService.getDataSensorsId(this.sensorGroup._id)
+      .filter((sensorId) => {
+        const sensorDataSource = this.dataService.getSensorConfig(sensorId).dataSource;
+        if (this.chartConfig.source === -1) { return true; }
+        return (sensorDataSource === this.chartConfig.source);
+      });
+  }
+
+  public getUnit(sensorId: string): string {
+    return this.dataService.getSensorConfig(sensorId).unit;
   }
 
   public getLastValue(sensorId: string): string {
-    const sensorData: number[][] = this.dataService.getSensorData(sensorId, this.isDataLive);
+    const sensorData: number[][] = this.dataService.getSensorData(sensorId, this.chartConfig.isDataLive);
     if (!sensorData || sensorData.length === 0 ) {
-      return 'no data';
+      return 'no sensorGroup';
     }
     return sensorData[sensorData.length - 1][1].toFixed(2);
   }
@@ -181,5 +196,16 @@ export class ChartComponent implements AfterContentInit {
       hash += sensorId.charCodeAt(i);
     }
     return this.colors[hash % this.colors.length];
+  }
+
+  hasData(): boolean {
+    return this.getSensorsId().length > 0;
+  }
+
+  public getSourceName(): string {
+    const sourceFound = this.dataService.sourcesOptions.find((source) => {
+      return source.value === this.chartConfig.source;
+    });
+    return sourceFound ? sourceFound.name : 'Toutes les sources';
   }
 }
