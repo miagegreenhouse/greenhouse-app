@@ -153,6 +153,12 @@ export class ChartComponent implements AfterContentInit {
         text: this.sensorGroup.name
       },
 
+      time: {
+        // timezone: "Europe/Paris",
+        timezoneOffset: 2 * new Date().getTimezoneOffset(),
+        // useUTC: false
+      },
+
       series: this.getChartData()
     });
   }
