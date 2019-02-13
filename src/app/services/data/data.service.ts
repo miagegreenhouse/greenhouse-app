@@ -23,13 +23,14 @@ export interface SensorData {
 }
 
 export interface AlertMessage {
-  alertId: string;
-  sensorId: string;
-  timestamp: number;
+  id: string;
+  sensorid: string;
+  dataId: string;
+  time: number;
   message: string;
   value: number;
-  timestampAck?: number;
-  idEmailAck?: string;
+  token: string;
+  timestampAcknowledgment: number;
 }
 
 @Injectable({
@@ -47,12 +48,18 @@ export class DataService {
   alerts: { [key: string]: AlertMessage} = {}; // alertId => AlertMessage
   mails: Set<Email> = new Set();
 
+  sourcesOptions = [
+    {name: 'Toutes les sources', value: -1},
+    {name: 'MyFood', value: 0},
+    {name: 'G2Elab', value: 1}
+  ];
+
   constructor(private socketService: SocketService,
               private toastService: ToastService,
               public restService: RestService,
               private events: Events,
               public storageService: StorageService) {
-    
+
     this.initData();
 
   }
@@ -101,20 +108,21 @@ export class DataService {
         }, reject);
       });
     }).then(() => {
-
+      if (this.storageService.get('access_token')) {
+        this.restService.getEmails().subscribe((mails: Email[]) => {
+          mails.forEach(mail => this.mails.add(mail));
+        });
+        this.restService.getAlerts().subscribe((alerts: any[]) => {
+          alerts.forEach(alert => this.alerts[alert.id] = alert);
+        });
+      }
     }).catch(err => {
       console.error(err);
       // TODO
     });
 
-    if (this.storageService.get('access_token')) {
-      this.restService.getEmails().subscribe((mails: Email[]) => {
-        mails.forEach(mail => this.mails.add(mail));
-      });
-    }
-
     this.events.subscribe(MessageType.DATA, (dataMessage: DataMessage) => {
-      // For each sensor in data
+      // For each sensor in sensorGroup
       Object.keys(dataMessage).forEach(sensorId => {
         const messageSensor = dataMessage[sensorId];
         if (!this.sensorsDatas[sensorId]) { // if object does not exists in map
@@ -126,14 +134,16 @@ export class DataService {
           sensorDatas.push([parseInt(sensorData.time), sensorData.value]);
         });
 
-        this.events.publish('updateData:' + this.sensorsConfigs[sensorId].dataId);
+        this.events.publish('updateData:' + this.sensorsConfigs[sensorId].sensorGroupId);
       });
     });
 
     this.events.subscribe(MessageType.ALERT, (alertMessage: AlertMessage) => {
-      this.alerts[alertMessage.alertId] = alertMessage;
-      if (alertMessage.timestampAck) {
-        this.toastService.showToast('Alerte acquittée', 'success', 3000);
+      console.log('alert', alertMessage);
+      this.alerts[alertMessage.id] = alertMessage;
+      if (alertMessage.timestampAcknowledgment) {
+        // this.toastService.showToast('Alerte acquittée', 'success', 3000);
+
       } else {
         this.toastService.showToast(alertMessage.message, 'warning', 3000);
       }
@@ -157,12 +167,12 @@ export class DataService {
     return Object.values(this.alerts);
   }
 
-  getAlertById(id: string): Observable<any>{
+  getAlertById(id: string): Observable<any> {
     return this.restService.getAlertById(id);
   }
 
-  acknowledgeAlert(id: string, token: string){
-    return this.restService.acknowledgeAlert(id,token);
+  acknowledgeAlert(id: string, token: string) {
+    return this.restService.acknowledgeAlert(id, token);
   }
 
   getMails(): Email[] {
@@ -212,9 +222,13 @@ export class DataService {
   acquitAlert(alertId: string) {
     // TODO (jules) : Rest POST
     // TODO : remove below: just a mock
-    this.alerts[alertId].timestampAck = new Date().getTime();
-    this.alerts[alertId].idEmailAck =  'test';
-    this.events.publish(MessageType.ALERT, this.alerts[alertId]);
+    const now = new Date();
+    this.alerts[alertId].timestampAcknowledgment = now.getTime();
+    this.restService.updateAlert(this.alerts[alertId])
+    .subscribe(alert => {
+      this.toastService.showToast('Alerte acquittée', 'success', 3000);
+    });
+
   }
 
   addMail(email: string): Observable<any> {
@@ -244,10 +258,10 @@ export class DataService {
     // TODO : remove below: just a mock
     return new Observable<any>(observer => {
 
-      // Remove sensor from previous data
+      // Remove sensor from previous sensorGroup
       const oldSensorConfig = this.sensorsConfigs[sensorConfigEdit._id];
 
-      // Add sensor to new data
+      // Add sensor to new sensorGroup
       this.sensorsConfigs[sensorConfigEdit._id] = sensorConfigEdit;
 
       this.restService.updateSensorsConfig(sensorConfigEdit).subscribe(() => {

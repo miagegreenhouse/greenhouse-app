@@ -1,11 +1,9 @@
-import {Component, QueryList, ViewChildren} from '@angular/core';
+import {Component} from '@angular/core';
 import {ToastService} from '../services/toast/toast.service';
-import {ChartComponent, DataInfo, DateRange} from '../chart/chart.component';
-import {AlertMessage, DataService} from '../services/data/data.service';
+import {DataInfo, DateRange} from '../chart/chart.component';
+import {DataService} from '../services/data/data.service';
 import {Events, ModalController} from '@ionic/angular';
-import {MessageType} from '../services/socket/socket.service';
 import {DateRangePickerComponent} from '../component/date-range-picker/date-range-picker.component';
-import {el} from '@angular/platform-browser/testing/src/browser_util';
 
 @Component({
   selector: 'app-home',
@@ -14,13 +12,11 @@ import {el} from '@angular/platform-browser/testing/src/browser_util';
 })
 export class HomePage {
 
-  @ViewChildren(ChartComponent) charts: QueryList<ChartComponent>;
-
   customActionSheetOptions: any = {
     header: 'Sélectionner une plage de données'
   };
 
-  dateRange: Tick[] = [
+  dateRangeList: Tick[] = [
     {
       name:  'Temps réel',
       timestamp: 21600000 // 6h
@@ -42,12 +38,15 @@ export class HomePage {
       timestamp: 7776000000,
     },
   ];
-  dateRangeSelected = 0;
-  sourceSelected = 'Toutes';
+  dateRangeSelected = 4;
 
-  customDateRange: DateRange = {
-    min: new Date().getTime() - (1000 * 60 * 60 * 3),
-    max: new Date().getTime()
+  chartConfig: DataInfo = {
+    isDataLive: true,
+    source: -1,
+    dateRange: {
+      min: new Date().getTime() - 7776000000,
+      max: new Date().getTime()
+    }
   };
 
   constructor(public toastService: ToastService,
@@ -61,14 +60,13 @@ export class HomePage {
       this.openModal();
       return;
     }
-    const dataInfo: DataInfo = {
-      isDataLive: true,
-      dateRange: {
-        min: new Date().getTime() - this.dateRange[this.dateRangeSelected].timestamp,
-        max: new Date().getTime()
-      }
+
+    this.chartConfig.isDataLive = true;
+    this.chartConfig.dateRange = {
+      min: new Date().getTime() - this.dateRangeList[this.dateRangeSelected].timestamp,
+      max: new Date().getTime()
     };
-    this.events.publish('updateChart', dataInfo);
+    this.events.publish('updateChart', this.chartConfig);
   }
 
   updateCustomDateRange() {
@@ -83,19 +81,16 @@ export class HomePage {
     const modal = await this.modalCtrl.create({
       component: DateRangePickerComponent,
       componentProps: {
-        'dateRange': this.customDateRange
+        'dateRange': this.chartConfig.dateRange
       }
     });
     modal.onDidDismiss().then((datRangeSelected) => {
       if (datRangeSelected.data) {
-        this.customDateRange = <DateRange>datRangeSelected.data;
-        this.dataService.getDatasInDateRange(this.customDateRange.min, this.customDateRange.max)
+        this.chartConfig.dateRange = <DateRange>datRangeSelected.data;
+        this.dataService.getDatasInDateRange(this.chartConfig.dateRange.min, this.chartConfig.dateRange.max)
             .then(() => {
-              const dataInfo: DataInfo = {
-                isDataLive: false,
-                dateRange: this.customDateRange
-              };
-              this.events.publish('updateChart', dataInfo);
+              this.chartConfig.isDataLive = true;
+              this.events.publish('updateChart', this.chartConfig);
             })
             .catch(err => {
               this.toastService.showToast('Erreur lors de la récupération des donneés', 'danger', 3000);
@@ -106,15 +101,7 @@ export class HomePage {
   }
 
   onChangeSource() {
-    this.charts.forEach(chart => {
-      chart.updateSource((this.sourceSelected === 'Toutes') ? null : this.sourceSelected);
-    });
-  }
-
-  getSourceOptions(): string[] {
-    const sources = this.dataService.getSources();
-    sources.unshift('Toutes');
-    return sources;
+    this.events.publish('updateChart', this.chartConfig);
   }
 }
 
