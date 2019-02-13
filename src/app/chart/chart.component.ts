@@ -81,6 +81,7 @@ export class ChartComponent implements AfterContentInit {
 
   ngAfterContentInit() {
     this.events.subscribe('updateData:' + this.sensorGroup._id, () => {
+      console.log("here")
       this.updateChart();
     });
     setTimeout(() => {

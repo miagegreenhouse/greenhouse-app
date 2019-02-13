@@ -1,6 +1,6 @@
 
 import { Component, OnInit } from '@angular/core';
-import { NavParams, ModalController } from '@ionic/angular';
+import { NavParams, ModalController, Events } from '@ionic/angular';
 import { SensorConfig } from 'src/app/model';
 import {Validators, FormBuilder, FormGroup, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { DataService, SensorGroup} from '../../../services/data/data.service';
@@ -21,7 +21,7 @@ export class EditSensorComponent implements OnInit {
   sensorGroup: SensorGroup;
   sensorGroupSelectedValue: string;
 
-  constructor(public navParams: NavParams, public dataService: DataService, public modalController: ModalController, private formBuilder: FormBuilder) {
+  constructor(public navParams: NavParams, public dataService: DataService, public modalController: ModalController, private formBuilder: FormBuilder, public events: Events) {
     this.sensor = this.navParams.get('sensor');
 
     this.dataService.getSensorGroups().forEach(group => {
@@ -73,12 +73,17 @@ export class EditSensorComponent implements OnInit {
       this.dataService.getSensorGroups().forEach(group => {
         if(group.name == this.sensorForm.value['selectSensorGroup']){
           this.sensorGroup = group;
+          let oldGroupId = this.sensor.sensorGroupId;
+          this.dataService.sensorsGroups[this.sensor.sensorGroupId].sensorsId.delete(this.sensor._id);
           this.sensor.sensorGroupId = group._id;
+          this.dataService.sensorsGroups[this.sensorGroup._id].sensorsId.add(this.sensor._id)
+
+          if(oldGroupId){
+            this.events.publish('updateData:' + oldGroupId);
+          }
         }   
       });
 
-      this.dataService.sensorsGroups[this.sensorGroup._id].sensorsId.add(this.sensor._id);
-      //this.dataService.updateSensorGroup(this.dataService.sensorsGroups[this.sensorGroup._id]);
 
       this.modalController.dismiss(); // Enlever NgModel du template HTML
       return this.dataService.editSensor(this.sensor).subscribe(() => {});
