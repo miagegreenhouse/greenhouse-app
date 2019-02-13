@@ -32,6 +32,15 @@ export class SensorGroupComponent implements OnInit {
   }
 
   removeSensorGroup(group: SensorGroup){
-    //TODO
+    
+    this.dataService.removeSensorGroup(group).subscribe( (response: any) =>{
+      //this.dataService.sensorsGroups[sensorGroup._id] = sensorGroup;
+      delete this.dataService.sensorsGroups[group._id];
+    }, err => {
+      this.toastr.warning(err,"Erreur",{
+        timeOut: 5000,
+        positionClass: 'toast-top-right'
+      });
+    })
   }  
 }
