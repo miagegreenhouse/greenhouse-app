@@ -5,7 +5,7 @@
       <ion-list>
         <ion-item *ngFor="let group of dataService.getSensorGroups()">
           <ion-input readonly type="text" >{{group.name}}</ion-input> 
-          <ion-fab-button end (click)="removeSensorGroup(group)" class="sensorGroupFabButton">
+          <ion-fab-button end color="primary" (click)="confirmationAlert(group)" class="sensorGroupFabButton">
             <ion-icon name="remove"></ion-icon>
           </ion-fab-button>
         </ion-item>

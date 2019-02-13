@@ -265,6 +265,10 @@ export class DataService {
     return this.restService.deleteSensorGroup(sensorGroup);
   }
 
+  updateSensorGroup(sensorGroup: SensorGroup){
+    return this.restService.updateSensorGroup(sensorGroup);
+  }
+
   getUsersCount(): Observable<any> {
     return this.restService.getUsersCount();
   }

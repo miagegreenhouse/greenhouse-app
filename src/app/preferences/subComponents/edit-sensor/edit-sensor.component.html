@@ -39,6 +39,12 @@
                placeholder="Message seuil maximum"></ion-input>
           </ion-item>
           <ion-item>
+            <ion-label>Type de capteur</ion-label>
+            <ion-select interface="action-sheet" formControlName="selectSensorGroup" placeholder="{{sensorGroup?.name}}">
+              <ion-select-option *ngFor="let group of dataService.getSensorGroups()" >{{group.name}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
               <ion-button (click)="sensorDismiss()">Annuler</ion-button>
               <ion-button type="submit" [disabled]="!sensorForm.valid">Valider</ion-button>
           </ion-item>

@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavParams, ModalController } from '@ionic/angular';
 import { SensorConfig } from 'src/app/model';
 import {Validators, FormBuilder, FormGroup, ReactiveFormsModule, FormControl } from '@angular/forms';
-import { DataService} from '../../../services/data/data.service';
+import { DataService, SensorGroup} from '../../../services/data/data.service';
 
 
 
@@ -18,9 +18,19 @@ export class EditSensorComponent implements OnInit {
   sensor:SensorConfig;
   sensorEdit:SensorConfig;
   errorTreshold:boolean = true;
+  sensorGroup: SensorGroup;
+  sensorGroupSelectedValue: string;
 
   constructor(public navParams: NavParams, public dataService: DataService, public modalController: ModalController, private formBuilder: FormBuilder) {
     this.sensor = this.navParams.get('sensor');
+
+    this.dataService.getSensorGroups().forEach(group => {
+      group.sensorsId.forEach(sensorId => {
+        if(sensorId == this.sensor._id){
+          this.sensorGroup = group;
+        }
+      });      
+    });
 
     this.sensorForm = this.formBuilder.group({
       nomCapteur: [this.sensor.sensorName, Validators.required],
@@ -28,7 +38,8 @@ export class EditSensorComponent implements OnInit {
       seuilMini: [this.sensor.minThresholdValue, Validators.required],
       messageSeuilMini: [this.sensor.minThresholdAlertMessage, Validators.required],
       seuilMaxi: [this.sensor.maxThresholdValue, Validators.required],
-      messageSeuilMaxi: [this.sensor.maxThresholdAlertMessage, Validators.required]
+      messageSeuilMaxi: [this.sensor.maxThresholdAlertMessage, Validators.required],
+      selectSensorGroup: [this.sensorGroupSelectedValue]
     });
   }
 
@@ -59,10 +70,19 @@ export class EditSensorComponent implements OnInit {
       this.sensor.maxThresholdValue = this.sensorForm.value['seuilMaxi'];
       this.sensor.maxThresholdAlertMessage = this.sensorForm.value['messageSeuilMaxi'];
 
+      this.dataService.getSensorGroups().forEach(group => {
+        if(group.name == this.sensorForm.value['selectSensorGroup']){
+          this.sensorGroup = group;
+          this.sensor.sensorGroupId = group._id;
+        }   
+      });
+
+      this.dataService.sensorsGroups[this.sensorGroup._id].sensorsId.add(this.sensor._id);
+      //this.dataService.updateSensorGroup(this.dataService.sensorsGroups[this.sensorGroup._id]);
 
       this.modalController.dismiss(); // Enlever NgModel du template HTML
       return this.dataService.editSensor(this.sensor).subscribe(() => {});
-
+      
     }
   }
 
