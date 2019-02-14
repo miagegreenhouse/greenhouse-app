@@ -1,4 +1,4 @@
-<ion-card>
+<ion-card *ngIf="hasData()">
   <ion-card-header>
     <ion-card-title text-center>
       <ion-badge *ngFor="let sensorId of getSensorsId()"
