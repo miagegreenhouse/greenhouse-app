@@ -66,7 +66,7 @@ export class SensorGroupComponent implements OnInit {
     let message : string = '';
 
     if(sensors.length > 0){
-      message = '</br>Capteurs impactés : ';
+      message = '</br>Ces capteurs n\'aurons plus de groupe : ';
     }
     sensors.forEach(sensorId => {
       message += '</br> - '+sensorId.sensorName;

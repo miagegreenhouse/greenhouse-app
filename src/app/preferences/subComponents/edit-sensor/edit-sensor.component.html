@@ -44,9 +44,9 @@
               <ion-select-option *ngFor="let group of dataService.getSensorGroups()" >{{group.name}}</ion-select-option>
             </ion-select>
           </ion-item>
-          <ion-item>
-              <ion-button (click)="sensorDismiss()">Annuler</ion-button>
-              <ion-button type="submit" [disabled]="!sensorForm.valid">Valider</ion-button>
-          </ion-item>
+          <div class="buttonContainer">
+            <ion-button color="light" (click)="sensorDismiss()">Annuler</ion-button>
+            <ion-button type="submit" [disabled]="!sensorForm.valid">Valider</ion-button>
+          </div>
     </form>
 </ion-content>
