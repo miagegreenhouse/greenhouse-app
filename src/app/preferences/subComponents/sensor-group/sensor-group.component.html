@@ -6,11 +6,8 @@
     <div>
       <ion-list>
         <ion-item *ngFor="let group of dataService.getSensorGroups()">
-          <ion-input type="text" [(ngModel)]="group.name" ></ion-input>
-          <ion-fab-button end color="primary" (click)="updateSensorGroup(group)" class="sensorGroupFabButton">
-            <ion-icon name="send"></ion-icon>
-          </ion-fab-button>
-          <ion-fab-button size="small" end color="primary" (click)="confirmationAlert(group)" class="sensorGroupFabButton">
+          <ion-input type="text" [(ngModel)]="group.name" (keyup.enter)="updateSensorGroup(group)" ></ion-input>
+          <ion-fab-button end color="primary" (click)="confirmationAlert(group)" class="sensorGroupFabButton">
               <ion-icon name="remove"></ion-icon>
             </ion-fab-button>
         </ion-item>
