@@ -136,7 +136,9 @@ export class DataService {
           sensorDatas.push([parseInt(sensorData.time), sensorData.value]);
         });
 
-        this.events.publish('updateData:' + this.sensorsConfigs[sensorId].sensorGroupId);
+        if (this.sensorsConfigs[sensorId]) {
+          this.events.publish('updateData:' + this.sensorsConfigs[sensorId].sensorGroupId);
+        }
       });
     });
 

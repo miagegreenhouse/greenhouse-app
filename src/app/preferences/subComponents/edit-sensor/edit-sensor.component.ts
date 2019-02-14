@@ -74,7 +74,9 @@ export class EditSensorComponent implements OnInit {
         if(group.name == this.sensorForm.value['selectSensorGroup']){
           this.sensorGroup = group;
           let oldGroupId = this.sensor.sensorGroupId;
-          this.dataService.sensorsGroups[this.sensor.sensorGroupId].sensorsId.delete(this.sensor._id);
+          if (oldGroupId) {
+            this.dataService.sensorsGroups[this.sensor.sensorGroupId].sensorsId.delete(this.sensor._id);
+          }
           this.sensor.sensorGroupId = group._id;
           this.dataService.sensorsGroups[this.sensorGroup._id].sensorsId.add(this.sensor._id)
 

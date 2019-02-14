@@ -28,6 +28,18 @@
 
 <ion-content>
   <ion-row>
+    <ion-col [hidden]="dataService.getSensorGroups().length > 0">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title text-center>
+            Aucun groupe de capteur défini
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>Vous pouvez configurer les groupes de capteurs pour afficher des graphiques comparatifs dans les paramètres.</p>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
     <ion-col size-md="12" size-lg="6" size-xs="12" *ngFor="let data of dataService.getSensorGroups()">
       <app-chart [sensorGroup]="data"></app-chart>
     </ion-col>
