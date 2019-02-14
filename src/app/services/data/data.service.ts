@@ -113,7 +113,9 @@ export class DataService {
           mails.forEach(mail => this.mails.add(mail));
         });
         this.restService.getAlerts().subscribe((alerts: any[]) => {
-          alerts.forEach(alert => this.alerts[alert.id] = alert);
+          alerts.sort(function(alert1, alert2) {
+            return alert2.time - alert1.time;
+          }).forEach(alert => this.alerts[alert.id] = alert);
         });
       }
     }).catch(err => {
