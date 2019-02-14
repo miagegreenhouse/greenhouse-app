@@ -81,7 +81,6 @@ export class ChartComponent implements AfterContentInit {
 
   ngAfterContentInit() {
     this.events.subscribe('updateData:' + this.sensorGroup._id, () => {
-      console.log("here")
       this.updateChart();
     });
     setTimeout(() => {
@@ -102,23 +101,7 @@ export class ChartComponent implements AfterContentInit {
 
       yAxis: {
         events: {},
-        plotLines: [{
-          value: 25,
-          color: 'green',
-          dashStyle: 'shortdash',
-          width: 2,
-          label: {
-            text: 'Last quarter minimum'
-          }
-        }, {
-          value: 70,
-          color: 'red',
-          dashStyle: 'shortdash',
-          width: 2,
-          label: {
-            text: 'Last quarter maximum'
-          }
-        }]
+        plotLines: this.getPlotLines()
       },
 
       xAxis: {
@@ -135,6 +118,10 @@ export class ChartComponent implements AfterContentInit {
             self.events.publish('resizeChart', dataResize);
           }
         }
+      },
+
+      tooltip: {
+        xDateFormat: '%m/%e/%y %H:%M'
       },
 
       credits: {
@@ -161,6 +148,35 @@ export class ChartComponent implements AfterContentInit {
 
       series: this.getChartData()
     });
+  }
+
+  getPlotLines(): any[] {
+    const plotLines = [];
+    const nbSensors = this.getSensorsId().length;
+    if (nbSensors === 0 || nbSensors > 1) {
+      return plotLines;
+    }
+    const sensorConfig = this.dataService.getSensorConfig(this.getSensorsId()[0]);
+    if (sensorConfig.minThresholdValue) {
+      plotLines.push(this.getPlotLine(Number(sensorConfig.minThresholdValue), true));
+    }
+    if (sensorConfig.maxThresholdValue) {
+      plotLines.push(this.getPlotLine(Number(sensorConfig.maxThresholdValue), true));
+    }
+    return plotLines;
+  }
+
+  private getPlotLine(value: number, isMin: boolean) {
+    return {
+      value: value,
+      color: 'red',
+      dashStyle: 'shortdash',
+      zIndex: 5,
+      width: 2,
+      label: {
+        text: isMin ? 'min' : 'max'
+      }
+    };
   }
 
   private getChartData(): any[] {
