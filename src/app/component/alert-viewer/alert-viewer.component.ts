@@ -61,4 +61,17 @@ export class AlertViewerComponent implements OnInit {
       });
     }
   }
+
+  public formatTime(timestamp: any): string {
+    let time = timestamp;
+    if (typeof timestamp === 'string') {
+      time = parseInt(timestamp);
+    }
+    const options = {
+      year: 'numeric', month: 'numeric', day: 'numeric',
+      hour: 'numeric', minute: 'numeric', second: 'numeric'
+    };
+
+    return new Date(time).toLocaleDateString('fr-FR', options);
+  }
 }
