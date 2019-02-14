@@ -29,7 +29,9 @@ export class RestService {
   public CREATE_USER_ENDPOINT: string     = '/public/users';
 
   public SENSORS_GROUP_PRIVATE_ENDPOINT: string   = '/api/sensorsgroup';
+  public SENSORS_CONFIG_PRIVATE_ENDPOINT: string  = '/api/sensorsconfig';
 
+  public EXPORT_CSV_ENDPOINT: string = '/api/export';
 
   constructor(private http: HttpClient,
     public storageService: StorageService
@@ -146,17 +148,17 @@ export class RestService {
   }
 
   createSensorsConfig(sensorConfigForm: SensorConfigForm) {
-    let url = this.apiUrl + this.SENSORS_CONFIG_ENDPOINT;
+    let url = this.apiUrl + this.SENSORS_CONFIG_PRIVATE_ENDPOINT;
     return this.http.post(url, sensorConfigForm, {headers: this.headers});
   }
 
   updateSensorsConfig(sensorConfig: SensorConfig) {
-    let url = this.apiUrl + this.SENSORS_CONFIG_ENDPOINT + '/' + sensorConfig._id;
+    let url = this.apiUrl + this.SENSORS_CONFIG_PRIVATE_ENDPOINT + '/' + sensorConfig._id;
     return this.http.put(url, sensorConfig, {headers: this.headers});
   }
 
   deleteSensorsConfig(sensorConfig: SensorConfig) {
-    let url = this.apiUrl + this.SENSORS_CONFIG_ENDPOINT + '/' + sensorConfig._id;
+    let url = this.apiUrl + this.SENSORS_CONFIG_PRIVATE_ENDPOINT + '/' + sensorConfig._id;
     return this.http.delete(url, {headers: this.headers});
   }
 
@@ -200,6 +202,24 @@ export class RestService {
       "token" : token
     };
     return this.http.put(url, {headers: this.headers, alertid : id, token}, {observe: 'response'});
+  }
+
+
+
+  exportCSV(startTimestamp?: number, endTimestamp?: number) {
+    let url = this.apiUrl + this.EXPORT_CSV_ENDPOINT + '/?';
+    if (startTimestamp) {
+      url += 'start=' + startTimestamp + '&';
+    }
+    if (endTimestamp) {
+      url += 'end=' + endTimestamp;
+    }
+    let headers = new HttpHeaders({
+      'Accept': 'text/csv',
+      'Content-Type': 'text/csv',
+      'Authorization': (JSON.parse(localStorage.getItem('access_token')) ? 'Bearer ' + JSON.parse(localStorage.getItem('access_token')).value : '')
+    });
+    return this.http.get(url, {responseType: 'text' as 'json', headers: headers});
   }
 
 }

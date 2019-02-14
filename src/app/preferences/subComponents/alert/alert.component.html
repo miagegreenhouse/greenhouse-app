@@ -1,7 +1,12 @@
 <ion-card>
-  <ion-card-content>
+  <ion-card-header>
+    <ion-card-title>Alertes</ion-card-title>
+  </ion-card-header>
+  <ion-card-content style="max-height: 400px; overflow-y: scroll;">
+    <ion-card-subtitle>
+      Liste des emails recevant les alertes
+    </ion-card-subtitle>
     <ion-row>
-      <ion-card-title>Alertes</ion-card-title>
       <ion-col size="12">
         <ion-list no-lines>
           <ion-item *ngFor="let mail of dataService.getMails()">
@@ -21,7 +26,9 @@
           </ion-button>
         </ion-item>
       </ion-col>
-      <ion-card-title margin-top>Liste des alertes</ion-card-title>
+      <ion-card-subtitle margin-top>
+          Liste des alertes
+      </ion-card-subtitle>
       <ion-col size="12">
         <ion-list>
           <ion-item *ngIf="dataService.getAlerts().length === 0">

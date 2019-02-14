@@ -1,6 +1,8 @@
 <ion-card>
-  <ion-card-content>
-    <ion-card-title>Types de capteur</ion-card-title>
+  <ion-card-header>
+    <ion-card-title>Groupes de capteurs</ion-card-title>
+  </ion-card-header>
+  <ion-card-content style="max-height: 400px; overflow-y: scroll;">
     <div>
       <ion-list>
         <ion-item *ngFor="let group of dataService.getSensorGroups()">
@@ -8,7 +10,7 @@
           <ion-fab-button end color="primary" (click)="updateSensorGroup(group)" class="sensorGroupFabButton">
             <ion-icon name="send"></ion-icon>
           </ion-fab-button>
-          <ion-fab-button end color="primary" (click)="confirmationAlert(group)" class="sensorGroupFabButton">
+          <ion-fab-button size="small" end color="primary" (click)="confirmationAlert(group)" class="sensorGroupFabButton">
               <ion-icon name="remove"></ion-icon>
             </ion-fab-button>
         </ion-item>

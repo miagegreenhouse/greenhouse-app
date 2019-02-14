@@ -8,14 +8,37 @@
 </ion-header>
 
 <ion-content padding>
-  <app-sensor-group>
-  </app-sensor-group>
-
-  <app-sensor-list >
-  </app-sensor-list>
-
-  <app-alert >
-  </app-alert>
+  <ion-row>
+    <ion-col size-lg="9" size-md="12" size-xs="12">
+      <app-sensor-list >
+        </app-sensor-list>
+    </ion-col>
+    <ion-col size-lg="3" size-md="6" size-xs="6">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            Export
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-button size="small" (click)="downloadCSV()">
+            Télécharger CSV
+            <ion-icon name="download" slot="end"></ion-icon>
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
+    </ion-col>
+  </ion-row>
+  <ion-row>
+    <ion-col size-md="12" size-lg="6" size-xs="12">
+      <app-sensor-group>
+        </app-sensor-group>
+    </ion-col>
+    <ion-col size-md="12" size-lg="6" size-xs="12">
+      <app-alert >
+        </app-alert>
+    </ion-col>
+  </ion-row>
 
   <div style="width: 100%; text-align: center;">
     <ion-button (click)="logout()">
