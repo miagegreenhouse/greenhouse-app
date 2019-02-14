@@ -76,8 +76,8 @@ export class DataService {
         sensorsGroups.forEach(sensorGroup => {
           this.sensorsGroups[sensorGroup._id] = sensorGroup;
           this.sensorsGroups[sensorGroup._id].sensorsId = new Set<string>();
-          resolve();
         });
+        resolve();
       }, reject);
     }).then(() => {
       return new Promise((resolve, reject) => {
