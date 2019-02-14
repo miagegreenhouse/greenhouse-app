@@ -12,6 +12,9 @@ export class DateRangePickerComponent implements OnInit {
   @ViewChild('endDate') max;
   dateRange: DateRange;
 
+  cancelText = 'Annuler';
+  doneText = 'Sauver';
+
   constructor(private navParams: NavParams, private modalCtrl: ModalController) {
     this.dateRange = this.navParams.get('dateRange');
   }
