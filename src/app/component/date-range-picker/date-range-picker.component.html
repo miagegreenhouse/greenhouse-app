@@ -11,12 +11,16 @@
     <ion-item>
       <ion-label>Date de début</ion-label>
       <ion-datetime #startDate
+                    [cancelText]="cancelText"
+                    [doneText]="doneText"
                     [value]="getDateTime(dateRange.min)"
                     display-format="YYYY/MM/DD HH:mm"></ion-datetime>
     </ion-item>
     <ion-item>
       <ion-label>Date de fin</ion-label>
       <ion-datetime #endDate
+                    [cancelText]="cancelText"
+                    [doneText]="doneText"
                     [value]="getDateTime(dateRange.max)"
                     display-format="YYYY/MM/DD HH:mm"></ion-datetime>
     </ion-item>
