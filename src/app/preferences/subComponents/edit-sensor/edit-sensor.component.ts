@@ -33,12 +33,12 @@ export class EditSensorComponent implements OnInit {
     });
 
     this.sensorForm = this.formBuilder.group({
-      nomCapteur: [this.sensor.sensorName, Validators.required],
-      unite: [this.sensor.unit, Validators.required],
-      seuilMini: [this.sensor.minThresholdValue, Validators.required],
-      messageSeuilMini: [this.sensor.minThresholdAlertMessage, Validators.required],
-      seuilMaxi: [this.sensor.maxThresholdValue, Validators.required],
-      messageSeuilMaxi: [this.sensor.maxThresholdAlertMessage, Validators.required],
+      nomCapteur: [this.sensor.sensorName],
+      unite: [this.sensor.unit],
+      seuilMini: [this.sensor.minThresholdValue],
+      messageSeuilMini: [this.sensor.minThresholdAlertMessage],
+      seuilMaxi: [this.sensor.maxThresholdValue],
+      messageSeuilMaxi: [this.sensor.maxThresholdAlertMessage],
       selectSensorGroup: [this.sensorGroupSelectedValue]
     });
   }

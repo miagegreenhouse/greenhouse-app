@@ -1,11 +1,39 @@
 <ion-content>
-  <div class="alertViewContainer">
-    <ion-card class="alertViewCard">
-      <ion-card-content>
-        <ion-card-title>Alerte</ion-card-title>
-        <ion-item>{{alert?.message}}</ion-item>
-      </ion-card-content>
-      <ion-button color="danger" (click)="acknowledge()">{{buttonValue}}</ion-button>
-    </ion-card>
-  </div>
-</ion-content>
+    <div class="alertViewContainer">
+      <ion-card class="alertViewCard">
+        <ion-card-content>
+          <ion-card-title margin-end>
+              <ion-icon [name]="alert?.timestampAcknowledgment ? 'checkmark-circle-outline' : 'alert'"
+              [color]="alert?.timestampAcknowledgment ? 'success' : 'danger'"
+              margin-end></ion-icon>
+            {{dataService.getSensorConfig(alert?.sensorid)?.sensorName}}
+          </ion-card-title>
+          <ion-label text-wrap>
+            <h1  class="alertContentTitle" >{{alert?.value.toFixed(2)}}</h1>
+            <p><i>{{alert?.message}}</i></p>
+            <ion-text>
+              <ion-badge margin-end color="medium">
+                {{formatTime(alert?.time)}}
+              </ion-badge>
+              <ion-badge margin-end color="dark" *ngIf="dataService.hasData(alert?.dataId)">
+                {{dataService.sensorsGroups[alert?.dataId]?.name}}
+              </ion-badge>
+              <ion-badge margin-end color="dark" *ngIf="dataService.hasData(alert?.dataId) && dataService.getSensorConfig(alert?.sensorid)">
+                {{dataService.getSensorConfig(alert?.sensorid)?.sensorName}}
+              </ion-badge>
+              <ion-badge *ngIf="alert?.timestampAcknowledgment" margin-end color="success">
+                {{formatTime(alert?.timestampAcknowledgment)}}
+              </ion-badge>
+            </ion-text>
+          </ion-label>
+        </ion-card-content>
+        <ion-item>
+          <ion-button  slot="end"
+          (click)="acknowledge()">
+          <ion-icon  *ngIf="!alert?.timestampAcknowledgment" name="checkmark-circle-outline"></ion-icon>
+          {{buttonValue}}
+          </ion-button>
+        </ion-item>  
+      </ion-card>
+    </div>
+  </ion-content>
