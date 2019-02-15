@@ -38,6 +38,8 @@ export class ChartComponent implements AfterContentInit {
       max: new Date().getTime()
     }
   };
+  lastSource = -1;
+  lastDataLive = true;
 
   colors: string[] = [
     '#953686',
@@ -59,10 +61,12 @@ export class ChartComponent implements AfterContentInit {
     });
     this.events.subscribe('updateChart', (chartConfig: DataInfo) => {
       let isUpdateChart = false;
-      if (this.chartConfig.source !== chartConfig.source) {
+      if (this.lastSource !== chartConfig.source) {
+        this.lastSource = chartConfig.source;
         isUpdateChart = true;
       }
-      if (this.chartConfig.isDataLive !== chartConfig.isDataLive || !chartConfig.isDataLive) { // if change or isCustomDateRange
+      if (this.lastDataLive !== chartConfig.isDataLive) {
+        this.lastDataLive = chartConfig.isDataLive;
         isUpdateChart = true;
       }
       this.chartConfig = Object.assign({}, chartConfig); // deep copy
