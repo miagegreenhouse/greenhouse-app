@@ -89,7 +89,7 @@ export class HomePage {
         this.chartConfig.dateRange = <DateRange>datRangeSelected.data;
         this.dataService.getDatasInDateRange(this.chartConfig.dateRange.min, this.chartConfig.dateRange.max)
             .then(() => {
-              this.chartConfig.isDataLive = true;
+              this.chartConfig.isDataLive = false;
               this.events.publish('updateChart', this.chartConfig);
             })
             .catch(err => {
