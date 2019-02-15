@@ -20,7 +20,6 @@ export class ConfigService {
     return new Promise((resolve, reject) => {
       this.http.get('./assets/config/' + (environment.production ? 'prod' : 'dev') + '.json').subscribe(config => {
         this.appConfig = <AppConfig> config;
-        console.log(config);
         resolve(true);
       }, reject);
     });

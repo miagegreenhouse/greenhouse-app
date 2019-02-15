@@ -60,7 +60,6 @@ export class AuthenticationService implements CanActivate {
           this.restService.getMe().subscribe((user: User) => {
             this.currentUser = user;
             this.storageService.set('currentUser', user);
-            console.log(user);
             resolve(user);
           }, reject);
         }, reject);
@@ -70,7 +69,6 @@ export class AuthenticationService implements CanActivate {
         this.restService.getMe().subscribe((user: User) => {
           this.currentUser = user;
           this.storageService.set('currentUser', user);
-          console.log(user);
           resolve(user);
         }, reject);
       } else {

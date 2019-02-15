@@ -20,10 +20,11 @@ export class EditSensorComponent implements OnInit {
   errorTreshold:boolean = true;
   sensorGroups: SensorGroup[] = [];
   sensorGroupSelectedValue: string;
+  color: string = '#dddddd';
 
   constructor(public navParams: NavParams, public dataService: DataService, public modalController: ModalController, private formBuilder: FormBuilder, public events: Events) {
     this.sensor = this.navParams.get('sensor');
-
+    this.color = this.sensor.color || '';
     this.dataService.getSensorGroups().forEach(group => {
       group.sensorsId.forEach(sensorId => {
         if(sensorId == this.sensor._id){
@@ -59,22 +60,21 @@ export class EditSensorComponent implements OnInit {
     this.controlThreshold();
     if(!this.errorTreshold){
 
-      this.sensor.sensorName = this.sensorForm.value['nomCapteur'];
-      this.sensor.unit = this.sensorForm.value['unite'];
-      this.sensor.minThresholdValue = this.sensorForm.value['seuilMini'];
-      this.sensor.minThresholdAlertMessage = this.sensorForm.value['messageSeuilMini'];
-      this.sensor.maxThresholdValue = this.sensorForm.value['seuilMaxi'];
-      this.sensor.maxThresholdAlertMessage = this.sensorForm.value['messageSeuilMaxi'];
-      let oldGroupIds = this.sensor.sensorGroupIds;
+      this.sensor.sensorName                = this.sensorForm.value['nomCapteur'];
+      this.sensor.unit                      = this.sensorForm.value['unite'];
+      this.sensor.minThresholdValue         = this.sensorForm.value['seuilMini'];
+      this.sensor.minThresholdAlertMessage  = this.sensorForm.value['messageSeuilMini'];
+      this.sensor.maxThresholdValue         = this.sensorForm.value['seuilMaxi'];
+      this.sensor.maxThresholdAlertMessage  = this.sensorForm.value['messageSeuilMaxi'];
+      this.sensor.color                     = this.color;
+      let oldGroupIds                       = this.sensor.sensorGroupIds;
       if (oldGroupIds) {
         this.sensor.sensorGroupIds.forEach(sensorGroupId => {
-          console.log(sensorGroupId);
           this.dataService.sensorsGroups[sensorGroupId].sensorsId.delete(this.sensor._id);
         });
-        this.sensor.sensorGroupIds = [];
       }
+      this.sensor.sensorGroupIds = [];
       this.dataService.getSensorGroups().forEach(group => {
-        console.log(this.sensorForm.value['selectSensorGroup']);
 
         this.sensorForm.value['selectSensorGroup'].forEach(selectedSensorGroup => {
           if(group.name == selectedSensorGroup.name){
@@ -100,7 +100,6 @@ export class EditSensorComponent implements OnInit {
 
   sensorHasGroup(sensorGroup: SensorGroup) {
     if (this.sensor.sensorGroupIds) {
-      console.log(this.sensor.sensorGroupIds.indexOf(sensorGroup._id));
       return this.sensor.sensorGroupIds.indexOf(sensorGroup._id) !== -1;
     } else {
       return false;

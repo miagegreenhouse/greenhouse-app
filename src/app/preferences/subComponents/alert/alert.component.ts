@@ -13,14 +13,12 @@ export class AlertComponent implements OnInit {
   mailInput = '';
 
   constructor(public dataService: DataService, public toastrService: ToastrService, public alertCtrl: AlertController) {
-    console.log(this.dataService);
   }
 
   ngOnInit() {
   }
 
   addMail() {
-    console.log(this.mailInput);
     let regexp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
     if (regexp.test(this.mailInput)) {
       this.dataService.addMail(this.mailInput).subscribe((email) => {

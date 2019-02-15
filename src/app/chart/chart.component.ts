@@ -186,7 +186,8 @@ export class ChartComponent implements AfterContentInit {
         name: this.dataService.getSensorConfig(sensorId).sensorName, // this.dataService.getSensorConfig(sensorId).sensorName,
         data: this.dataService.getSensorData(sensorId, this.chartConfig.isDataLive).sort((d1, d2) => { // TODO : sort server side
           return d1[0] > d2[0] ? 1 : -1;
-        })
+        }),
+        color: this.dataService.getSensorConfig(sensorId).color || this.getColor(sensorId)
       });
     });
     return series;
@@ -218,7 +219,7 @@ export class ChartComponent implements AfterContentInit {
     for (let i = 0; i < sensorId.length; i++) {
       hash += sensorId.charCodeAt(i);
     }
-    return this.colors[hash % this.colors.length];
+    return this.dataService.sensorsConfigs[sensorId].color || this.colors[hash % this.colors.length];
   }
 
   hasData(): boolean {

@@ -25,9 +25,7 @@ export class AppComponent {
     this.platform.ready().then(() => {
       this.statusBar.styleDefault();
       this.splashScreen.hide();
-      this.socketService.onMessage().subscribe(message => {
-        console.log(message);
-      });
+      this.socketService.onMessage().subscribe(message => {});
     });
   }
 }

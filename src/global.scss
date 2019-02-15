@@ -12,3 +12,20 @@
 
 // regular style toast 
 @import '~ngx-toastr/toastr.css';
+
+
+.color-picker {
+  left: 50% !important;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 11px 15px -7px rgba(0,0,0,.2), 0 24px 38px 3px rgba(0,0,0,.14), 0 9px 46px 8px rgba(0,0,0,.12);
+  box-shadow: 0 11px 15px -7px rgba(0,0,0,.2), 0 24px 38px 3px rgba(0,0,0,.14), 0 9px 46px 8px rgba(0,0,0,.12);
+  border: 0px !important;
+  .saturation-lightness {
+    border-radius: 4px !important;
+  }
+}
+
+.color-picker .arrow.arrow-top {
+  left: 92% !important;
+  border-color: white rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) rgba(0, 0, 0, 0) !important;
+}

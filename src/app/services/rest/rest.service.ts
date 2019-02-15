@@ -56,21 +56,17 @@ export class RestService {
       this.endPoints.set(endPointKey, appConfig.restApi[endPointKey]);
     });
     this.apiUrl = appConfig.method + "://" + appConfig.host;
-    console.log(this.endPoints);
-    console.log(this.apiUrl);
   }
 
 
   getMe() {
     let url = this.apiUrl + this.GET_ME_ENDPOINT;
     this.getHeaders();
-    console.log(this.headers);
     return this.http.get(url, {headers: this.headers});
   }
 
   getHeaders() {
     let access_token = this.storageService.get("access_token");
-    console.log(access_token);
     let token;
     if (access_token) {
       token = access_token.value;

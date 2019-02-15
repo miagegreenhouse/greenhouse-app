@@ -25,7 +25,6 @@ describe('RestService', () => {
     const service: RestService = TestBed.get(RestService);
     service.apiUrl = 'https://httpbin.org/';
     service.get('get').subscribe(value => {
-      console.log(value);
       expect(value.url).toBe('https://httpbin.org/get');
     });
   });
@@ -37,7 +36,6 @@ describe('RestService', () => {
     service.get('get', [
         {name: 'foo', value: 12}
         ]).subscribe(value => {
-      console.log(value);
       expect(value.url).toBe('https://httpbin.org/get');
       expect(value.args.foo).toBe('12');
     });
@@ -52,7 +50,6 @@ describe('RestService', () => {
       {name: 'fooBoolean', value: true},
       {name: 'fooString', value: 'test'}
     ]).subscribe(value => {
-      console.log(value);
       expect(value.url).toBe('https://httpbin.org/get');
       expect(value.args.fooNumber).toBe('12');
       expect(value.args.fooBoolean).toBe('true');
@@ -68,7 +65,6 @@ describe('RestService', () => {
     service.post('post', data, [
       {name: 'fooNumber', value: 12}
     ]).subscribe(value => {
-      console.log(value);
       expect('' + value.data).toBe('' + 123);
     });
   });

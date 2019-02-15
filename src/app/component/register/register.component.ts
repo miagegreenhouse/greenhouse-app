@@ -29,10 +29,8 @@ export class RegisterComponent implements OnInit {
   ) { }
     
   ngOnInit() {
-    console.log("On init");
     this.route.queryParams.subscribe(
       params => {
-        console.log(params);
         if (params.redirect) {
           this.redirect = params.redirect;
         }
@@ -71,7 +69,6 @@ export class RegisterComponent implements OnInit {
         .subscribe(res => {
           this.auth.login()
           .then(user => {
-            console.log(user);
             this.dataService.initData();
             this.toastr.success("Vous êtes connecté avec : "+user.email,"Succès",{
               timeOut: 2000,
@@ -86,7 +83,7 @@ export class RegisterComponent implements OnInit {
               timeOut: 5000,
               positionClass: 'toast-bottom-right'
             });
-            console.log(err);
+            console.error(err);
           });
         }, err => {
           this.toastr.warning("The server could not create the email","Erreur",{
@@ -107,7 +104,7 @@ export class RegisterComponent implements OnInit {
         timeOut: 5000,
         positionClass: 'toast-bottom-right'
       });
-      console.log(err);
+      console.error(err);
     });
   }
 

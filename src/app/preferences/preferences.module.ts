@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
+import { ColorPickerModule } from 'ngx-color-picker';
 
 import { PreferencesPage } from './preferences.page';
 import {AlertComponent} from './subComponents/alert/alert.component';
@@ -25,7 +26,8 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    ColorPickerModule
   ],
   declarations: [PreferencesPage, AlertComponent,SensorListComponent, EditSensorComponent,SensorGroupComponent],
   entryComponents: [EditSensorComponent],

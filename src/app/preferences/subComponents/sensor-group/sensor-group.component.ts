@@ -35,6 +35,12 @@ export class SensorGroupComponent implements OnInit {
 
   removeSensorGroup(group: SensorGroup){
     this.dataService.removeSensorGroup(group).subscribe( (response: any) =>{
+      Object.values(this.dataService.sensorsConfigs).forEach(value => {
+        let index = value.sensorGroupIds.indexOf(group._id);
+        if (index !== -1) {
+          value.sensorGroupIds = value.sensorGroupIds.slice(index, 1);
+        }
+      });
       delete this.dataService.sensorsGroups[group._id];
     }, err => {
       this.toastr.warning(err,"Erreur",{
@@ -84,7 +90,6 @@ export class SensorGroupComponent implements OnInit {
         }, {
           text: 'Valider',
           handler: () => {
-            console.log('Confirm Okay');
             this.removeSensorGroup(group);
           }
         }

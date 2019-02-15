@@ -19,15 +19,12 @@ export class ConnexionComponent implements OnInit {
   constructor(public auth : AuthenticationService, private toastr: ToastrService, private router: Router, private route: ActivatedRoute, public dataService: DataService) { }
     
   ngOnInit() {
-    console.log("On init");
     this.route.queryParams.subscribe(
       params => {
-        console.log(params);
         if (params.redirect) {
           this.redirect = params.redirect;
         }
         this.dataService.getUsersCount().subscribe((response) => {
-          console.log(response);
           if (!response.count || response.count < 0) {
             console.log("No user in database");
             this.toastr.info("Vous devez créer un compte administrateur pour la première utilisation");
@@ -67,7 +64,7 @@ export class ConnexionComponent implements OnInit {
         timeOut: 5000,
         positionClass: 'toast-bottom-right'
       });
-      console.log(err);
+      console.error(err);
     });
   }
 }

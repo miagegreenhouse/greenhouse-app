@@ -40,9 +40,13 @@
           </ion-item>
           <ion-item>
             <ion-label>Afficher sur le(s) graphique(s)</ion-label>
-            <ion-select multiple="true" cancelText="Annuler" okText="Valider" interface="action-sheet" formControlName="selectSensorGroup" placeholder="{{sensorGroup?.name}}">
+            <ion-select multiple="true" cancelText="Annuler" okText="Valider" interface="action-sheet" formControlName="selectSensorGroup">
               <ion-select-option [value]="group" *ngFor="let group of dataService.getSensorGroups()" >{{group.name}}</ion-select-option>
             </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label>Couleur sur le(s) graphique(s)</ion-label>
+            <input [(colorPicker)]="color" [cpPosition]="'top'" [cpPositionOffset]="'15%'" [style.background]="color"/>
           </ion-item>
           <div class="buttonContainer">
             <ion-button color="light" (click)="sensorDismiss()">Annuler</ion-button>

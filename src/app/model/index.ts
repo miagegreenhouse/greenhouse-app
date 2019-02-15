@@ -48,6 +48,7 @@ export interface SensorConfig {
   maxThresholdAlertMessage?: string;
   createdDate?: string;
   lastModifiedDate?: string;
+  color?: string;
 }
 
 export interface Email {
