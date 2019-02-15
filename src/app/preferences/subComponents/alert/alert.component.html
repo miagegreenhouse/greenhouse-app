@@ -19,7 +19,7 @@
           </ion-item>
         </ion-list>
         <ion-item>
-          <ion-input type="text" placeholder="Ajouter un email" [(ngModel)]="mailInput" email></ion-input>
+          <ion-input type="text" placeholder="Ajouter un email" [(ngModel)]="mailInput" email (keypress)="onKeyPressed($event.keyCode)"></ion-input>
           <ion-button (click)="addMail()"
                       slot="end">
             <ion-icon slot="icon-only" name="add"></ion-icon>

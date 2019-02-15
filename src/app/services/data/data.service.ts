@@ -85,9 +85,11 @@ export class DataService {
           sensorsConfigs.forEach(sensorConfig => {
             this.sensorsConfigs[sensorConfig._id] = sensorConfig;
             this.sensorsDatas[sensorConfig._id] = [];
-            if (this.sensorsGroups[sensorConfig.sensorGroupId] !== undefined) {
-              this.sensorsGroups[sensorConfig.sensorGroupId].sensorsId.add(sensorConfig._id);
-            }
+            sensorConfig.sensorGroupIds.forEach(sensorGroupId => {
+              if (this.sensorsGroups[sensorGroupId] !== undefined) {
+                this.sensorsGroups[sensorGroupId].sensorsId.add(sensorConfig._id);
+              }
+            });
             resolve();
           });
           console.log(this.sensorsConfigs);
@@ -137,7 +139,9 @@ export class DataService {
         });
 
         if (this.sensorsConfigs[sensorId]) {
-          this.events.publish('updateData:' + this.sensorsConfigs[sensorId].sensorGroupId);
+          this.sensorsConfigs[sensorId].sensorGroupIds.forEach(sensorGroupId => {
+            this.events.publish('updateData:' + sensorGroupId);
+          });
         }
       });
     });

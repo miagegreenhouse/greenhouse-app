@@ -38,7 +38,7 @@ export enum HTTPMethod {
 export interface SensorConfig {
   _id: string;
   sensorName?: string;
-  sensorGroupId?: string;
+  sensorGroupIds?: string[];
   dataId?: string;
   dataSource?: number;
   unit?: string;

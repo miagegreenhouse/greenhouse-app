@@ -66,7 +66,7 @@ export class SensorGroupComponent implements OnInit {
     let message : string = '';
 
     if(sensors.length > 0){
-      message = '</br>Ces capteurs n\'aurons plus de groupe : ';
+      message = '</br>Ces capteurs n\'aurons plus de graphique : ';
     }
     sensors.forEach(sensorId => {
       message += '</br> - '+sensorId.sensorName;
@@ -74,7 +74,7 @@ export class SensorGroupComponent implements OnInit {
 
     const alert = await this.alertController.create({
       header: 'Attention',
-      subHeader: 'Voulez vous vraiment supprimer ce type de capteur ?',
+      subHeader: 'Voulez vous vraiment supprimer ce graphique ?',
       message: message,
       buttons: [
         {
@@ -106,5 +106,11 @@ export class SensorGroupComponent implements OnInit {
     });
 
     return sensors;
+  }
+
+  onKeyPressed(key: number) {
+    if (key === 13) {
+      this.addSensorGroup();
+    }
   }
 }

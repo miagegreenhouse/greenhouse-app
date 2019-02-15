@@ -18,7 +18,7 @@ export class EditSensorComponent implements OnInit {
   sensor:SensorConfig;
   sensorEdit:SensorConfig;
   errorTreshold:boolean = true;
-  sensorGroup: SensorGroup;
+  sensorGroups: SensorGroup[] = [];
   sensorGroupSelectedValue: string;
 
   constructor(public navParams: NavParams, public dataService: DataService, public modalController: ModalController, private formBuilder: FormBuilder, public events: Events) {
@@ -27,10 +27,11 @@ export class EditSensorComponent implements OnInit {
     this.dataService.getSensorGroups().forEach(group => {
       group.sensorsId.forEach(sensorId => {
         if(sensorId == this.sensor._id){
-          this.sensorGroup = group;
+          this.sensorGroups.push(group);
         }
       });      
     });
+
 
     this.sensorForm = this.formBuilder.group({
       nomCapteur: [this.sensor.sensorName],
@@ -39,7 +40,7 @@ export class EditSensorComponent implements OnInit {
       messageSeuilMini: [this.sensor.minThresholdAlertMessage],
       seuilMaxi: [this.sensor.maxThresholdValue],
       messageSeuilMaxi: [this.sensor.maxThresholdAlertMessage],
-      selectSensorGroup: [this.sensorGroupSelectedValue]
+      selectSensorGroup: [this.sensorGroups]
     });
   }
 
@@ -50,18 +51,13 @@ export class EditSensorComponent implements OnInit {
     let seuilMaxi = Number(this.sensorForm.value['seuilMaxi']);
     let seuilMini = Number(this.sensorForm.value['seuilMini']);
 
-    if(seuilMini > seuilMaxi){
-      this.errorTreshold = false;
-    }
-    else{
-      this.errorTreshold = true;
-    }
+    this.errorTreshold = seuilMini > seuilMaxi;
   }
 
 
   validateForm(){
     this.controlThreshold();
-    if(this.errorTreshold){
+    if(!this.errorTreshold){
 
       this.sensor.sensorName = this.sensorForm.value['nomCapteur'];
       this.sensor.unit = this.sensorForm.value['unite'];
@@ -69,27 +65,45 @@ export class EditSensorComponent implements OnInit {
       this.sensor.minThresholdAlertMessage = this.sensorForm.value['messageSeuilMini'];
       this.sensor.maxThresholdValue = this.sensorForm.value['seuilMaxi'];
       this.sensor.maxThresholdAlertMessage = this.sensorForm.value['messageSeuilMaxi'];
-
+      let oldGroupIds = this.sensor.sensorGroupIds;
+      if (oldGroupIds) {
+        this.sensor.sensorGroupIds.forEach(sensorGroupId => {
+          console.log(sensorGroupId);
+          this.dataService.sensorsGroups[sensorGroupId].sensorsId.delete(this.sensor._id);
+        });
+        this.sensor.sensorGroupIds = [];
+      }
       this.dataService.getSensorGroups().forEach(group => {
-        if(group.name == this.sensorForm.value['selectSensorGroup']){
-          this.sensorGroup = group;
-          let oldGroupId = this.sensor.sensorGroupId;
-          if (oldGroupId) {
-            this.dataService.sensorsGroups[this.sensor.sensorGroupId].sensorsId.delete(this.sensor._id);
-          }
-          this.sensor.sensorGroupId = group._id;
-          this.dataService.sensorsGroups[this.sensorGroup._id].sensorsId.add(this.sensor._id)
+        console.log(this.sensorForm.value['selectSensorGroup']);
 
-          if(oldGroupId){
-            this.events.publish('updateData:' + oldGroupId);
-          }
-        }   
+        this.sensorForm.value['selectSensorGroup'].forEach(selectedSensorGroup => {
+          if(group.name == selectedSensorGroup.name){
+
+            this.sensor.sensorGroupIds.push(group._id);
+            this.dataService.sensorsGroups[selectedSensorGroup._id].sensorsId.add(this.sensor._id)
+  
+          }   
+        });
       });
 
+      if(oldGroupIds){
+        oldGroupIds.forEach(oldGroupId => {
+          this.events.publish('updateData:' + oldGroupId);
+        });
+      }
 
       this.modalController.dismiss(); // Enlever NgModel du template HTML
       return this.dataService.editSensor(this.sensor).subscribe(() => {});
       
+    }
+  }
+
+  sensorHasGroup(sensorGroup: SensorGroup) {
+    if (this.sensor.sensorGroupIds) {
+      console.log(this.sensor.sensorGroupIds.indexOf(sensorGroup._id));
+      return this.sensor.sensorGroupIds.indexOf(sensorGroup._id) !== -1;
+    } else {
+      return false;
     }
   }
 

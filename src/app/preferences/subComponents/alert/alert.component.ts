@@ -57,6 +57,12 @@ export class AlertComponent implements OnInit {
     });
   }
 
+  onKeyPressed(keyCode: number) {
+    if (keyCode === 13) {
+      this.addMail();
+    }
+  }
+
   public formatTime(timestamp: any): string {
     let time = timestamp;
     if (typeof timestamp === 'string') {

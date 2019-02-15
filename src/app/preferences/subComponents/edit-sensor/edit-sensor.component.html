@@ -39,9 +39,9 @@
                placeholder="Message seuil maximum"></ion-input>
           </ion-item>
           <ion-item>
-            <ion-label>Type de capteur</ion-label>
-            <ion-select interface="action-sheet" formControlName="selectSensorGroup" placeholder="{{sensorGroup?.name}}">
-              <ion-select-option *ngFor="let group of dataService.getSensorGroups()" >{{group.name}}</ion-select-option>
+            <ion-label>Afficher sur le(s) graphique(s)</ion-label>
+            <ion-select multiple="true" cancelText="Annuler" okText="Valider" interface="action-sheet" formControlName="selectSensorGroup" placeholder="{{sensorGroup?.name}}">
+              <ion-select-option [value]="group" *ngFor="let group of dataService.getSensorGroups()" >{{group.name}}</ion-select-option>
             </ion-select>
           </ion-item>
           <div class="buttonContainer">

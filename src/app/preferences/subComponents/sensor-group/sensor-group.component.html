@@ -1,6 +1,6 @@
 <ion-card>
   <ion-card-header>
-    <ion-card-title>Groupes de capteurs</ion-card-title>
+    <ion-card-title>Graphiques</ion-card-title>
   </ion-card-header>
   <ion-card-content style="max-height: 400px; overflow-y: scroll;">
     <div>
@@ -12,7 +12,7 @@
             </ion-fab-button>
         </ion-item>
         <ion-item>
-          <ion-input [(ngModel)]="newGroupName" type="text" placeholder="Nouveau groupe de capteur" ></ion-input>
+          <ion-input [(ngModel)]="newGroupName" type="text" placeholder="Nouveau graphique" (keypress)="onKeyPressed($event.keyCode)"></ion-input>
           <ion-button (click)="addSensorGroup()"> Ajouter</ion-button>
         </ion-item>
       </ion-list>
