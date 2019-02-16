@@ -5,12 +5,16 @@
   <ion-card-content style="max-height: 400px; overflow-y: scroll;">
     <div>
       <ion-list>
-        <ion-item *ngFor="let group of dataService.getSensorGroups()">
-          <ion-input type="text" [(ngModel)]="group.name" (keyup.enter)="updateSensorGroup(group)" ></ion-input>
-          <ion-fab-button end color="primary" (click)="confirmationAlert(group)" class="sensorGroupFabButton">
+        <ion-reorder-group (ionItemReorder)="onIonItemReorder($event)" disabled="false">
+          <ion-item *ngFor="let group of dataService.getSensorGroups()">
+            <ion-input type="text" [(ngModel)]="group.name" (keyup.enter)="updateSensorGroup(group)" ></ion-input>
+            <ion-fab-button end color="primary" (click)="confirmationAlert(group)" class="sensorGroupFabButton">
               <ion-icon name="remove"></ion-icon>
             </ion-fab-button>
-        </ion-item>
+            <!-- <ion-label>{{ group.name }}</ion-label> -->
+            <ion-reorder slot="start"></ion-reorder>
+          </ion-item>
+        </ion-reorder-group>
         <ion-item>
           <ion-input [(ngModel)]="newGroupName" type="text" placeholder="Nouveau graphique" (keypress)="onKeyPressed($event.keyCode)"></ion-input>
           <ion-button (click)="addSensorGroup()"> Ajouter</ion-button>

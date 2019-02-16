@@ -77,6 +77,14 @@ export class DataService {
           this.sensorsGroups[sensorGroup._id] = sensorGroup;
           this.sensorsGroups[sensorGroup._id].sensorsId = new Set<string>();
         });
+        let groupsOrder = this.storageService.get('groups_order');
+        if (groupsOrder) {
+          let newSensorsGroups = {};
+          groupsOrder.forEach(sensorGroupKey => {
+            newSensorsGroups[sensorGroupKey] = this.sensorsGroups[sensorGroupKey];
+          });
+          this.sensorsGroups = newSensorsGroups;
+        }
         resolve();
       }, reject);
     }).then(() => {
@@ -233,6 +241,10 @@ export class DataService {
       this.toastService.showToast('Alerte acquittée', 'success', 3000);
     });
 
+  }
+
+  saveGroupOrder() {
+    this.storageService.set('groups_order', Object.keys(this.sensorsGroups));
   }
 
   addMail(email: string): Observable<any> {
