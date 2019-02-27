@@ -15,7 +15,7 @@
               <ion-input color="primary" name="seuilMini" formControlName="seuilMini" 
                placeholder="Seuil minimum"></ion-input>
           </ion-item>
-          <div *ngIf="!errorTreshold"
+          <div *ngIf="errorTreshold"
           class="alert-danger">
         Attention le seuil minimum doit être inférieur au seuil maximum
         </div>
@@ -29,7 +29,7 @@
               <ion-input  color="primary" name="seuilMaxi" formControlName="seuilMaxi"
                placeholder="Seuil maximum"></ion-input>
           </ion-item>
-        <div *ngIf="!errorTreshold"
+        <div *ngIf="errorTreshold"
           class="alert alert-danger">
         Attention le seuil minimum doit être inférieur au seuil maximum
         </div>

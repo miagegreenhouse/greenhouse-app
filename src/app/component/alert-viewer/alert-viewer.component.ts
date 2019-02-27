@@ -18,7 +18,7 @@ export class AlertViewerComponent implements OnInit {
   private paramSubscription: Subscription;
   private alertSubscription: Subscription;
 
-  constructor( private route: ActivatedRoute, private router: Router, private dataService: DataService, private toastr: ToastrService) { }
+  constructor( private route: ActivatedRoute, private router: Router, public dataService: DataService, private toastr: ToastrService) { }
 
   ngOnInit() {
     this.paramSubscription = this.route.params.subscribe(params => {
@@ -46,7 +46,9 @@ export class AlertViewerComponent implements OnInit {
       this.dataService.acknowledgeAlert(this.id, this.token)
       .subscribe(resp => {
         if (resp.status === 200) {
-          this.toastr.success('La notification à bien été acquittée', '', {
+          this.dataService.alerts[this.id].timestampAcknowledgment = Date.now();
+          this.dataService.alerts[this.id].token = this.token;
+          this.toastr.success('L\'alerte à bien été acquittée', '', {
             timeOut: 2000,
             positionClass: 'toast-bottom-right',
           }).onHidden.subscribe(() => {

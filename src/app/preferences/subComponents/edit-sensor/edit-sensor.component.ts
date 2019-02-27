@@ -17,7 +17,7 @@ export class EditSensorComponent implements OnInit {
   sensorForm: FormGroup;
   sensor:SensorConfig;
   sensorEdit:SensorConfig;
-  errorTreshold:boolean = true;
+  errorTreshold:boolean = false;
   sensorGroups: SensorGroup[] = [];
   sensorGroupSelectedValue: string;
   color: string = '#dddddd';

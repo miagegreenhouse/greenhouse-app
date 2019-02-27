@@ -25,7 +25,10 @@ export class AlertComponent implements OnInit {
         this.dataService.mails.add(email);
         this.toastrService.success(email.email + ' ajouté');
         this.mailInput = '';
-    });
+      }, err => {
+        let errorString = err.error.reason || JSON.stringify(err);
+        this.toastrService.error(errorString);
+      });
     } else {
       this.toastrService.warning("Format d'adresse non valide");
     }

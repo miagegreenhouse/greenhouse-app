@@ -165,7 +165,7 @@ export class ChartComponent implements AfterContentInit {
       plotLines.push(this.getPlotLine(Number(sensorConfig.minThresholdValue), true));
     }
     if (sensorConfig.maxThresholdValue) {
-      plotLines.push(this.getPlotLine(Number(sensorConfig.maxThresholdValue), true));
+      plotLines.push(this.getPlotLine(Number(sensorConfig.maxThresholdValue), false));
     }
     return plotLines;
   }

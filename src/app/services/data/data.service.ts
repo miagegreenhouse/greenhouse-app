@@ -81,7 +81,9 @@ export class DataService {
         if (groupsOrder) {
           let newSensorsGroups = {};
           groupsOrder.forEach(sensorGroupKey => {
-            newSensorsGroups[sensorGroupKey] = this.sensorsGroups[sensorGroupKey];
+            if (this.sensorsGroups[sensorGroupKey]) {
+              newSensorsGroups[sensorGroupKey] = this.sensorsGroups[sensorGroupKey];
+            }
           });
           this.sensorsGroups = newSensorsGroups;
         }
@@ -154,7 +156,12 @@ export class DataService {
 
     this.events.subscribe(MessageType.ALERT, (alertMessage: AlertMessage) => {
       console.log('alert', alertMessage);
-      this.alerts[alertMessage.id] = alertMessage;
+      let newAlerts = {};
+      newAlerts[alertMessage.id] = alertMessage;
+      Object.keys(this.alerts).forEach(alertKey => {
+        newAlerts[alertKey] = this.alerts[alertKey];
+      });
+      this.alerts = newAlerts;
       if (alertMessage.timestampAcknowledgment) {
         // this.toastService.showToast('Alerte acquittée', 'success', 3000);
 

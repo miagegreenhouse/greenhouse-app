@@ -102,24 +102,6 @@ export class SensorGroupComponent implements OnInit {
   }
 
   onIonItemReorder(event) {
-    // let sensorGroups = Object.values(this.dataService.sensorsGroups);
-    // let sensorGroupToMove = undefined;
-
-    // let newSensorGroups = {};
-
-    // sensorGroups.forEach((sensorGroup, i) => {
-    //   if (i === event.detail.from) {
-    //     sensorGroupToMove = sensorGroup;
-    //   }
-    // });
-    // delete this.dataService.sensorsGroups[sensorGroupToMove._id];
-    // Object.values(this.dataService.sensorsGroups).forEach((sensorGroup, i) => {
-    //   if (i === event.detail.to) {
-    //     newSensorGroups[sensorGroupToMove._id] = sensorGroupToMove;
-    //   }
-    //   newSensorGroups[sensorGroup._id] = sensorGroup;
-    // });
-    // this.dataService.sensorsGroups = newSensorGroups;
     let order = Object.keys(this.dataService.sensorsGroups);
     let groupToMove = order.splice(event.detail.from, 1)[0];
     order.splice(event.detail.to, 0, groupToMove);

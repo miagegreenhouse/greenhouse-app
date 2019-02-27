@@ -62,105 +62,108 @@ export class RestService {
   getMe() {
     let url = this.apiUrl + this.GET_ME_ENDPOINT;
     this.getHeaders();
-    return this.http.get(url, {headers: this.headers});
+    return this.http.get(url, {headers: this.getHeaders()});
   }
 
   getHeaders() {
-    let access_token = this.storageService.get("access_token");
-    let token;
-    if (access_token) {
-      token = access_token.value;
-      this.headers = this.headers.set('Authorization', 'Bearer ' + token);
-    }
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': (JSON.parse(localStorage.getItem('access_token')) ? 'Bearer ' + JSON.parse(localStorage.getItem('access_token')).value : '')
+    });
+    return headers;
   }
 
   login(userForm: UserForm) {
     let url = this.apiUrl + this.LOGIN_ENDPOINT;
-    return this.http.post(url, userForm, {headers: this.headers});
+    return this.http.post(url, userForm, {headers: this.getHeaders()});
   }
 
 
   getEmails() {
     let url = this.apiUrl + this.EMAIL_ENDPOINT;
-    return this.http.get(url, {headers: this.headers});
+    return this.http.get(url, {headers: this.getHeaders()});
   }
 
   getEmail(mail: Email) {
     let url = this.apiUrl + this.EMAIL_ENDPOINT + '/' + mail._id;
-    return this.http.get(url, {headers: this.headers});
+    return this.http.get(url, {headers: this.getHeaders()});
   }
 
   createEmail(mailForm: MailForm) {
     let url = this.apiUrl + this.EMAIL_ENDPOINT;
-    return this.http.post(url, mailForm, {headers: this.headers});
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': (JSON.parse(localStorage.getItem('access_token')) ? 'Bearer ' + JSON.parse(localStorage.getItem('access_token')).value : '')
+    });
+    return this.http.post(url, mailForm, {headers: headers});
   }
 
   updateEmail(mail: Email) {
     let url = this.apiUrl + this.EMAIL_ENDPOINT + '/' + mail._id;
-    return this.http.put(url, mail, {headers: this.headers});
+    return this.http.put(url, mail, {headers: this.getHeaders()});
   }
 
   deleteEmail(mail: Email) {
     let url = this.apiUrl + this.EMAIL_ENDPOINT + '/' + mail._id;
-    return this.http.delete(url, {headers: this.headers});
+    return this.http.delete(url, {headers: this.getHeaders()});
   }
 
 
 
   getSensorsGroups() {
     let url = this.apiUrl + this.SENSORS_GROUP_ENDPOINT;
-    return this.http.get(url, {headers: this.headers});
+    return this.http.get(url, {headers: this.getHeaders()});
   }
 
   getSensorsGroup(sensorGroup: SensorGroup) {
     let url = this.apiUrl + this.SENSORS_GROUP_ENDPOINT + '/' + sensorGroup._id;
-    return this.http.get(url, {headers: this.headers});
+    return this.http.get(url, {headers: this.getHeaders()});
   }
 
   createSensorGroup(name: string) {
     let url = this.apiUrl + this.SENSORS_GROUP_PRIVATE_ENDPOINT;
-    return this.http.post(url, {name : name}, {headers: this.headers});
+    return this.http.post(url, {name : name}, {headers: this.getHeaders()});
   }
 
   updateSensorGroup(sensorGroup: SensorGroup) {
     let url = this.apiUrl + this.SENSORS_GROUP_PRIVATE_ENDPOINT + '/' + sensorGroup._id;
-    return this.http.put(url, sensorGroup, {headers: this.headers});
+    return this.http.put(url, sensorGroup, {headers: this.getHeaders()});
   }
 
   deleteSensorGroup(sensorGroup: SensorGroup) {
     let url = this.apiUrl + this.SENSORS_GROUP_PRIVATE_ENDPOINT + '/' + sensorGroup._id;
-    return this.http.delete(url, {headers: this.headers});
+    return this.http.delete(url, {headers: this.getHeaders()});
   }
 
 
   getSensorsConfigs() {
     let url = this.apiUrl + this.SENSORS_CONFIG_ENDPOINT;
-    return this.http.get(url, {headers: this.headers});
+    return this.http.get(url, {headers: this.getHeaders()});
   }
 
   getSensorsConfig(sensorConfig: SensorConfig) {
     let url = this.apiUrl + this.SENSORS_CONFIG_ENDPOINT + '/' + sensorConfig._id;
-    return this.http.get(url, {headers: this.headers});
+    return this.http.get(url, {headers: this.getHeaders()});
   }
 
   createSensorsConfig(sensorConfigForm: SensorConfigForm) {
     let url = this.apiUrl + this.SENSORS_CONFIG_PRIVATE_ENDPOINT;
-    return this.http.post(url, sensorConfigForm, {headers: this.headers});
+    return this.http.post(url, sensorConfigForm, {headers: this.getHeaders()});
   }
 
   updateSensorsConfig(sensorConfig: SensorConfig) {
     let url = this.apiUrl + this.SENSORS_CONFIG_PRIVATE_ENDPOINT + '/' + sensorConfig._id;
-    return this.http.put(url, sensorConfig, {headers: this.headers});
+    return this.http.put(url, sensorConfig, {headers: this.getHeaders()});
   }
 
   deleteSensorsConfig(sensorConfig: SensorConfig) {
     let url = this.apiUrl + this.SENSORS_CONFIG_PRIVATE_ENDPOINT + '/' + sensorConfig._id;
-    return this.http.delete(url, {headers: this.headers});
+    return this.http.delete(url, {headers: this.getHeaders()});
   }
 
   getUsersCount() {
     let url = this.apiUrl + this.GET_USERS_COUNT_ENDPOINT;
-    return this.http.get(url, {headers: this.headers});
+    return this.http.get(url, {headers: this.getHeaders()});
   }
 
   getSensorsData(startTimestamp: number, endTimestamp: number) {
@@ -169,26 +172,26 @@ export class RestService {
       startTimestamp ? ('start=' + startTimestamp) : null,
       endTimestamp ? ('end=' + endTimestamp) : null
     ].join('&');
-    return this.http.get(url, {headers: this.headers});
+    return this.http.get(url, {headers: this.getHeaders()});
   }
 
   createAdminAccount(adminForm) {
     let url = this.apiUrl + this.CREATE_USER_ENDPOINT;
-    return this.http.post(url, adminForm, {headers: this.headers});
+    return this.http.post(url, adminForm, {headers: this.getHeaders()});
   }
 
   getAlerts() {
     let url = this.apiUrl + this.ALERT_ENDPOINT;
-    return this.http.get(url, {headers: this.headers});
+    return this.http.get(url, {headers: this.getHeaders()});
   }
 
   updateAlert(alert: AlertMessage) {
     let url = this.apiUrl + this.ALERT_ENDPOINT + "/" + alert.id;
-    return this.http.put(url, alert, {headers: this.headers});
+    return this.http.put(url, alert, {headers: this.getHeaders()});
   }
   getAlertById(id : string) {
     let url = this.apiUrl + this.ALERTS_ENDPOINT + '/' + id;
-    return this.http.get(url, {headers: this.headers});
+    return this.http.get(url, {headers: this.getHeaders()});
   }
 
   acknowledgeAlert(id : string, token: string){
@@ -197,7 +200,7 @@ export class RestService {
       "alertid" : id,
       "token" : token
     };
-    return this.http.put(url, {headers: this.headers, alertid : id, token}, {observe: 'response'});
+    return this.http.put(url, {headers: this.getHeaders(), alertid : id, token}, {observe: 'response'});
   }
 
 

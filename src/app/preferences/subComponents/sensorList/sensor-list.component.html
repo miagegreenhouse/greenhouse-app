@@ -2,17 +2,17 @@
   <ion-card-header>
     <ion-card-title>Capteurs</ion-card-title>
   </ion-card-header>
-  <ion-card-content>
+  <ion-card-content style="max-height: 400px; overflow-y: scroll;">
       <div id="sensorContainers">
         <ion-grid ion-grid-padding >  
-          <ion-row style="margin-bottom: 10px;">
+          <ion-row style="margin-bottom: 10px; border-bottom: 1px solid grey;">
             <ion-col size="4"><b>Nom</b></ion-col>
             <ion-col size="2"><b>Unité</b></ion-col>
             <ion-col size="2"><b>Seuil min</b></ion-col> 
             <ion-col size="2"><b>Seuil max</b></ion-col>
             <ion-col size="2"><b>Options</b></ion-col>
           </ion-row>
-          <ion-row *ngFor="let sensor of dataService.getSensorsConfig()">
+          <ion-row *ngFor="let sensor of dataService.getSensorsConfig()" style="border-bottom: 1px solid rgba(0, 0, 0, 0.13);">
             <ion-col size="4"><ion-input readonly >{{sensor.sensorName}}</ion-input></ion-col>
             <ion-col size="2"><ion-input readonly >{{sensor.unit || 'Non définie'}}</ion-input> </ion-col>
             <ion-col size="2"><ion-input readonly >{{(sensor.minThresholdValue || sensor.minThresholdValue === 0) || 'Non défini'}}</ion-input></ion-col>
